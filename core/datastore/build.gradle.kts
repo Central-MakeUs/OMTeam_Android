@@ -10,6 +10,6 @@ dependencies {
     // DataStore (Android 전용)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     
-    // Android 의존성
+    // android 의존성
     implementation(libs.androidx.core.ktx)
 }

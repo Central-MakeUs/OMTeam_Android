@@ -1,6 +1,5 @@
-package com.omteam.omt.ui.theme
+package com.omteam.designsystem.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

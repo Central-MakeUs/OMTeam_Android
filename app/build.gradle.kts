@@ -1,6 +1,5 @@
 plugins {
     id("omteam.android.application")
-    id("omteam.android.compose")
     id("omteam.android.hilt")
 }
 
@@ -15,11 +14,12 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    // Feature 모듈
+    implementation(project(":feature:main"))
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    // Core 모듈
+    implementation(project(":core:designsystem"))
+
+    // 필수 의존성
+    implementation(libs.androidx.core.ktx)
 }

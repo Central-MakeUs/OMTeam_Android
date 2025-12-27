@@ -13,6 +13,6 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:datastore"))
     
-    // Android 의존성
+    // android 의존성
     implementation(libs.androidx.core.ktx)
 }

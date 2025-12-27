@@ -1,4 +1,4 @@
-package com.omteam.omt.ui.theme
+package com.omteam.designsystem.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

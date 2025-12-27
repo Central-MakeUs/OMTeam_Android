@@ -10,6 +10,6 @@ android {
 dependencies {
     // Compose 의존성은 AndroidComposeConventionPlugin에서 자동 추가됨
     
-    // Android 의존성
+    // android 의존성
     implementation(libs.androidx.core.ktx)
 }

@@ -11,7 +11,7 @@ dependencies {
     // Domain 모듈 (API 응답 → Domain Entity 변환)
     implementation(project(":core:domain"))
     
-    // Retrofit & OkHttp
+    // 레트로핏
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -20,6 +20,6 @@ dependencies {
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
     
-    // Android 의존성
+    // android 의존성
     implementation(libs.androidx.core.ktx)
 }
