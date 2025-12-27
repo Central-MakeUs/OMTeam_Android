@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -21,3 +22,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "OMTeam"
 include(":app")
+include(":core:domain")
+include(":core:data")
+include(":core:datastore")
+include(":core:designsystem")
+include(":core:network")
+include(":core:presentation")
