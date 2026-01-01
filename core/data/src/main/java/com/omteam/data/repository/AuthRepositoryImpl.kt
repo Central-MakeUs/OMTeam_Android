@@ -15,7 +15,5 @@ class AuthRepositoryImpl @Inject constructor(
         UserInfoMapper.toDomain(kakaoUser)
     }
 
-    override suspend fun logout(): Result<Unit> = runCatching {
-        // 로그아웃 구현 (필요시)
-    }
+    override suspend fun logout(): Result<Unit> = kakaoAuthDataSource.logout()
 }

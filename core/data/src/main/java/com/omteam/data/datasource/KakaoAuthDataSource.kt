@@ -17,4 +17,14 @@ class KakaoAuthDataSource @Inject constructor() {
             }
         }
     }
+
+    suspend fun logout(): Result<Unit> = suspendCoroutine { continuation ->
+        UserApiClient.instance.logout { error ->
+            if (error != null) {
+                continuation.resume(Result.failure(error))
+            } else {
+                continuation.resume(Result.success(Unit))
+            }
+        }
+    }
 }

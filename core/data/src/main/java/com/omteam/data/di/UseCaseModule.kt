@@ -2,6 +2,7 @@ package com.omteam.data.di
 
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.domain.usecase.GetUserInfoUseCase
+import com.omteam.domain.usecase.LogoutUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +18,10 @@ object UseCaseModule {
     fun provideGetUserInfoUseCase(
         authRepository: AuthRepository
     ): GetUserInfoUseCase = GetUserInfoUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun provideLogoutUseCase(
+        authRepository: AuthRepository
+    ): LogoutUseCase = LogoutUseCase(authRepository)
 }
