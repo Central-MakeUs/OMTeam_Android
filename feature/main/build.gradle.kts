@@ -17,4 +17,7 @@ dependencies {
     // Activity Compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    
+    // 카카오 로그인
+    implementation(libs.kakao.user)
 }
