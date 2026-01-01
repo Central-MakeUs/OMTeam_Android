@@ -81,7 +81,7 @@ fun MainScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "카카오 로그인 테스트",
+            text = "소셜 로그인 테스트",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -109,10 +109,10 @@ fun MainScreen(
                 }
             }
             else -> {
-                // 로그인 버튼
+                // 카카오 로그인 버튼
                 Button(
                     onClick = {
-                        viewModel.onLoginStart()
+                        viewModel.loginWithKakao()
                         
                         coroutineScope.launch {
                             val loginResult = if (KakaoLoginManager.isKakaoTalkAvailable(context)) {
@@ -138,6 +138,23 @@ fun MainScreen(
                             "로그인 중..."
                         else
                             "카카오 로그인"
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // 구글 로그인 버튼
+                Button(
+                    onClick = {
+                        viewModel.loginWithGoogle(context)
+                    },
+                    enabled = loginState !is MainViewModel.LoginState.Loading
+                ) {
+                    Text(
+                        text = if (loginState is MainViewModel.LoginState.Loading)
+                            "로그인 중..."
+                        else
+                            "구글 로그인"
                     )
                 }
             }

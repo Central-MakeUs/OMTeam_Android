@@ -14,7 +14,8 @@ hiltNavigationCompose = "1.2.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 kakao = "2.23.1"
-googlePlayServicesAuth = "21.4.0"
+credentialsManager = "1.5.0"
+googleid = "1.1.1"
 googleServices = "4.4.4"
 firebaseBom = "34.7.0"
 firebaseCrashlyticsGradle = "3.0.2"
@@ -48,8 +49,10 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 # 카카오 로그인
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 
-# 구글 로그인
-google-play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "googlePlayServicesAuth" }
+# 구글 로그인 (Credential Manager)
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentialsManager" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsManager" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 # firebase bom, services
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

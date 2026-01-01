@@ -25,7 +25,13 @@ android {
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            "\"${localProperties.getProperty("KAKAO_NATIVE_KEY")}\""
+            "\"${localProperties.getProperty("KAKAO_NATIVE_KEY", "")}\""
+        )
+        
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"${localProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")}\""
         )
         
         // 매니페스트에서 사용
@@ -50,8 +56,10 @@ dependencies {
     // 카카오 로그인
     implementation(libs.kakao.user)
 
-    // 구글 로그인
-    implementation(libs.google.play.services.auth)
+    // 구글 로그인 (Credential Manager)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
 
     // 파이어베이스
     implementation(platform(libs.firebase.bom))
