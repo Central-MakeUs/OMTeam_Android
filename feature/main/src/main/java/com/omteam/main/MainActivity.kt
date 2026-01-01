@@ -103,7 +103,6 @@ fun MainScreen(
 
         when (loginState) {
             is MainViewModel.LoginState.Success -> {
-                // 로그아웃 버튼
                 Button(onClick = { viewModel.logout() }) {
                     Text(text = "로그아웃")
                 }
@@ -114,7 +113,6 @@ fun MainScreen(
                     onClick = {
                         viewModel.onLoginStart()
                         
-                        // UI 레이어에서 직접 카카오 로그인 처리
                         coroutineScope.launch {
                             val loginResult = if (KakaoLoginManager.isKakaoTalkAvailable(context)) {
                                 KakaoLoginManager.loginWithKakaoTalk(context)
@@ -124,7 +122,7 @@ fun MainScreen(
                             
                             loginResult
                                 .onSuccess {
-                                    // 로그인 성공 후 사용자 정보 가져오기
+                                    // 로그인 성공 후 사용자 정보 조회
                                     viewModel.onLoginSuccess()
                                 }
                                 .onFailure { error ->
