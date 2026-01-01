@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     id("omteam.android.application")
     id("omteam.android.hilt")
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
 }
 
 android {
@@ -10,6 +19,19 @@ android {
         applicationId = "com.omteam.omt"
         versionCode = 1
         versionName = "1.0"
+        
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            "\"${localProperties.getProperty("KAKAO_NATIVE_KEY")}\""
+        )
+        
+        // 매니페스트에서 사용
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = localProperties.getProperty("KAKAO_NATIVE_KEY") ?: ""
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -22,4 +44,7 @@ dependencies {
 
     // 필수 의존성
     implementation(libs.androidx.core.ktx)
+
+    // 카카오 로그인
+    implementation(libs.kakao.user)
 }

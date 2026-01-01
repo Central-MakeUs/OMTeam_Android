@@ -15,4 +15,7 @@ dependencies {
     
     // android 의존성
     implementation(libs.androidx.core.ktx)
+    
+    // 카카오 로그인
+    implementation(libs.kakao.user)
 }
