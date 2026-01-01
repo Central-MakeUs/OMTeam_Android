@@ -18,4 +18,12 @@ dependencies {
     
     // 카카오 로그인
     implementation(libs.kakao.user)
+
+    // 구글 로그인 (Credential Manager)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    
+    // timber
+    implementation(libs.timber)
 }

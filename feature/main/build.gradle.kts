@@ -24,4 +24,12 @@ dependencies {
     
     // 카카오 SDK (설치 여부 확인용)
     implementation(libs.kakao.user)
+    
+    // 구글 로그인 (Credential Manager)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+    
+    // timber
+    implementation(libs.timber)
 }

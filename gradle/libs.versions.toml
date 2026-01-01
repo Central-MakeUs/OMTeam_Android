@@ -14,6 +14,12 @@ hiltNavigationCompose = "1.2.0"
 appcompat = "1.7.1"
 material = "1.13.0"
 kakao = "2.23.1"
+credentialsManager = "1.5.0"
+googleid = "1.1.1"
+googleServices = "4.4.4"
+firebaseBom = "34.7.0"
+firebaseCrashlyticsGradle = "3.0.2"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +50,23 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 # 카카오 로그인
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 
+# 구글 로그인 (Credential Manager)
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentialsManager" }
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentialsManager" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+
+# firebase bom, services
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
+# timber
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# gradle plugins
+google-services-gradlePlugin = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
+firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsGradle" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -52,3 +75,5 @@ kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsGradle" }
