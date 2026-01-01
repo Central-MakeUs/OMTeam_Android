@@ -38,6 +38,9 @@ hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-p
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+# Hilt
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
 # 카카오 로그인
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 

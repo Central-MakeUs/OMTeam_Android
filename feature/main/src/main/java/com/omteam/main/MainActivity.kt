@@ -16,17 +16,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.theme.OMTeamTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -44,11 +45,34 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    viewModel: MainViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
+) {
+    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val kakaoLoginHelper = remember { KakaoLoginHelper(context) }
-    var loginStatus by remember { mutableStateOf("로그인 전") }
-    var isLoading by remember { mutableStateOf(false) }
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
+
+    // 상태에 따른 Toast 표시
+    LaunchedEffect(loginState) {
+        when (val state = loginState) {
+            is MainViewModel.LoginState.Success -> {
+                Toast.makeText(
+                    context,
+                    "로그인 성공: ${state.userInfo.nickname}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            is MainViewModel.LoginState.Error -> {
+                Toast.makeText(
+                    context,
+                    "로그인 실패: ${state.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+            else -> Unit
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -59,35 +83,53 @@ fun MainScreen(modifier: Modifier = Modifier) {
             text = "카카오 로그인 테스트",
             style = MaterialTheme.typography.headlineMedium
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Text(
-            text = loginStatus,
+            text = when (loginState) {
+                is MainViewModel.LoginState.Idle -> "로그인 전"
+                is MainViewModel.LoginState.Loading -> "로그인 중..."
+                is MainViewModel.LoginState.Success ->
+                    "로그인 성공: ${(loginState as MainViewModel.LoginState.Success).userInfo.nickname}"
+                is MainViewModel.LoginState.Error ->
+                    "로그인 실패: ${(loginState as MainViewModel.LoginState.Error).message}"
+            },
             style = MaterialTheme.typography.bodyLarge
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
-        
+
         Button(
             onClick = {
-                isLoading = true
-                loginStatus = "로그인 중..."
+                viewModel.onLoginStart()
                 
-                kakaoLoginHelper.loginWithKakao { success, message ->
-                    isLoading = false
-                    if (success) {
-                        loginStatus = message ?: "로그인 성공!"
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                // UI 레이어에서 직접 카카오 로그인 처리
+                coroutineScope.launch {
+                    val loginResult = if (KakaoLoginManager.isKakaoTalkAvailable(context)) {
+                        KakaoLoginManager.loginWithKakaoTalk(context)
                     } else {
-                        loginStatus = "로그인 실패: $message"
-                        Toast.makeText(context, "로그인 실패: $message", Toast.LENGTH_LONG).show()
+                        KakaoLoginManager.loginWithKakaoAccount(context)
                     }
+                    
+                    loginResult
+                        .onSuccess {
+                            // 로그인 성공 후 사용자 정보 가져오기
+                            viewModel.onLoginSuccess()
+                        }
+                        .onFailure { error ->
+                            viewModel.onLoginFailure(error.message ?: "알 수 없는 오류")
+                        }
                 }
             },
-            enabled = !isLoading
+            enabled = loginState !is MainViewModel.LoginState.Loading
         ) {
-            Text(text = if (isLoading) "로그인 중..." else "카카오 로그인")
+            Text(
+                text = if (loginState is MainViewModel.LoginState.Loading)
+                    "로그인 중..."
+                else
+                    "카카오 로그인"
+            )
         }
     }
 }
