@@ -53,7 +53,6 @@ fun MainScreen(
     val context = LocalContext.current
     val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
-    // 상태에 따른 Toast 표시
     LaunchedEffect(loginState) {
         when (val state = loginState) {
             is MainViewModel.LoginState.Success -> {
