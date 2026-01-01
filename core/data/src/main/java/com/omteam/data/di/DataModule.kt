@@ -45,8 +45,6 @@ object DataModule {
         @Named("google_web_client_id") webClientId: String
     ): AuthDataSource = GoogleAuthDataSource(context, credentialManager, webClientId)
 
-    // 현재 사용할 AuthDataSource 설정. 기본값 = 카카오
-    // 실제로는 DataStore 등에서 마지막 로그인 방식을 읽어와서 결정
     @Provides
     @Singleton
     fun provideAuthDataSource(

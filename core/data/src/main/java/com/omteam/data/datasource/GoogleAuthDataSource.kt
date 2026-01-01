@@ -1,7 +1,6 @@
 package com.omteam.data.datasource
 
 import android.content.Context
-import android.util.Log
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
@@ -9,6 +8,7 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.omteam.domain.model.UserInfo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -21,13 +21,9 @@ class GoogleAuthDataSource @Inject constructor(
     private val credentialManager: CredentialManager,
     private val webClientId: String
 ) : AuthDataSource {
-
-    companion object {
-        private const val TAG = "GoogleAuthDataSource"
-    }
     
     override suspend fun getUserInfo(): Result<UserInfo> {
-        Log.d(TAG, "getUserInfo() 시작")
+        Timber.d("getUserInfo() 시작")
         return try {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(true) // 이미 로그인된 계정만
@@ -38,7 +34,7 @@ class GoogleAuthDataSource @Inject constructor(
                 .addCredentialOption(googleIdOption)
                 .build()
             
-            Log.d(TAG, "Credential Manager에 사용자 정보 요청 중...")
+            Timber.d("Credential Manager에 사용자 정보 요청 중...")
             val result = credentialManager.getCredential(
                 request = request,
                 context = context
@@ -53,20 +49,20 @@ class GoogleAuthDataSource @Inject constructor(
                             nickname = googleIdTokenCredential.displayName,
                             email = googleIdTokenCredential.id
                         )
-                        Log.d(TAG, "사용자 정보 조회 성공 : ${userInfo.email}")
+                        Timber.d( "사용자 정보 조회 성공 : ${userInfo.email}")
                         Result.success(userInfo)
                     } else {
-                        Log.e(TAG, "예상 못한 Credential 타입 : ${credential.type}")
+                        Timber.e( "예상 못한 Credential 타입 : ${credential.type}")
                         Result.failure(Exception("Unexpected credential type"))
                     }
                 }
                 else -> {
-                    Log.e(TAG, "CustomCredential이 아닌 타입")
+                    Timber.e( "CustomCredential이 아닌 타입")
                     Result.failure(Exception("Unexpected credential type"))
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "사용자 정보 조회 실패 : ${e.message}", e)
+            Timber.e(e, "사용자 정보 조회 실패 : ${e.message}")
             Result.failure(e)
         }
     }

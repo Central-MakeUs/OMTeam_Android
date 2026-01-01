@@ -19,6 +19,7 @@ googleid = "1.1.1"
 googleServices = "4.4.4"
 firebaseBom = "34.7.0"
 firebaseCrashlyticsGradle = "3.0.2"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -58,6 +59,9 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
+# timber
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # gradle plugins
 google-services-gradlePlugin = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
