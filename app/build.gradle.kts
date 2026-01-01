@@ -3,6 +3,8 @@ import java.util.Properties
 plugins {
     id("omteam.android.application")
     id("omteam.android.hilt")
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val localProperties = Properties().apply {
@@ -47,4 +49,12 @@ dependencies {
 
     // 카카오 로그인
     implementation(libs.kakao.user)
+
+    // 구글 로그인
+    implementation(libs.google.play.services.auth)
+
+    // 파이어베이스
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }

@@ -20,3 +20,6 @@ local.properties
 .idea/firebender/
 *.firebender
 .idea/vcs.xml
+
+# google services
+google-services.json

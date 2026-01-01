@@ -18,4 +18,7 @@ dependencies {
     
     // 카카오 로그인
     implementation(libs.kakao.user)
+
+    // 구글 로그인
+    implementation(libs.google.play.services.auth)
 }
