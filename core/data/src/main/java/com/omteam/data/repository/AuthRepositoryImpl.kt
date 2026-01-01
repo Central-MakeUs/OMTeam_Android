@@ -1,19 +1,18 @@
 package com.omteam.data.repository
 
-import com.omteam.data.datasource.KakaoAuthDataSource
-import com.omteam.data.mapper.UserInfoMapper
+import com.omteam.data.datasource.AuthDataSource
 import com.omteam.domain.model.UserInfo
 import com.omteam.domain.repository.AuthRepository
 import javax.inject.Inject
 
+/**
+ * AuthDataSource 통해 구글, 카카오 로그인 지원
+ */
 class AuthRepositoryImpl @Inject constructor(
-    private val kakaoAuthDataSource: KakaoAuthDataSource
+    private val authDataSource: AuthDataSource
 ) : AuthRepository {
 
-    override suspend fun getUserInfo(): Result<UserInfo> = runCatching {
-        val kakaoUser = kakaoAuthDataSource.getUserInfo().getOrThrow()
-        UserInfoMapper.toDomain(kakaoUser)
-    }
+    override suspend fun getUserInfo(): Result<UserInfo> = authDataSource.getUserInfo()
 
-    override suspend fun logout(): Result<Unit> = kakaoAuthDataSource.logout()
+    override suspend fun logout(): Result<Unit> = authDataSource.logout()
 }
