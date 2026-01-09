@@ -35,7 +35,7 @@ import com.omteam.omt.core.designsystem.R
 fun OMTeamSnsButton(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int,
-    text: String? = null,
+    text: String,
     iconSize: Dp = dp24,
     onClick: () -> Unit,
     backgroundColor: Color = Color.White,
@@ -52,12 +52,8 @@ fun OMTeamSnsButton(
     }
 
     Button(
-        modifier = if (text.isNullOrEmpty()) {
-            modifier.size(dp56)
-        } else {
-            modifier.fillMaxWidth()
-                .height(dp56)
-        },
+        modifier = modifier.fillMaxWidth()
+            .height(dp56),
         shape = RoundedCornerShape(dp12),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -65,38 +61,24 @@ fun OMTeamSnsButton(
             contentColor = contentColor
         ),
         border = border,
-        contentPadding = if (text.isNullOrEmpty()) {
-            PaddingValues(dp0)
-        } else {
-            ButtonDefaults.ContentPadding
-        }
     ) {
-        if (text.isNullOrEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Icon(
                 painter = icon,
-                contentDescription = "카카오 로그인 버튼",
-                modifier = Modifier.size(iconSize),
+                contentDescription = "$text 버튼",
+                modifier = Modifier
+                    .size(iconSize)
+                    .align(Alignment.CenterStart),
                 tint = Color.Unspecified
             )
-        } else {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    painter = icon,
-                    contentDescription = "구글 로그인 버튼",
-                    modifier = Modifier
-                        .size(iconSize)
-                        .align(Alignment.CenterStart),
-                    tint = Color.Unspecified
-                )
-                Spacer(modifier = Modifier.width(dp12))
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = text,
-                    style = PretendardType.button01Disabled
-                )
-            }
+            Spacer(modifier = Modifier.width(dp12))
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = text,
+                style = PretendardType.button01Disabled
+            )
         }
     }
 }
