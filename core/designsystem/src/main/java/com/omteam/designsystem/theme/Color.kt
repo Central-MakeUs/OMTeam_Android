@@ -58,6 +58,7 @@ val Yellow10 = Color(0xFF7A611E)
 val Yellow11 = Color(0xFF644F16)
 val Yellow12 = Color(0xFF4D3D0F)
 val Yellow13 = Color(0xFF372A07)
+val Yellow14 = Color(0xFFFFD301)
 
 // gray
 val Gray01 = Color(0xFFF7F7F7)

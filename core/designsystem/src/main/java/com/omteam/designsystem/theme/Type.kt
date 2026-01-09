@@ -10,7 +10,7 @@ import com.omteam.omt.core.designsystem.R
 
 // 메인 폰트
 val PaperlogyFont = FontFamily(
-    Font(R.font.paperlogy_thin, FontWeight.Thin),           // 100
+    Font(R.font.paperlogy_thin, FontWeight.Thin),     // 100
     Font(R.font.paperlogy_extralight, FontWeight.ExtraLight),   // 200
     Font(R.font.paperlogy_light, FontWeight.Light),             // 300
     Font(R.font.paperlogy_regular, FontWeight.Normal),          // 400
@@ -21,9 +21,73 @@ val PaperlogyFont = FontFamily(
     Font(R.font.paperlogy_black, FontWeight.Black)              // 900
 )
 
+/**
+ * 사용 방법
+ *
+ *
+ * ```kotlin
+ * Button(
+ *     onClick = { /* ... */ },
+ *     enabled = isEnabled
+ * ) {
+ *     Text(
+ *         text = "버튼",
+ *         style = if (isEnabled) {
+ *             PretendardType.button01Enabled
+ *         } else {
+ *             PretendardType.button01Disabled
+ *         }
+ *     )
+ * }
+ * ```
+ */
+object PaperlogyType {
+    // Headline
+    val headline01 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 24.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val headline02 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 33.sp,  // 150%
+        letterSpacing = 0.sp
+    )
+
+    val headline03 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 21.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 21.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    // Button
+    val button01 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 18.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val button02 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 18.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+}
+
 // 서브 폰트
 val PretendardFont = FontFamily(
-    Font(R.font.pretendard_thin, FontWeight.Thin),           // 100
+    Font(R.font.pretendard_thin, FontWeight.Thin),    // 100
     Font(R.font.pretendard_extralight, FontWeight.ExtraLight),  // 200
     Font(R.font.pretendard_light, FontWeight.Light),            // 300
     Font(R.font.pretendard_regular, FontWeight.Normal),         // 400
@@ -33,6 +97,66 @@ val PretendardFont = FontFamily(
     Font(R.font.pretendard_extrabold, FontWeight.ExtraBold),    // 800
     Font(R.font.pretendard_black, FontWeight.Black)             // 900
 )
+
+object PretendardType {
+    // Body
+    val body01 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Normal, // 400
+        lineHeight = 18.sp,  // 100%
+        letterSpacing = (-0.072).sp
+    )
+
+    val body02 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 15.sp,  // 100%
+        letterSpacing = (-0.4).sp
+    )
+
+    // Button
+    val button01Disabled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 18.sp,  // 100%
+        letterSpacing = (-0.072).sp
+    )
+
+    val button01Enabled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 18.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 18.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val button02Disabled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 16.sp,  // 100%
+        letterSpacing = (-0.064).sp
+    )
+
+    val button02Enabled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 16.sp,  // 100%
+        letterSpacing = (-0.064).sp
+    )
+
+    val button03Disabled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Normal, // 400
+        lineHeight = 15.sp,  // 100%
+        letterSpacing = (-0.06).sp
+    )
+}
 
 /**
  * MaterialTheme.typography 통해 접근
