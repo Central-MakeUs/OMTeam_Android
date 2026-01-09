@@ -1,4 +1,4 @@
-package com.omteam.main
+package com.omteam.impl
 
 import android.content.Context
 import androidx.credentials.CredentialManager
