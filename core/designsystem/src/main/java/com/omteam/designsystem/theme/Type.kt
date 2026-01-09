@@ -61,9 +61,9 @@ object PaperlogyType {
 
     val headline03 = TextStyle(
         fontFamily = PaperlogyFont,
-        fontSize = 21.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold, // 600
-        lineHeight = 21.sp,  // 100%
+        lineHeight = 20.sp,  // 100%
         letterSpacing = 0.sp
     )
 
