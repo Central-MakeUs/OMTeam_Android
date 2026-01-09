@@ -7,5 +7,6 @@
 
     <!-- AccountLinkCompleteScreen(계정 연동 완료 화면) -->
     <string name="link_complete_title">계정 연동이 완료되었어요!</string>
-    <string name="link_complete_subtitle">OMT와 함께 건강한 습관을 만들어봐요</string>
+    <string name="link_complete_subtitle_first">OMT</string>
+    <string name="link_complete_subtitle_second">와 함께 건강한 습관을 만들어봐요</string>
 </resources>
