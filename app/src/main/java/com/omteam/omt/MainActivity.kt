@@ -1,7 +1,9 @@
 package com.omteam.omt
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +28,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            // 라이트 모드일 때 상단 네비게이션 바 글자들을 검은색으로 표시
+            statusBarStyle = SystemBarStyle.light(
+                scrim = Color.TRANSPARENT,
+                darkScrim = Color.TRANSPARENT,
+            )
+        )
         setContent {
             OMTeamTheme {
                 val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(LoginNavKey)) }

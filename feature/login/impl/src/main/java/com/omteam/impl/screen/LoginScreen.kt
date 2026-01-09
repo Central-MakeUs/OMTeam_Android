@@ -1,34 +1,118 @@
 package com.omteam.impl.screen
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.omteam.designsystem.foundation.dp32
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.omteam.designsystem.component.button.OMTeamSnsButton
+import com.omteam.designsystem.component.text.OMTeamText
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.Gray05
+import com.omteam.designsystem.theme.Gray09
+import com.omteam.designsystem.theme.OMTeamTheme
+import com.omteam.designsystem.theme.PretendardType
+import com.omteam.designsystem.theme.Yellow14
+import com.omteam.omt.core.designsystem.R
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginSuccess: () -> Unit,
+    onKakaoLogin: () -> Unit = {},
+    onGoogleLogin: () -> Unit = {},
+    onSignOut: () -> Unit = {},
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        Text("로그인 화면")
-        Spacer(modifier = Modifier.height(dp32))
-
-        Button(
-            onClick = onLoginSuccess
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .padding(horizontal = dp20),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("로그인하기")
+            Box(
+                modifier = Modifier
+                    .size(dp200)
+                    .background(
+                        color = Gray05,
+                        shape = CircleShape
+                    )
+            )
+
+            Spacer(modifier = Modifier.height(dp48))
+
+            OMTeamText(
+                text = stringResource(com.omteam.impl.R.string.login_welcome_message),
+                style = PretendardType.body01,
+                color = Gray09
+            )
+
+            Spacer(modifier = Modifier.height(186.dp))
         }
+
+        // SNS 로그인 버튼들
+        // 밑에서 52dp 떨어짐
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(horizontal = dp20)
+                .padding(bottom = dp52),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            // TODO : 로그아웃 기능 구현 시 제거
+            OMTeamSnsButton(
+                iconRes = R.drawable.kakao_symbol,
+                text = "SNS 로그아웃 (제거예정)",
+                onClick = onSignOut,
+                backgroundColor = Color.Gray,
+            )
+
+            Spacer(modifier = Modifier.height(dp12))
+            // TODO : 로그아웃 기능 구현 시 제거
+
+            OMTeamSnsButton(
+                iconRes = R.drawable.kakao_symbol,
+                text = stringResource(com.omteam.impl.R.string.login_with_kakao),
+                onClick = onKakaoLogin,
+                backgroundColor = Yellow14,
+            )
+
+            Spacer(modifier = Modifier.height(dp12))
+
+            OMTeamSnsButton(
+                iconRes = R.drawable.google_symbol,
+                text = stringResource(com.omteam.impl.R.string.login_with_google),
+                onClick = onGoogleLogin,
+                backgroundColor = Color.White,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun LoginScreenPreview() {
+    OMTeamTheme {
+        LoginScreen(
+            modifier = Modifier.background(Color.White),
+            onKakaoLogin = {},
+            onGoogleLogin = {}
+        )
     }
 }
