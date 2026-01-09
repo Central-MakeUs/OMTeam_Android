@@ -47,7 +47,8 @@ android {
 dependencies {
     // feature 모듈
     implementation(project(":feature:main"))
-    implementation(project(":feature:login"))
+    implementation(project(":feature:login:api"))
+    implementation(project(":feature:login:impl"))
 
     // core 모듈
     implementation(project(":core:designsystem"))
@@ -60,11 +61,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.kotlinx.serialization.json)
 
-    // 카카오 로그인
+    // 카카오 로그인 (Application 초기화 시 필요)
     implementation(libs.kakao.user)
 
-    // 구글 로그인 (Credential Manager)
+    // 구글 로그인 (AppModule에서 사용)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
@@ -73,9 +75,13 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+
+    // nav3
+    implementation(libs.androidx.navigation3.runtime)
     
     // timber
     implementation(libs.timber)
+    implementation(libs.androidx.navigation3.ui)
 
     // test
     debugImplementation(libs.androidx.compose.ui.tooling)
