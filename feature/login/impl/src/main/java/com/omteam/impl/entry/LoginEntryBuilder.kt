@@ -1,7 +1,5 @@
 package com.omteam.impl.entry
 
-import android.util.Log
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -17,7 +15,7 @@ import com.omteam.impl.screen.LoginScreen
 import timber.log.Timber
 
 /**
- * 로그인 화면 Entry Builder
+ * 로그인 화면 entry builder
  *
  * @param onNavigateToAccountLinkComplete 계정 연동 완료 화면 이동
  */
@@ -46,7 +44,7 @@ fun EntryProviderScope<NavKey>.loginEntry(
 }
 
 /**
- * 계정 연동 완료 화면 Entry Builder
+ * 계정 연동 완료 화면 entry builder
  *
  * @param onNavigateToOnboarding 온보딩 화면으로 이동
  */
@@ -54,7 +52,7 @@ fun EntryProviderScope<NavKey>.accountLinkCompleteEntry(
     onNavigateToOnboarding: () -> Unit
 ) {
     entry<AccountLinkCompleteNavKey> {
-        Timber.e("## 계정 연동 완료 화면으로 이동")
+        Timber.e("## 온보딩 화면으로 이동")
         AccountLinkCompleteScreen {
             onNavigateToOnboarding()
         }

@@ -15,6 +15,7 @@ dependencies {
     // core 모듈
     implementation(project(":core:designsystem"))
     implementation(project(":core:presentation"))
+    implementation(project(":core:data")) // GetUserInfoUseCase 사용하기 위해 필요
     implementation(project(":core:domain"))
 
     // nav3
