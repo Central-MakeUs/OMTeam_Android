@@ -156,6 +156,14 @@ object PretendardType {
         lineHeight = 15.sp,  // 100%
         letterSpacing = (-0.06).sp
     )
+
+    val skipButton = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 14.sp,  // 100%
+        letterSpacing = (-0.056).sp
+    )
 }
 
 /**
