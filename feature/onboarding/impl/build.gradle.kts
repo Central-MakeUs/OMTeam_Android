@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    namespace = "com.omteam.login.impl"
+    namespace = "com.omteam.onboarding.impl"
     compileSdk = 36
 }
 
 dependencies {
-    implementation(project(":feature:login:api"))
+    implementation(project(":feature:onboarding:api"))
 
     // core 모듈
     implementation(project(":core:designsystem"))
@@ -28,14 +28,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    // 카카오 SDK
-    implementation(libs.kakao.user)
-
-    // 구글 로그인 (Credential Manager)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
 
     // timber
     implementation(libs.timber)
