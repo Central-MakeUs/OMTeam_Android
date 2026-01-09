@@ -20,20 +20,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
-import com.omteam.api.R
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.dp15
-import com.omteam.designsystem.foundation.dp16
-import com.omteam.designsystem.foundation.dp20
-import com.omteam.designsystem.foundation.dp200
-import com.omteam.designsystem.foundation.dp48
-import com.omteam.designsystem.foundation.dp72
-import com.omteam.designsystem.theme.Black
-import com.omteam.designsystem.theme.Gray05
-import com.omteam.designsystem.theme.Gray09
-import com.omteam.designsystem.theme.Green08
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.designsystem.theme.PretendardType
+import com.omteam.login.impl.R
 
 @Composable
 fun AccountLinkCompleteScreen(
@@ -62,7 +54,7 @@ fun AccountLinkCompleteScreen(
             Spacer(modifier = Modifier.height(dp72))
 
             OMTeamText(
-                text = stringResource(com.omteam.impl.R.string.link_complete_title),
+                text = stringResource(R.string.link_complete_title),
                 style = PaperlogyType.headline01,
                 color = Black
             )
@@ -72,9 +64,9 @@ fun AccountLinkCompleteScreen(
             Text(
                 text = buildAnnotatedString {
                     withStyle(style = SpanStyle(color = Green08)) {
-                        append(stringResource(com.omteam.impl.R.string.link_complete_subtitle_first))
+                        append(stringResource(R.string.link_complete_subtitle_first))
                     }
-                    append(stringResource(com.omteam.impl.R.string.link_complete_subtitle_second))
+                    append(stringResource(R.string.link_complete_subtitle_second))
                 },
                 style = PretendardType.body02,
                 color = Gray09,

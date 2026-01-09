@@ -2,24 +2,25 @@ plugins {
     id("omteam.android.library")
     id("omteam.android.compose")
     id("omteam.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.omteam.login.impl"
+    namespace = "com.omteam.main.impl"
     compileSdk = 36
 }
 
 dependencies {
-    implementation(project(":feature:login:api"))
+    implementation(project(":feature:main:api"))
 
     // core 모듈
     implementation(project(":core:designsystem"))
     implementation(project(":core:presentation"))
-    implementation(project(":core:data")) // GetUserInfoUseCase 사용 위해 필요
     implementation(project(":core:domain"))
 
     // nav3
     implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.kotlinx.serialization.json)
 
     // hilt
     implementation(libs.hilt.android)
@@ -29,14 +30,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    // 카카오 SDK
-    implementation(libs.kakao.user)
-
-    // 구글 로그인 (Credential Manager)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
 
     // timber
     implementation(libs.timber)

@@ -46,9 +46,12 @@ android {
 
 dependencies {
     // feature 모듈
-    implementation(project(":feature:main"))
     implementation(project(":feature:login:api"))
     implementation(project(":feature:login:impl"))
+    implementation(project(":feature:main:api"))
+    implementation(project(":feature:main:impl"))
+    implementation(project(":feature:onboarding:api"))
+    implementation(project(":feature:onboarding:impl"))
 
     // core 모듈
     implementation(project(":core:designsystem"))

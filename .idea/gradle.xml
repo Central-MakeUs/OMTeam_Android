@@ -37,6 +37,11 @@
             <option value="$PROJECT_DIR$/feature/login/api" />
             <option value="$PROJECT_DIR$/feature/login/impl" />
             <option value="$PROJECT_DIR$/feature/main" />
+            <option value="$PROJECT_DIR$/feature/main/api" />
+            <option value="$PROJECT_DIR$/feature/main/impl" />
+            <option value="$PROJECT_DIR$/feature/onboarding" />
+            <option value="$PROJECT_DIR$/feature/onboarding/api" />
+            <option value="$PROJECT_DIR$/feature/onboarding/impl" />
           </set>
         </option>
       </GradleProjectSettings>

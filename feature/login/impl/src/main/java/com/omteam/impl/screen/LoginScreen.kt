@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,7 +56,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(dp48))
 
             OMTeamText(
-                text = stringResource(com.omteam.impl.R.string.login_welcome_message),
+                text = stringResource(com.omteam.login.impl.R.string.login_welcome_message),
                 style = PretendardType.body01,
                 color = Gray09
             )
@@ -88,7 +87,7 @@ fun LoginScreen(
 
             OMTeamSnsButton(
                 iconRes = R.drawable.kakao_symbol,
-                text = stringResource(com.omteam.impl.R.string.login_with_kakao),
+                text = stringResource(com.omteam.login.impl.R.string.login_with_kakao),
                 onClick = onKakaoLogin,
                 backgroundColor = Yellow14,
             )
@@ -97,7 +96,7 @@ fun LoginScreen(
 
             OMTeamSnsButton(
                 iconRes = R.drawable.google_symbol,
-                text = stringResource(com.omteam.impl.R.string.login_with_google),
+                text = stringResource(com.omteam.login.impl.R.string.login_with_google),
                 onClick = onGoogleLogin,
                 backgroundColor = Color.White,
             )
