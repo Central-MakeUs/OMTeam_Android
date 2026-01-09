@@ -82,17 +82,17 @@ class LoginViewModel @Inject constructor(
                 credentialManager = credentialManager,
                 webClientId = googleWebClientId
             ).onSuccess { googleCredential ->
-                Timber.d("GoogleLoginManager.signIn() 성공")
+                Timber.d("## 구글 로그인 성공")
                 // 구글 로그인 성공 시 GoogleIdTokenCredential에서 직접 정보 추출
                 val userInfo = UserInfo(
                     id = googleCredential.id.hashCode().toLong(),
                     nickname = googleCredential.displayName,
                     email = googleCredential.id  // email
                 )
-                Timber.d("UserInfo 생성 완료 : ${userInfo.email}")
+                Timber.d("## 구글 유저 정보 생성 성공 : ${userInfo.email}")
                 _loginState.value = LoginState.Success(userInfo)
             }.onFailure { error ->
-                Timber.e("GoogleLoginManager.signIn() 실패 : ${error.message}")
+                Timber.e("## 구글 로그인 실패 : ${error.message}")
                 currentLoginType = LoginType.NONE
                 _loginState.value = LoginState.Error(error.message ?: "구글 로그인 실패")
             }
