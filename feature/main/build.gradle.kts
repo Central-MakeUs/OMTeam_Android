@@ -15,14 +15,14 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
 
-    // Activity Compose
+    // compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     
-    // Hilt Navigation Compose
+    // hilt navigation compose
     implementation(libs.androidx.hilt.navigation.compose)
     
-    // 카카오 SDK (설치 여부 확인용)
+    // 카카오 SDK
     implementation(libs.kakao.user)
     
     // 구글 로그인 (Credential Manager)

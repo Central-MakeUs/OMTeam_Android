@@ -44,10 +44,11 @@ android {
 }
 
 dependencies {
-    // Feature 모듈
+    // feature 모듈
+    implementation(project(":feature:main"))
     implementation(project(":feature:main"))
 
-    // Core 모듈
+    // core 모듈
     implementation(project(":core:designsystem"))
 
     // 필수 의존성
