@@ -26,6 +26,17 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
 
+    // 카카오 SDK
+    implementation(libs.kakao.user)
+
+    // 구글 로그인 (Credential Manager)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    // timber
+    implementation(libs.timber)
+
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

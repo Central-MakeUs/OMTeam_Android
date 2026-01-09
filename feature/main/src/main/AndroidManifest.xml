@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
         <activity
-            android:name="com.omteam.main.MainActivity"
+            android:name="com.omteam.omt.MainActivity"
             android:exported="false" />
     </application>
 </manifest>

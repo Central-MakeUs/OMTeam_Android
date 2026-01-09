@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("omteam.android.application")
+    id("omteam.android.compose")
     id("omteam.android.hilt")
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -46,13 +47,19 @@ android {
 dependencies {
     // feature 모듈
     implementation(project(":feature:main"))
-    implementation(project(":feature:main"))
+    implementation(project(":feature:login"))
 
     // core 모듈
     implementation(project(":core:designsystem"))
 
     // 필수 의존성
     implementation(libs.androidx.core.ktx)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // 카카오 로그인
     implementation(libs.kakao.user)
@@ -69,4 +76,8 @@ dependencies {
     
     // timber
     implementation(libs.timber)
+
+    // test
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
