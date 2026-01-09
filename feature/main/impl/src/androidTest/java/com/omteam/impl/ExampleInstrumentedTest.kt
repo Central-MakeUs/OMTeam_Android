@@ -1,4 +1,4 @@
-package com.omteam.main
+package com.omteam.impl
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.omteam.main.test", appContext.packageName)
+        assertEquals("com.omteam.impl.test", appContext.packageName)
     }
 }
