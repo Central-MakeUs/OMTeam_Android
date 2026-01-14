@@ -14,7 +14,8 @@ import timber.log.Timber
  */
 fun EntryProviderScope<NavKey>.onboardingEntry(
     onNavigateToNextStep: (currentStep: Int) -> Unit,
-    onNavigateToMain: () -> Unit
+    onNavigateToMain: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     entry<OnboardingNavKey> { navKey ->
         Timber.e("## 온보딩 화면 - Step ${navKey.step}")
@@ -34,6 +35,10 @@ fun EntryProviderScope<NavKey>.onboardingEntry(
             onSkip = {
                 // 건너뛰기 → 메인 화면
                 onNavigateToMain()
+            },
+            onBack = {
+                // 이전 온보딩 화면 이동
+                onNavigateBack()
             }
         )
     }

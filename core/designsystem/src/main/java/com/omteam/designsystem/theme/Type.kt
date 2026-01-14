@@ -83,6 +83,14 @@ object PaperlogyType {
         lineHeight = 18.sp,  // 100%
         letterSpacing = 0.sp
     )
+
+    val onboardingCardText = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 20.sp,  // 100%
+        letterSpacing = 0.sp
+    )
 }
 
 // 서브 폰트

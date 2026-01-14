@@ -41,7 +41,9 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             OMTeamTheme {
-                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(LoginNavKey)) }
+                // TODO : 온보딩 구현 후 아래 코드 원복해서 사용
+//                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(LoginNavKey)) }
+                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(OnboardingNavKey(step = 1))) }
                 val navigator = remember { AppNavigator(backStackState) }
 
 //                LaunchedEffect(backStackState.value) {
@@ -51,21 +53,20 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavDisplay(
                         backStack = backStackState.value,
-                        onBack = {
-                            navigator.popBackStack()
-                        },
+                        onBack = { navigator.popBackStack() },
                         entryProvider = entryProvider {
-                            loginEntry(
-                                onNavigateToAccountLinkComplete = {
-                                    navigator.navigateToAccountLinkComplete()
-                                }
-                            )
-
-                            accountLinkCompleteEntry(
-                                onNavigateToOnboarding = {
-                                    navigator.navigateToOnboarding()
-                                }
-                            )
+                            // TODO : 온보딩 구현 후 아래 코드 원복해서 사용
+//                            loginEntry(
+//                                onNavigateToAccountLinkComplete = {
+//                                    navigator.navigateToAccountLinkComplete()
+//                                }
+//                            )
+//
+//                            accountLinkCompleteEntry(
+//                                onNavigateToOnboarding = {
+//                                    navigator.navigateToOnboarding()
+//                                }
+//                            )
 
                             onboardingEntry(
                                 onNavigateToNextStep = { currentStep ->
@@ -76,6 +77,9 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToMain = {
                                     // 온보딩 완료 후 메인 화면 이동
                                     backStackState.value = listOf(MainNavKey)
+                                },
+                                onNavigateBack = {
+                                    navigator.popBackStack()
                                 }
                             )
 

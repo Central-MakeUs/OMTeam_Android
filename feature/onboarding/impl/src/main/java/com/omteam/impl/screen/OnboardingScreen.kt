@@ -19,6 +19,8 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.designsystem.theme.PretendardType
+import com.omteam.impl.screen.component.GoalOnboardingScreen
+import com.omteam.impl.screen.component.NicknameOnboardingScreen
 import com.omteam.impl.screen.component.OnboardingStepIndicator
 
 @Composable
@@ -26,6 +28,7 @@ fun OnboardingScreen(
     currentStep: Int,
     totalSteps: Int,
     onNext: () -> Unit,
+    onBack: () -> Unit,
     onSkip: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,14 +68,25 @@ fun OnboardingScreen(
         }
 
         Spacer(modifier = Modifier.height(dp38))
+        // 1~7단계 숫자
         OnboardingStepIndicator(currentStep = currentStep)
-        Spacer(modifier = Modifier.height(dp48))
+        Spacer(modifier = Modifier.height(dp36))
 
         // 나머지 온보딩 컨텐츠
         // 좌우 20dp씩 떨어져서 표시돼야 함
-        when (currentStep) {
-            // 1 ->
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .padding(horizontal = dp20)
+        ) {
+            when (currentStep) {
+                1 -> NicknameOnboardingScreen(
+                    onNext = onNext
+                )
+                2 -> GoalOnboardingScreen(
+                    onNext = onNext,
+                    onBack = onBack
+                )
+            }
         }
-        Text("온보딩 화면 1부터 시작")
     }
 }
