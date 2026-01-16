@@ -41,9 +41,7 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             OMTeamTheme {
-                // TODO : 온보딩 구현 후 아래 코드 원복해서 사용
-//                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(LoginNavKey)) }
-                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(OnboardingNavKey(step = 1))) }
+                val backStackState = remember { mutableStateOf<List<NavKey>>(listOf(LoginNavKey)) }
                 val navigator = remember { AppNavigator(backStackState) }
 
 //                LaunchedEffect(backStackState.value) {
@@ -55,18 +53,17 @@ class MainActivity : ComponentActivity() {
                         backStack = backStackState.value,
                         onBack = { navigator.popBackStack() },
                         entryProvider = entryProvider {
-                            // TODO : 온보딩 구현 후 아래 코드 원복해서 사용
-//                            loginEntry(
-//                                onNavigateToAccountLinkComplete = {
-//                                    navigator.navigateToAccountLinkComplete()
-//                                }
-//                            )
-//
-//                            accountLinkCompleteEntry(
-//                                onNavigateToOnboarding = {
-//                                    navigator.navigateToOnboarding()
-//                                }
-//                            )
+                            loginEntry(
+                                onNavigateToAccountLinkComplete = {
+                                    navigator.navigateToAccountLinkComplete()
+                                }
+                            )
+
+                            accountLinkCompleteEntry(
+                                onNavigateToOnboarding = {
+                                    navigator.navigateToOnboarding()
+                                }
+                            )
 
                             onboardingEntry(
                                 onNavigateToNextStep = { currentStep ->
