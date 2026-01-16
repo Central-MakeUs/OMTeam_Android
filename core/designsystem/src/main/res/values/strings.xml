@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 에러 바텀 시트 -->
+    <string name="error_bottom_sheet_title">일시적 오류가 발생했어요</string>
+    <string name="error_bottom_sheet_message">잠시 후에 다시 시도해주세요.</string>
+    <string name="error_bottom_sheet_button">홈으로 돌아가기</string>
+</resources>
