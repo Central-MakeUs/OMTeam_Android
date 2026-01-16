@@ -1,6 +1,7 @@
 package com.omteam.designsystem.component.text
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
@@ -34,9 +35,16 @@ fun OMTeamText(
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     textDecoration: TextDecoration? = null,
+    onClick: (() -> Unit)? = null,
 ) {
     Text(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (onClick != null) {
+                Modifier.clickable { onClick() }
+            } else {
+                Modifier
+            }
+        ),
         text = text,
         style = style.copy(
             // style 기본값 유지하면서 명시적으로 넘어온 값만 재정의

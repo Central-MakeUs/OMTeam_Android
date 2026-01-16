@@ -19,9 +19,13 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.omteam.api.LoginNavKey
+import com.omteam.api.MainNavKey
+import com.omteam.api.OnboardingNavKey
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.impl.entry.accountLinkCompleteEntry
 import com.omteam.impl.entry.loginEntry
+import com.omteam.impl.entry.mainEntry
+import com.omteam.impl.entry.onboardingEntry
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,9 +51,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavDisplay(
                         backStack = backStackState.value,
-                        onBack = {
-                            navigator.popBackStack()
-                        },
+                        onBack = { navigator.popBackStack() },
                         entryProvider = entryProvider {
                             loginEntry(
                                 onNavigateToAccountLinkComplete = {
@@ -62,6 +64,23 @@ class MainActivity : ComponentActivity() {
                                     navigator.navigateToOnboarding()
                                 }
                             )
+
+                            onboardingEntry(
+                                onNavigateToNextStep = { currentStep ->
+                                    backStackState.value += OnboardingNavKey(
+                                        step = currentStep + 1
+                                    )
+                                },
+                                onNavigateToMain = {
+                                    // 온보딩 완료 후 메인 화면 이동
+                                    backStackState.value = listOf(MainNavKey)
+                                },
+                                onNavigateBack = {
+                                    navigator.popBackStack()
+                                }
+                            )
+
+                            mainEntry()
                         },
                         modifier = Modifier.padding(innerPadding),
                     )

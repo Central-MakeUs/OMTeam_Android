@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.omteam.impl"
+    namespace = "com.omteam.login.impl"
     compileSdk = 36
 }
 
@@ -15,6 +15,7 @@ dependencies {
     // core 모듈
     implementation(project(":core:designsystem"))
     implementation(project(":core:presentation"))
+    implementation(project(":core:data")) // GetUserInfoUseCase 사용 위해 필요
     implementation(project(":core:domain"))
 
     // nav3

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.omteam.api"
+    namespace = "com.omteam.login.api"
     compileSdk = 36
 }
 

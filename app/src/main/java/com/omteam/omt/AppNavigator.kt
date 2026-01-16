@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.AccountLinkCompleteNavKey
 import com.omteam.api.LoginNavKey
+import com.omteam.api.OnboardingNavKey
 
 class AppNavigator(
     private val backStackState: MutableState<List<NavKey>>
@@ -37,12 +38,15 @@ class AppNavigator(
 
     fun navigateToAccountLinkComplete() =
         navigate(
-            AccountLinkCompleteNavKey,
+            destination = AccountLinkCompleteNavKey,
             popUpTo = LoginNavKey,
             inclusive = false
         )
 
-    fun navigateToOnboarding() {
-        // TODO : 온보딩 화면 구현 후 navigate() 추가
-    }
+    fun navigateToOnboarding() =
+        navigate(
+            destination = OnboardingNavKey(step = 1),
+            popUpTo = AccountLinkCompleteNavKey,
+            inclusive = true,
+        )
 }

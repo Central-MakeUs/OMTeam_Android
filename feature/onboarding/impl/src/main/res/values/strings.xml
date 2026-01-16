@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="next">다음</string>
+    <string name="before">이전</string>
+
+    <!-- 1 : 닉네임 설정 -->
+    <string name="set_nickname_screen_title">OMT에서 사용하실\n닉네임을 알려주세요!</string>
+    <string name="nickname_text_field_placeholder">닉네임을 입력해주세요. (최대 8글자)</string>
+
+    <!-- 2 : 목표 설정 -->
+    <string name="set_goal_screen_title">OMT에서 함께 이루고 싶은 목표를\n선택해주세요.</string>
+    <string name="diet">체중 감량하기</string>
+    <string name="habit_formation">운동 습관 형성하기</string>
+    <string name="direct_input">직접 입력하기</string>
+    <string name="direct_input_placeholder">목표를 입력해 주세요.</string>
+
+    <!-- 3 : 하루 중 운동할 수 있는 시간 -->
+    <string name="set_time_screen_title">하루 중 운동할 수 있는\n시간을 알려주세요.</string>
+    <string name="time_first">18:00 이전</string>
+    <string name="time_second">18:00 이후 부터</string>
+    <string name="time_third">19:00 이후 부터</string>
+    <string name="time_fourth">20:00 이후 부터</string>
+
+    <!-- 4 : 미션 수행에 투자할 수 있는 시간 -->
+    <string name="set_mission_time_screen_title">OMT와 함께 미션 수행에\n투자할 수 있는 시간을 알려주세요!</string>
+    <string name="mission_time_first">05분</string>
+    <string name="mission_time_second">10분</string>
+    <string name="mission_time_third">15분</string>
+
+    <!-- 5 : 평소 선호하는 운동 -->
+    <string name="set_favorite_exercise_screen_title">평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)</string>
+    <string name="walking">걷기</string>
+    <string name="stretching_yoga">스트레칭/요가</string>
+    <string name="home_training">홈 트레이닝(맨몸 운동)</string>
+    <string name="health">헬스</string>
+    <string name="practical_exercise">생활 속 운동</string>
+
+    <!-- 6 : 최근 한 달 간의 생활 패턴과 가장 유사한 것 -->
+    <string name="set_similar_pattern_screen_title">최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.</string>
+    <string name="pattern_first">비교적 규칙적인 평일 주간 근무에요.</string>
+    <string name="pattern_second">야근/불규칙한 일정이 자주 있어요.</string>
+    <string name="pattern_third">주기적으로 교대/밤샘 근무가 있어요.</string>
+    <string name="pattern_fourth">일정이 매일매일 달라요.</string>
+
+    <!-- 7 : 푸시 알림 설정 -->
+    <string name="set_push_permission_screen_title">푸시 알림을 켜두면 서비스를\n더 효과적으로 이용하실 수 있어요.</string>
+    <string name="set_push_permission_screen_subtitle">알람을 받아보시겠어요?</string>
+    <string name="grant">받을래요.</string>
+    <string name="not_grant">안 받을래요.</string>
+</resources>
