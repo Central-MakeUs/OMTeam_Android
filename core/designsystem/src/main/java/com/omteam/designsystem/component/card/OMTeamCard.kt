@@ -8,24 +8,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.foundation.dp1
+import com.omteam.designsystem.foundation.dp10
+import com.omteam.designsystem.foundation.dp14
+import com.omteam.designsystem.foundation.dp64
 import com.omteam.designsystem.theme.Gray09
 import com.omteam.designsystem.theme.Green01
 import com.omteam.designsystem.theme.Green04
-import com.omteam.designsystem.theme.Green04Button
-import com.omteam.designsystem.theme.GreenCard01
-import com.omteam.designsystem.theme.GreenSub03
 import com.omteam.designsystem.theme.GreenSub03Card
-import com.omteam.designsystem.theme.PaperlogyFont
 import com.omteam.designsystem.theme.PaperlogyType
-import com.omteam.designsystem.theme.White
 
 @Composable
 fun OMTeamCard(
