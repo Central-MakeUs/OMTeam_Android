@@ -156,12 +156,11 @@ fun GoalOnboardingScreen(
         
         ModalBottomSheet(
             onDismissRequest = {
-                if (!isTextFieldFocused) {
-                    showBottomSheet = false
-                }
+                // 외부 클릭으로 인한 dismiss는 무시
             },
             sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true
+                skipPartiallyExpanded = true,
+                confirmValueChange = { false } // 모든 상태 변경을 무시해서 바텀 시트 바깥 클릭으로 닫히지 않음
             ),
             properties = ModalBottomSheetDefaults.properties(
                 shouldDismissOnBackPress = false
