@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_home">HOME</string>
+    <string name="tab_chat">CHAT</string>
+    <string name="tab_report">REPORT</string>
+    <string name="tab_my_page">MY PAGE</string>
+</resources>

@@ -172,6 +172,14 @@ object PretendardType {
         lineHeight = 14.sp,  // 100%
         letterSpacing = (-0.056).sp
     )
+
+    val tabLabel = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 11.sp,  // 100%
+        letterSpacing = (-0.044).sp
+    )
 }
 
 /**
