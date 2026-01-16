@@ -4,4 +4,12 @@
     <string name="tab_chat">CHAT</string>
     <string name="tab_report">REPORT</string>
     <string name="tab_my_page">MY PAGE</string>
+
+    <!-- 마이페이지 -->
+    <string name="edit_button">수정하기</string>
+    <string name="my_page_card">OMT와 함께 운동습관 형성하기</string>
+    <string name="setting_alarm_title">알림 설정하기</string>
+    <string name="edit_my_info">내 정보 수정하기</string>
+    <string name="inquiry">문의하기</string>
+    <string name="other">기타</string>
 </resources>
