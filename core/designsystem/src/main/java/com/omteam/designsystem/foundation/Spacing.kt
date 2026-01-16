@@ -104,6 +104,7 @@ val dp98 = 98.dp
 val dp99 = 99.dp
 val dp100 = 100.dp
 val dp126 = 126.dp
+val dp134 = 134.dp
 val dp140 = 140.dp
 val dp186 = 186.dp
 val dp200 = 200.dp

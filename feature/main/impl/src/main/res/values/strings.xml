@@ -5,6 +5,10 @@
     <string name="tab_report">REPORT</string>
     <string name="tab_my_page">MY PAGE</string>
 
+    <!-- 채팅 화면 -->
+    <string name="chat_screen_middle_text">아직 OMT와 나눈 대화가 없어요!</string>
+    <string name="chat_screen_button">OMT와 채팅 시작하기</string>
+
     <!-- 마이페이지 -->
     <string name="edit_button">수정하기</string>
     <string name="my_page_card">OMT와 함께 운동습관 형성하기</string>

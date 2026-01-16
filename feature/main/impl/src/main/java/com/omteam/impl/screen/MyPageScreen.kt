@@ -40,7 +40,7 @@ fun MyPageScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(GreenSub01)
+            .background(White)
             .padding(dp20)
             .verticalScroll(rememberScrollState()),
     ) {

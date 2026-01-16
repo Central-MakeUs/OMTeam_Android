@@ -12,16 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.omteam.designsystem.foundation.dp16
-import com.omteam.designsystem.theme.GreenSub01
-import com.omteam.designsystem.theme.Gray09
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(GreenSub01)
+            .background(White)
             .padding(dp16),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
