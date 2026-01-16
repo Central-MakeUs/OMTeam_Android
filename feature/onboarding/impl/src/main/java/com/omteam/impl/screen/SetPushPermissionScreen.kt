@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -31,6 +32,7 @@ import com.omteam.designsystem.foundation.dp9
 import com.omteam.designsystem.theme.GreenSub03Button
 import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.impl.R
 
 @Composable
 fun SetPushPermissionScreen(
@@ -39,6 +41,9 @@ fun SetPushPermissionScreen(
     onBack: () -> Unit = {},
 ) {
     var selectedFavoriteExercise by remember { mutableStateOf("") }
+    
+    val grantText = stringResource(R.string.grant)
+    val notGrantText = stringResource(R.string.not_grant)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -51,29 +56,29 @@ fun SetPushPermissionScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 OMTeamText(
-                    text = "푸시 알림을 켜두면 서비스를\n더 효과적으로 이용하실 수 있어요.",
+                    text = stringResource(R.string.set_push_permission_screen_title),
                     style = PaperlogyType.headline02
                 )
 
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamText(
-                    text = "알람을 받아보시겠어요?",
+                    text = stringResource(R.string.set_push_permission_screen_subtitle),
                     style = PaperlogyType.headline02
                 )
 
                 Spacer(modifier = Modifier.height(dp20))
 
                 OMTeamCard(
-                    text = "받을래요.",
-                    isSelected = (selectedFavoriteExercise == "받을래요."),
+                    text = grantText,
+                    isSelected = (selectedFavoriteExercise == grantText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "받을래요.") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == grantText) {
                             ""
                         } else {
-                            "받을래요."
+                            grantText
                         }
                         onPushGranted(selectedFavoriteExercise)
                     },
@@ -82,15 +87,15 @@ fun SetPushPermissionScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "안 받을래요.",
-                    isSelected = (selectedFavoriteExercise == "안 받을래요."),
+                    text = notGrantText,
+                    isSelected = (selectedFavoriteExercise == notGrantText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "안 받을래요.") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == notGrantText) {
                             ""
                         } else {
-                            "안 받을래요."
+                            notGrantText
                         }
                         onPushGranted(selectedFavoriteExercise)
                     }
@@ -107,7 +112,7 @@ fun SetPushPermissionScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -119,7 +124,7 @@ fun SetPushPermissionScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,

@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -31,6 +32,7 @@ import com.omteam.designsystem.foundation.dp9
 import com.omteam.designsystem.theme.GreenSub03Button
 import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.impl.R
 
 @Composable
 fun SetFavoriteExerciseScreen(
@@ -39,6 +41,12 @@ fun SetFavoriteExerciseScreen(
     onBack: () -> Unit = {},
 ) {
     var selectedFavoriteExercise by remember { mutableStateOf("") }
+
+    val walkingText = stringResource(R.string.walking)
+    val stretchingYogaText = stringResource(R.string.stretching_yoga)
+    val homeTrainingText = stringResource(R.string.home_training)
+    val healthText = stringResource(R.string.health)
+    val practicalExerciseText = stringResource(R.string.practical_exercise)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -51,22 +59,22 @@ fun SetFavoriteExerciseScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 OMTeamText(
-                    text = "평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)",
+                    text = stringResource(R.string.set_favorite_exercise_screen_title),
                     style = PaperlogyType.headline02
                 )
 
                 Spacer(modifier = Modifier.height(dp20))
 
                 OMTeamCard(
-                    text = "걷기",
-                    isSelected = (selectedFavoriteExercise == "걷기"),
+                    text = walkingText,
+                    isSelected = (selectedFavoriteExercise == walkingText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "걷기") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == walkingText) {
                             ""
                         } else {
-                            "걷기"
+                            walkingText
                         }
                         onExerciseChange(selectedFavoriteExercise)
                     },
@@ -75,15 +83,15 @@ fun SetFavoriteExerciseScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "스트레칭/요가",
-                    isSelected = (selectedFavoriteExercise == "스트레칭/요가"),
+                    text = stretchingYogaText,
+                    isSelected = (selectedFavoriteExercise == stretchingYogaText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "스트레칭/요가") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == stretchingYogaText) {
                             ""
                         } else {
-                            "스트레칭/요가"
+                            stretchingYogaText
                         }
                         onExerciseChange(selectedFavoriteExercise)
                     }
@@ -92,15 +100,15 @@ fun SetFavoriteExerciseScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "홈 트레이닝(맨몸 운동)",
-                    isSelected = (selectedFavoriteExercise == "홈 트레이닝(맨몸 운동)"),
+                    text = homeTrainingText,
+                    isSelected = (selectedFavoriteExercise == homeTrainingText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "홈 트레이닝(맨몸 운동)") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == homeTrainingText) {
                             ""
                         } else {
-                            "홈 트레이닝(맨몸 운동)"
+                            homeTrainingText
                         }
                         onExerciseChange(selectedFavoriteExercise)
                     }
@@ -109,15 +117,15 @@ fun SetFavoriteExerciseScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "헬스",
-                    isSelected = (selectedFavoriteExercise == "헬스"),
+                    text = healthText,
+                    isSelected = (selectedFavoriteExercise == healthText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "헬스") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == healthText) {
                             ""
                         } else {
-                            "헬스"
+                            healthText
                         }
                         onExerciseChange(selectedFavoriteExercise)
                     }
@@ -126,15 +134,15 @@ fun SetFavoriteExerciseScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "생활 속 운동",
-                    isSelected = (selectedFavoriteExercise == "생활 속 운동"),
+                    text = practicalExerciseText,
+                    isSelected = (selectedFavoriteExercise == practicalExerciseText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == "생활 속 운동") {
+                        selectedFavoriteExercise = if (selectedFavoriteExercise == practicalExerciseText) {
                             ""
                         } else {
-                            "생활 속 운동"
+                            practicalExerciseText
                         }
                         onExerciseChange(selectedFavoriteExercise)
                     }
@@ -151,7 +159,7 @@ fun SetFavoriteExerciseScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -163,7 +171,7 @@ fun SetFavoriteExerciseScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,

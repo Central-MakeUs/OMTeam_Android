@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
@@ -42,6 +43,7 @@ import com.omteam.designsystem.theme.GreenSub03Button
 import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.designsystem.theme.White
+import com.omteam.impl.R
 import com.omteam.impl.screen.component.OnboardingBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +58,11 @@ fun SetMissionTimeScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    
+    val missionTimeFirstText = stringResource(R.string.mission_time_first)
+    val missionTimeSecondText = stringResource(R.string.mission_time_second)
+    val missionTimeThirdText = stringResource(R.string.mission_time_third)
+    val directInputText = stringResource(R.string.direct_input)
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -68,22 +75,22 @@ fun SetMissionTimeScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 OMTeamText(
-                    text = "OMT와 함께 미션 수행에\n투자할 수 있는 시간을 알려주세요!",
+                    text = stringResource(R.string.set_mission_time_screen_title),
                     style = PaperlogyType.headline02
                 )
 
                 Spacer(modifier = Modifier.height(dp20))
 
                 OMTeamCard(
-                    text = "05분",
-                    isSelected = (selectedMissionTime == "05분"),
+                    text = missionTimeFirstText,
+                    isSelected = (selectedMissionTime == missionTimeFirstText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedMissionTime = if (selectedMissionTime == "05분") {
+                        selectedMissionTime = if (selectedMissionTime == missionTimeFirstText) {
                             ""
                         } else {
-                            "05분"
+                            missionTimeFirstText
                         }
                         onMissionTimeChange(selectedMissionTime)
                     },
@@ -92,15 +99,15 @@ fun SetMissionTimeScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "10분",
-                    isSelected = (selectedMissionTime == "10분"),
+                    text = missionTimeSecondText,
+                    isSelected = (selectedMissionTime == missionTimeSecondText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedMissionTime = if (selectedMissionTime == "10분") {
+                        selectedMissionTime = if (selectedMissionTime == missionTimeSecondText) {
                             ""
                         } else {
-                            "10분"
+                            missionTimeSecondText
                         }
                         onMissionTimeChange(selectedMissionTime)
                     }
@@ -109,15 +116,15 @@ fun SetMissionTimeScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "15분",
-                    isSelected = (selectedMissionTime == "15분"),
+                    text = missionTimeThirdText,
+                    isSelected = (selectedMissionTime == missionTimeThirdText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedMissionTime = if (selectedMissionTime == "15분") {
+                        selectedMissionTime = if (selectedMissionTime == missionTimeThirdText) {
                             ""
                         } else {
-                            "15분"
+                            missionTimeThirdText
                         }
                         onMissionTimeChange(selectedMissionTime)
                     }
@@ -126,8 +133,8 @@ fun SetMissionTimeScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = "직접 입력하기",
-                    isSelected = (selectedMissionTime == "직접 입력하기"),
+                    text = directInputText,
+                    isSelected = (selectedMissionTime == directInputText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         showBottomSheet = true
@@ -145,7 +152,7 @@ fun SetMissionTimeScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -157,7 +164,7 @@ fun SetMissionTimeScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,

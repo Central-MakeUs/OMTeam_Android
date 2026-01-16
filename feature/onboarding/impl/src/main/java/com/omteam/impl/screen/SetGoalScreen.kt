@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
@@ -43,6 +44,7 @@ import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.designsystem.theme.White
+import com.omteam.impl.R
 import com.omteam.impl.screen.component.OnboardingBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,27 +60,32 @@ fun GoalOnboardingScreen(
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
+    val goalTitleText = stringResource(R.string.set_goal_screen_title)
+    val dietText = stringResource(R.string.diet)
+    val habitFormationText = stringResource(R.string.habit_formation)
+    val directInputText = stringResource(R.string.direct_input)
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             OMTeamText(
-                text = "OMT에서 함께 이루고 싶은 목표를\n선택해주세요.",
+                text = goalTitleText,
                 style = PaperlogyType.headline02
             )
 
             Spacer(modifier = Modifier.height(dp20))
 
             OMTeamCard(
-                text = "체중 감량하기",
-                isSelected = (selectedGoal == "체중 감량하기"),
+                text = dietText,
+                isSelected = (selectedGoal == dietText),
                 textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     // 같은 카드 짝수 회 클릭 시 선택 해제
-                    selectedGoal = if (selectedGoal == "체중 감량하기") {
+                    selectedGoal = if (selectedGoal == dietText) {
                         ""
                     } else {
-                        "체중 감량하기"
+                        dietText
                     }
                     onGoalChange(selectedGoal)
                 },
@@ -87,15 +94,15 @@ fun GoalOnboardingScreen(
             Spacer(modifier = Modifier.height(dp12))
 
             OMTeamCard(
-                text = "운동 습관 형성하기",
-                isSelected = (selectedGoal == "운동 습관 형성하기"),
+                text = habitFormationText,
+                isSelected = (selectedGoal == habitFormationText),
                 textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     // 같은 카드 짝수 회 클릭 시 선택 해제
-                    selectedGoal = if (selectedGoal == "운동 습관 형성하기") {
+                    selectedGoal = if (selectedGoal == habitFormationText) {
                         ""
                     } else {
-                        "운동 습관 형성하기"
+                        habitFormationText
                     }
                     onGoalChange(selectedGoal)
                 }
@@ -104,8 +111,8 @@ fun GoalOnboardingScreen(
             Spacer(modifier = Modifier.height(dp12))
 
             OMTeamCard(
-                text = "직접 입력하기",
-                isSelected = (selectedGoal == "직접 입력하기"),
+                text = directInputText,
+                isSelected = (selectedGoal == directInputText),
                 textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     showBottomSheet = true
@@ -120,7 +127,7 @@ fun GoalOnboardingScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -132,7 +139,7 @@ fun GoalOnboardingScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -173,7 +180,7 @@ fun GoalOnboardingScreen(
         ) {
             Box(modifier = Modifier.imePadding()) {
                 OnboardingBottomSheet(
-                    placeholder = "목표를 입력해 주세요.",
+                    placeholder = stringResource(R.string.direct_input_placeholder),
                     onGoalSubmit = { customGoal ->
                         selectedGoal = customGoal
                         onGoalChange(customGoal)

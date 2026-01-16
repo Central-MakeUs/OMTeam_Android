@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -31,6 +32,7 @@ import com.omteam.designsystem.foundation.dp9
 import com.omteam.designsystem.theme.GreenSub03Button
 import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.impl.R
 
 @Composable
 fun SetSimilarPatternScreen(
@@ -41,10 +43,10 @@ fun SetSimilarPatternScreen(
     var selectedPattern by remember { mutableStateOf("") }
 
     val patternOptions = listOf(
-        "비교적 규칙적인 평일 주간 근무에요.",
-        "야근/불규칙한 일정이 자주 있어요.",
-        "주기적으로 교대/밤샘 근무가 있어요.",
-        "일정이 매일매일 달라요."
+        stringResource(R.string.pattern_first),
+        stringResource(R.string.pattern_second),
+        stringResource(R.string.pattern_third),
+        stringResource(R.string.pattern_fourth),
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -58,7 +60,7 @@ fun SetSimilarPatternScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 OMTeamText(
-                    text = "최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.",
+                    text = stringResource(R.string.set_similar_pattern_screen_title),
                     style = PaperlogyType.headline02
                 )
 
@@ -96,7 +98,7 @@ fun SetSimilarPatternScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -108,7 +110,7 @@ fun SetSimilarPatternScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,

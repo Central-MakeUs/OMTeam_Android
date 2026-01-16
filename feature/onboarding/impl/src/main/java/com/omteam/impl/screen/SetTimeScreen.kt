@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
@@ -36,6 +37,7 @@ import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.designsystem.theme.White
+import com.omteam.impl.R
 
 @Composable
 fun SetTimeScreen(
@@ -46,10 +48,10 @@ fun SetTimeScreen(
     var selectedTime by remember { mutableStateOf("") }
 
     val timeOptions = listOf(
-        "18:00 이전",
-        "18:00 이후 부터",
-        "19:00 이후 부터",
-        "20:00 이후 부터"
+        stringResource(R.string.time_first),
+        stringResource(R.string.time_second),
+        stringResource(R.string.time_third),
+        stringResource(R.string.time_fourth),
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -63,7 +65,7 @@ fun SetTimeScreen(
                     .verticalScroll(rememberScrollState())
             ) {
                 OMTeamText(
-                    text = "하루 중 운동할 수 있는\n시간을 알려주세요.",
+                    text = stringResource(R.string.set_time_screen_title),
                     style = PaperlogyType.headline02
                 )
 
@@ -101,7 +103,7 @@ fun SetTimeScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 OMTeamButton(
-                    text = "이전",
+                    text = stringResource(R.string.before),
                     onClick = { onBack() },
                     height = dp60,
                     cornerRadius = dp8,
@@ -113,7 +115,7 @@ fun SetTimeScreen(
                 Spacer(modifier = Modifier.width(dp9))
 
                 OMTeamButton(
-                    text = "다음",
+                    text = stringResource(R.string.next),
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,

@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
@@ -21,6 +22,7 @@ import com.omteam.designsystem.component.textfield.OMTeamTextField
 import com.omteam.designsystem.foundation.dp20
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.impl.R
 
 @Composable
 fun NicknameOnboardingScreen(
@@ -35,14 +37,14 @@ fun NicknameOnboardingScreen(
         var nickname by remember { mutableStateOf(initialNickname) }
 
         OMTeamText(
-            text = "OMT에서 사용하실\n닉네임을 알려주세요!",
+            text = stringResource(R.string.set_nickname_screen_title),
             style = PaperlogyType.headline02
         )
 
         Spacer(modifier = Modifier.height(dp20))
 
         OMTeamTextField(
-            placeholder = "닉네임을 입력해주세요. (최대 8글자)",
+            placeholder = stringResource(R.string.nickname_text_field_placeholder),
             value = nickname,
             onValueChange = { 
                 nickname = it
@@ -53,7 +55,7 @@ fun NicknameOnboardingScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         OMTeamButton(
-            text = "다음",
+            text = stringResource(R.string.next),
             onClick = {
                 onNext()
             },
