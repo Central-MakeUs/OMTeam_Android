@@ -18,6 +18,7 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.Gray09
 import com.omteam.designsystem.theme.Green01
+import com.omteam.designsystem.theme.Green04
 import com.omteam.designsystem.theme.Green04Button
 import com.omteam.designsystem.theme.GreenCard01
 import com.omteam.designsystem.theme.GreenSub03
@@ -40,7 +41,7 @@ fun OMTeamCard(
             .fillMaxWidth()  // align-self: stretch
             .clip(RoundedCornerShape(dp10))
             .background(
-                color = if (isSelected) Green04Button else GreenCard01, // 선택 시 색 변경 옵션
+                color = if (isSelected) Green04 else Green01, // 선택 시 색 변경 옵션
                 shape = RoundedCornerShape(dp10)
             )
             .border(

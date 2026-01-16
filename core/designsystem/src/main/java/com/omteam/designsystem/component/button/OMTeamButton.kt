@@ -42,7 +42,7 @@ fun OMTeamButton(
     modifier: Modifier = Modifier,
     height: Dp = dp56,
     cornerRadius: Dp = dp10,
-    backgroundColor: Color = Green04Button,
+    backgroundColor: Color = Green04,
     textColor: Color = Gray09,
     enabled: Boolean = true,
 ) {
