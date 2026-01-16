@@ -3,6 +3,7 @@ package com.omteam.impl.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -126,7 +128,7 @@ fun MyPageScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(dp10))
 
-        // 목표 카드
+        // 운동 습관 형성 카드
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -160,7 +162,6 @@ fun MyPageScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(dp50))
 
-        // 설정 메뉴 목록
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title),
             onClick = { Timber.d("## 알림 설정하기 클릭") }
@@ -200,7 +201,11 @@ private fun MyPageMenuItem(
             color = Gray11,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick() }
+                .clickable(
+                    // 물결 효과 제거
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { onClick() }
         )
 
         if (showDivider) {
