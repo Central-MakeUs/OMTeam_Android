@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.textfield.OMTeamTextField
@@ -27,6 +29,9 @@ import com.omteam.designsystem.theme.OMTeamTheme
 @Composable
 fun OnboardingBottomSheet(
     onGoalSubmit: (String) -> Unit,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    placeholder: String,
+    inputFilter: ((String) -> String)? = null,
     onFocusChanged: (Boolean) -> Unit = {}
 ) {
     var goalText by remember { mutableStateOf("") }
@@ -45,8 +50,15 @@ fun OnboardingBottomSheet(
         // 텍스트 입력 필드
         OMTeamTextField(
             value = goalText,
-            onValueChange = { goalText = it },
-            placeholder = "예: 건강한 식습관 만들기",
+            onValueChange = { newValue ->
+                goalText = if (inputFilter != null) {
+                    inputFilter(newValue)
+                } else {
+                    newValue
+                }
+            },
+            placeholder = placeholder,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             modifier = Modifier
                 .fillMaxWidth()
                 .onFocusChanged { focusState ->
@@ -78,6 +90,7 @@ private fun OnboardingBottomSheetPreview() {
             modifier = Modifier.background(Color.White)
         ) {
             OnboardingBottomSheet(
+                placeholder = "목표를 입력해 주세요",
                 onGoalSubmit = {}
             )
         }

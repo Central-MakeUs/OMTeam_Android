@@ -22,7 +22,6 @@ fun EntryProviderScope<NavKey>.onboardingEntry(
 
         OnboardingScreen(
             currentStep = navKey.step,
-            totalSteps = 7,
             onNext = {
                 if (navKey.step < 7) {
                     // 다음 단계로

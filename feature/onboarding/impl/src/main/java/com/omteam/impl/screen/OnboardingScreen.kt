@@ -12,26 +12,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.designsystem.theme.PretendardType
-import com.omteam.impl.screen.component.GoalOnboardingScreen
-import com.omteam.impl.screen.component.NicknameOnboardingScreen
 import com.omteam.impl.screen.component.OnboardingStepIndicator
+import com.omteam.impl.viewmodel.OnboardingViewModel
 
 @Composable
 fun OnboardingScreen(
     currentStep: Int,
-    totalSteps: Int,
     onNext: () -> Unit,
     onBack: () -> Unit,
     onSkip: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: OnboardingViewModel = hiltViewModel()
 ) {
+    val onboardingData by viewModel.onboardingData.collectAsState()
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -80,11 +82,39 @@ fun OnboardingScreen(
         ) {
             when (currentStep) {
                 1 -> NicknameOnboardingScreen(
-                    onNext = onNext
+                    initialNickname = onboardingData.nickname,
+                    onNicknameChange = { viewModel.updateNickname(it) },
+                    onNext = onNext,
                 )
                 2 -> GoalOnboardingScreen(
+                    initialGoal = onboardingData.goal,
+                    onGoalChange = { viewModel.updateGoal(it) },
                     onNext = onNext,
-                    onBack = onBack
+                    onBack = onBack,
+                )
+                3 -> SetTimeScreen(
+                    onTimeChange = { viewModel.updateTime(it) },
+                    onNext = onNext,
+                    onBack = onBack,
+                )
+                4 -> SetMissionTimeScreen(
+                    onMissionTimeChange = { viewModel.updateMissionTime(it) },
+                    onNext = onNext,
+                    onBack = onBack,
+                )
+                5 -> SetFavoriteExerciseScreen(
+                    onExerciseChange = { viewModel.updateFavoriteExercise(it) },
+                    onNext = onNext,
+                    onBack = onBack,
+                )
+                6 -> SetSimilarPatternScreen(
+                    onPatternChange = { viewModel.updatePattern(it) },
+                    onNext = onNext,
+                    onBack = onBack,
+                )
+                7 -> SetPushPermissionScreen(
+                    onNext = onNext,
+                    onBack = onBack,
                 )
             }
         }

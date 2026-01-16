@@ -1,4 +1,4 @@
-package com.omteam.impl.screen.component
+package com.omteam.impl.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -43,15 +43,18 @@ import com.omteam.designsystem.theme.GreenSub07Button
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.designsystem.theme.White
+import com.omteam.impl.screen.component.OnboardingBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GoalOnboardingScreen(
+    initialGoal: String = "",
+    onGoalChange: (String) -> Unit = {},
     onNext: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var selectedGoal by remember { mutableStateOf("") }
+    var selectedGoal by remember { mutableStateOf(initialGoal) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -77,6 +80,7 @@ fun GoalOnboardingScreen(
                     } else {
                         "체중 감량하기"
                     }
+                    onGoalChange(selectedGoal)
                 },
             )
 
@@ -93,6 +97,7 @@ fun GoalOnboardingScreen(
                     } else {
                         "운동 습관 형성하기"
                     }
+                    onGoalChange(selectedGoal)
                 }
             )
 
@@ -169,8 +174,10 @@ fun GoalOnboardingScreen(
         ) {
             Box(modifier = Modifier.imePadding()) {
                 OnboardingBottomSheet(
+                    placeholder = "목표를 입력해 주세요.",
                     onGoalSubmit = { customGoal ->
                         selectedGoal = customGoal
+                        onGoalChange(customGoal)
                         showBottomSheet = false
                     },
                     onFocusChanged = { focused ->
