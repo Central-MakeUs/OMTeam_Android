@@ -140,6 +140,22 @@ object PretendardType {
         letterSpacing = (-0.4).sp
     )
 
+    val body04_2 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 12.sp,  // 100%
+        letterSpacing = (-0.048).sp
+    )
+
+    val body05 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 15.sp,  // 100%
+        letterSpacing = (-0.06).sp
+    )
+
     // Button
     val button01Disabled = TextStyle(
         fontFamily = PretendardFont,
@@ -187,6 +203,14 @@ object PretendardType {
         fontWeight = FontWeight.Medium, // 500
         lineHeight = 14.sp,  // 100%
         letterSpacing = (-0.056).sp
+    )
+
+    val homeLevelText = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 13.sp,  // 100%
+        letterSpacing = (-0.052).sp
     )
 
     val tabLabel = TextStyle(

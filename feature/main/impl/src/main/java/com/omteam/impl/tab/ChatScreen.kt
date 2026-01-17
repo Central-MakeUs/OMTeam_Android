@@ -40,7 +40,6 @@ fun ChatScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(White)
     ) {
-        // 스크롤 가능한 컨텐츠 영역
         Column(
             modifier = Modifier
                 .weight(1f)
