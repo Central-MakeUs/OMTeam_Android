@@ -81,12 +81,11 @@ fun OnboardingScreen(
                 .padding(horizontal = dp20)
         ) {
             when (currentStep) {
-                1 -> NicknameOnboardingScreen(
-                    initialNickname = onboardingData.nickname,
-                    onNicknameChange = { viewModel.updateNickname(it) },
+                1 -> SetNicknameScreen(
+                    viewModel = viewModel,
                     onNext = onNext,
                 )
-                2 -> GoalOnboardingScreen(
+                2 -> SetGoalScreen(
                     initialGoal = onboardingData.goal,
                     onGoalChange = { viewModel.updateGoal(it) },
                     onNext = onNext,
