@@ -13,6 +13,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.theme.GreenTab
 import com.omteam.impl.component.BottomTabBar
+import com.omteam.impl.tab.ChatScreen
+import com.omteam.impl.tab.HomeScreen
+import com.omteam.impl.tab.MyPageScreen
+import com.omteam.impl.tab.ReportScreen
 import com.omteam.impl.viewmodel.MainViewModel
 
 /**

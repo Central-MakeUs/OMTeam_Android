@@ -1,4 +1,4 @@
-package com.omteam.impl.screen
+package com.omteam.impl.tab
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
