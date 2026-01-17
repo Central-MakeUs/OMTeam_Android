@@ -52,19 +52,21 @@ fun SetFavoriteExerciseScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            // 제목은 스크롤되지 않음
+            OMTeamText(
+                text = stringResource(R.string.set_favorite_exercise_screen_title),
+                style = PaperlogyType.headline02
+            )
+
+            Spacer(modifier = Modifier.height(dp20))
+
+            // 카드들만 스크롤 가능
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
             ) {
-                OMTeamText(
-                    text = stringResource(R.string.set_favorite_exercise_screen_title),
-                    style = PaperlogyType.headline02
-                )
-
-                Spacer(modifier = Modifier.height(dp20))
-
                 OMTeamCard(
                     text = walkingText,
                     isSelected = selectedExercises.contains(walkingText),
