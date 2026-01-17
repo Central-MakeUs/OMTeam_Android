@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
+import java.time.LocalDate
+import java.time.temporal.WeekFields
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -18,6 +21,15 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val _selectedTabIndex = MutableStateFlow(0)
     val selectedTabIndex: StateFlow<Int> = _selectedTabIndex.asStateFlow()
 
+    // 리포트 화면에서 선택된 날짜 (기본값 : 오늘)
+    private val _selectedDate = MutableStateFlow(LocalDate.now())
+    val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+
+    // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
+    val weekDisplayText: StateFlow<String> = MutableStateFlow("").apply {
+        value = formatWeekDisplayText(_selectedDate.value)
+    }
+
     fun selectTab(index: Int) {
         if (index in 0..3) {
             Timber.d("## ${index}번 탭 선택")
@@ -25,5 +37,34 @@ class MainViewModel @Inject constructor() : ViewModel() {
         } else {
             Timber.e("## 이 탭 인덱스 있는 게 맞음? : $index")
         }
+    }
+
+    fun moveToPreviousWeek() {
+        _selectedDate.value = _selectedDate.value.minusWeeks(1)
+        (weekDisplayText as MutableStateFlow).value = formatWeekDisplayText(_selectedDate.value)
+        Timber.d("## 이전 주 표시 : ${weekDisplayText.value}")
+    }
+
+    fun moveToNextWeek() {
+        _selectedDate.value = _selectedDate.value.plusWeeks(1)
+        (weekDisplayText as MutableStateFlow).value = formatWeekDisplayText(_selectedDate.value)
+        Timber.d("## 다음 주 표시 : ${weekDisplayText.value}")
+    }
+
+    fun resetToCurrentWeek() {
+        _selectedDate.value = LocalDate.now()
+        (weekDisplayText as MutableStateFlow).value = formatWeekDisplayText(_selectedDate.value)
+        Timber.d("## 현재 주로 리셋 : ${weekDisplayText.value}")
+    }
+
+    /**
+     * 날짜를 "yyyy M월 n주" 형식으로 변환
+     */
+    private fun formatWeekDisplayText(date: LocalDate): String {
+        val year = date.year
+        val month = date.monthValue
+        val weekOfMonth = date.get(WeekFields.of(Locale.KOREA).weekOfMonth())
+
+        return "${year}년 ${month}월 ${weekOfMonth}주"
     }
 }
