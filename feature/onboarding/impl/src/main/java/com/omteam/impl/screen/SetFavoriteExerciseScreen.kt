@@ -40,7 +40,7 @@ fun SetFavoriteExerciseScreen(
     onNext: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    var selectedFavoriteExercise by remember { mutableStateOf("") }
+    var selectedExercises by remember { mutableStateOf(setOf<String>()) }
 
     val walkingText = stringResource(R.string.walking)
     val stretchingYogaText = stringResource(R.string.stretching_yoga)
@@ -67,16 +67,15 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamCard(
                     text = walkingText,
-                    isSelected = (selectedFavoriteExercise == walkingText),
+                    isSelected = selectedExercises.contains(walkingText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
-                        // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == walkingText) {
-                            ""
+                        selectedExercises = if (selectedExercises.contains(walkingText)) {
+                            selectedExercises - walkingText
                         } else {
-                            walkingText
+                            selectedExercises + walkingText
                         }
-                        onExerciseChange(selectedFavoriteExercise)
+                        onExerciseChange(selectedExercises.joinToString(", "))
                     },
                 )
 
@@ -84,16 +83,15 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamCard(
                     text = stretchingYogaText,
-                    isSelected = (selectedFavoriteExercise == stretchingYogaText),
+                    isSelected = selectedExercises.contains(stretchingYogaText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
-                        // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == stretchingYogaText) {
-                            ""
+                        selectedExercises = if (selectedExercises.contains(stretchingYogaText)) {
+                            selectedExercises - stretchingYogaText
                         } else {
-                            stretchingYogaText
+                            selectedExercises + stretchingYogaText
                         }
-                        onExerciseChange(selectedFavoriteExercise)
+                        onExerciseChange(selectedExercises.joinToString(", "))
                     }
                 )
 
@@ -101,16 +99,15 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamCard(
                     text = homeTrainingText,
-                    isSelected = (selectedFavoriteExercise == homeTrainingText),
+                    isSelected = selectedExercises.contains(homeTrainingText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
-                        // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == homeTrainingText) {
-                            ""
+                        selectedExercises = if (selectedExercises.contains(homeTrainingText)) {
+                            selectedExercises - homeTrainingText
                         } else {
-                            homeTrainingText
+                            selectedExercises + homeTrainingText
                         }
-                        onExerciseChange(selectedFavoriteExercise)
+                        onExerciseChange(selectedExercises.joinToString(", "))
                     }
                 )
 
@@ -118,16 +115,15 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamCard(
                     text = healthText,
-                    isSelected = (selectedFavoriteExercise == healthText),
+                    isSelected = selectedExercises.contains(healthText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
-                        // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == healthText) {
-                            ""
+                        selectedExercises = if (selectedExercises.contains(healthText)) {
+                            selectedExercises - healthText
                         } else {
-                            healthText
+                            selectedExercises + healthText
                         }
-                        onExerciseChange(selectedFavoriteExercise)
+                        onExerciseChange(selectedExercises.joinToString(", "))
                     }
                 )
 
@@ -135,16 +131,15 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamCard(
                     text = practicalExerciseText,
-                    isSelected = (selectedFavoriteExercise == practicalExerciseText),
+                    isSelected = selectedExercises.contains(practicalExerciseText),
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
-                        // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == practicalExerciseText) {
-                            ""
+                        selectedExercises = if (selectedExercises.contains(practicalExerciseText)) {
+                            selectedExercises - practicalExerciseText
                         } else {
-                            practicalExerciseText
+                            selectedExercises + practicalExerciseText
                         }
-                        onExerciseChange(selectedFavoriteExercise)
+                        onExerciseChange(selectedExercises.joinToString(", "))
                     }
                 )
 
