@@ -49,7 +49,7 @@ import com.omteam.impl.screen.component.OnboardingBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GoalOnboardingScreen(
+fun SetGoalScreen(
     initialGoal: String = "",
     onGoalChange: (String) -> Unit = {},
     onNext: () -> Unit = {},
@@ -197,12 +197,12 @@ fun GoalOnboardingScreen(
 
 @Preview
 @Composable
-private fun GoalOnboardingScreenPreview() {
+private fun SetGoalScreenPreview() {
     OMTeamTheme {
         Column(
             modifier = Modifier.background(Color.White)
         ) {
-            GoalOnboardingScreen()
+            SetGoalScreen()
         }
     }
 }

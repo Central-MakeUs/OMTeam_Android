@@ -6,6 +6,8 @@
     <!-- 1 : 닉네임 설정 -->
     <string name="set_nickname_screen_title">OMT에서 사용하실\n닉네임을 알려주세요!</string>
     <string name="nickname_text_field_placeholder">닉네임을 입력해주세요. (최대 8글자)</string>
+    <string name="nickname_error_length">글자수를 초과했어요!</string>
+    <string name="nickname_error_special_char">특수문자는 사용할 수 없어요!</string>
 
     <!-- 2 : 목표 설정 -->
     <string name="set_goal_screen_title">OMT에서 함께 이루고 싶은 목표를\n선택해주세요.</string>
