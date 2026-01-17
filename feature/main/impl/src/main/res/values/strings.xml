@@ -9,6 +9,11 @@
     <string name="chat_screen_middle_text">아직 OMT와 나눈 대화가 없어요!</string>
     <string name="chat_screen_button">OMT와 채팅 시작하기</string>
 
+    <!-- 레포트 화면 -->
+    <string name="empty_report_data">아직 분석할 데이터가 없어요!</string>
+    <string name="empty_report_data_first">OMT</string>
+    <string name="empty_report_data_second">와 함께 건강한 습관을 만들어봐요.</string>
+
     <!-- 마이페이지 -->
     <string name="edit_button">수정하기</string>
     <string name="my_page_card">OMT와 함께 운동습관 형성하기</string>
