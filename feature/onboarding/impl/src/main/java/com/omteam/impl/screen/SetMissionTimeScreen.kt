@@ -54,6 +54,7 @@ fun SetMissionTimeScreen(
     onBack: () -> Unit = {},
 ) {
     var selectedMissionTime by remember { mutableStateOf("") }
+    var customMissionTimeInput by remember { mutableStateOf("") }
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -63,6 +64,9 @@ fun SetMissionTimeScreen(
     val missionTimeSecondText = stringResource(R.string.mission_time_second)
     val missionTimeThirdText = stringResource(R.string.mission_time_third)
     val directInputText = stringResource(R.string.direct_input)
+    
+    // "직접 입력하기" 카드에 표시될 텍스트 (커스텀 입력이 있으면 그걸 표시, 없으면 "직접 입력하기")
+    val directInputDisplayText = customMissionTimeInput.ifEmpty { directInputText }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -133,8 +137,8 @@ fun SetMissionTimeScreen(
                 Spacer(modifier = Modifier.height(dp12))
 
                 OMTeamCard(
-                    text = directInputText,
-                    isSelected = (selectedMissionTime == directInputText),
+                    text = directInputDisplayText,
+                    isSelected = customMissionTimeInput.isNotEmpty() && selectedMissionTime == customMissionTimeInput,
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         showBottomSheet = true
@@ -230,7 +234,9 @@ fun SetMissionTimeScreen(
                     onGoalSubmit = { customTime ->
                         val timeValue = customTime.toIntOrNull()
                         if (timeValue != null && timeValue in 1..30) {
-                            selectedMissionTime = "${customTime}분"
+                            val displayText = "${customTime}분"
+                            customMissionTimeInput = displayText
+                            selectedMissionTime = displayText
                             onMissionTimeChange(customTime)
                             showBottomSheet = false
                         }

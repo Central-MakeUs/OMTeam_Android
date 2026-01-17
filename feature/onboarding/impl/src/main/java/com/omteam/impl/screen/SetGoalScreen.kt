@@ -57,6 +57,7 @@ fun SetGoalScreen(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedGoal by remember { mutableStateOf(initialGoal) }
+    var customGoalInput by remember { mutableStateOf("") }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -64,6 +65,9 @@ fun SetGoalScreen(
     val dietText = stringResource(R.string.diet)
     val habitFormationText = stringResource(R.string.habit_formation)
     val directInputText = stringResource(R.string.direct_input)
+    
+    // "직접 입력하기" 카드에 표시될 텍스트 (커스텀 입력이 있으면 그걸 표시, 없으면 "직접 입력하기")
+    val directInputDisplayText = customGoalInput.ifEmpty { directInputText }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -111,8 +115,8 @@ fun SetGoalScreen(
             Spacer(modifier = Modifier.height(dp12))
 
             OMTeamCard(
-                text = directInputText,
-                isSelected = (selectedGoal == directInputText),
+                text = directInputDisplayText,
+                isSelected = customGoalInput.isNotEmpty() && selectedGoal == customGoalInput,
                 textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     showBottomSheet = true
@@ -182,6 +186,7 @@ fun SetGoalScreen(
                 OnboardingBottomSheet(
                     placeholder = stringResource(R.string.direct_input_placeholder),
                     onGoalSubmit = { customGoal ->
+                        customGoalInput = customGoal
                         selectedGoal = customGoal
                         onGoalChange(customGoal)
                         showBottomSheet = false
