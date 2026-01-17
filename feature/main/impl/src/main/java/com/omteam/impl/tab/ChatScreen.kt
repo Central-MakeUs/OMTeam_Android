@@ -1,4 +1,4 @@
-package com.omteam.impl.screen
+package com.omteam.impl.tab
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
@@ -107,7 +108,7 @@ fun SimpleChatBubbleWithX(
             val path = Path().apply {
                 // 원 그리기
                 addOval(
-                    androidx.compose.ui.geometry.Rect(
+                    Rect(
                         left = 0f,
                         top = 0f,
                         right = 48.dp.toPx(),
