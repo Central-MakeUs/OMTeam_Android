@@ -99,6 +99,15 @@ object PaperlogyType {
         lineHeight = 20.sp,  // 100%
         letterSpacing = 0.sp
     )
+
+    // Body
+    val body01 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 16.sp,  // 100%
+        letterSpacing = 0.sp
+    )
 }
 
 // 서브 폰트
@@ -138,6 +147,30 @@ object PretendardType {
         fontWeight = FontWeight.Medium, // 500
         lineHeight = 22.4.sp,  // 140% (16px × 1.4 = 22.4px)
         letterSpacing = (-0.4).sp
+    )
+
+    val body04_2 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 12.sp,  // 100%
+        letterSpacing = (-0.048).sp
+    )
+
+    val body04_3 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 15.6.sp,  // 130% (12px × 1.3 = 15.6px)
+        letterSpacing = (-0.048).sp
+    )
+
+    val body05 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 15.sp,  // 100%
+        letterSpacing = (-0.06).sp
     )
 
     // Button
@@ -187,6 +220,14 @@ object PretendardType {
         fontWeight = FontWeight.Medium, // 500
         lineHeight = 14.sp,  // 100%
         letterSpacing = (-0.056).sp
+    )
+
+    val homeLevelText = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 13.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 13.sp,  // 100%
+        letterSpacing = (-0.052).sp
     )
 
     val tabLabel = TextStyle(
