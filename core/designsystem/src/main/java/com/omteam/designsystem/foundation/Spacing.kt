@@ -112,4 +112,5 @@ val dp175 = 175.dp
 val dp186 = 186.dp
 val dp200 = 200.dp
 val dp260 = 260.dp
+val dp270 = 270.dp
 val dp335 = 335.dp

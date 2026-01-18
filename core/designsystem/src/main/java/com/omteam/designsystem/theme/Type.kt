@@ -99,6 +99,15 @@ object PaperlogyType {
         lineHeight = 20.sp,  // 100%
         letterSpacing = 0.sp
     )
+
+    // Body
+    val body01 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 16.sp,  // 100%
+        letterSpacing = 0.sp
+    )
 }
 
 // 서브 폰트
@@ -145,6 +154,14 @@ object PretendardType {
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium, // 500
         lineHeight = 12.sp,  // 100%
+        letterSpacing = (-0.048).sp
+    )
+
+    val body04_3 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 15.6.sp,  // 130% (12px × 1.3 = 15.6px)
         letterSpacing = (-0.048).sp
     )
 

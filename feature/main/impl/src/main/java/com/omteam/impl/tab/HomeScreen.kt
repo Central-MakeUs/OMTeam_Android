@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,8 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -115,8 +119,168 @@ fun HomeScreen(
                     }
 
                     Spacer(modifier = Modifier.height(dp8))
+
+                    // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 진척도 프로그레스 바 (배경)
+                        Box(
+                            modifier = Modifier
+                                .width(dp270)
+                                .height(dp20)
+                                .background(
+                                    color = Gray05,
+                                    shape = RoundedCornerShape(dp32)
+                                )
+                        ) {
+                            // 진행률 표시
+                            val progress = 0.4f
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress)
+                                    .background(
+                                        color = Green05,
+                                        shape = RoundedCornerShape(dp32)
+                                    )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(dp9))
+
+                        // 진척도 % 텍스트
+                        OMTeamText(
+                            text = "40%", // "${(progress * 100).toInt()}%"
+                            style = PretendardType.skipButton.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                color = Black
+                            )
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(dp40))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_mission),
+                    contentDescription = "오늘의 미션 아이콘",
+                    modifier = Modifier
+                        .padding(start = dp20)
+                        .size(dp32)
+                )
+
+                Spacer(modifier = Modifier.width(dp8))
+
+                OMTeamText(
+                    text = "오늘의 미션",
+                    style = PaperlogyType.headline02,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(dp24))
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = dp32),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(dp81)
+                        .background(
+                            color = ErrorBottomSheetBackground,
+                            shape = CircleShape
+                        )
+                )
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(vertical = 21.5.dp)
+                ) {
+                    OMTeamText(
+                        text = "아직 미션이 생성되지 않았어요!",
+                        style = PaperlogyType.body01
+                    )
+
+                    Spacer(modifier = Modifier.height(dp6))
+
+                    OMTeamText(
+                        text = "개인 설정을 완료하여 미션을 받아보세요.",
+                        style = PretendardType.body04_3,
+                        color = Gray09,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(dp64))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_report),
+                    contentDescription = "분석 요약 아이콘",
+                    modifier = Modifier
+                        .padding(start = dp20)
+                        .size(dp32)
+                )
+
+                Spacer(modifier = Modifier.width(dp8))
+
+                OMTeamText(
+                    text = "분석 요약",
+                    style = PaperlogyType.headline02,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(dp24))
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = dp32),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(dp81)
+                        .background(
+                            color = ErrorBottomSheetBackground,
+                            shape = CircleShape
+                        )
+                )
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(vertical = 12.dp)
+                ) {
+                    OMTeamText(
+                        text = "아직 분석할 데이터가 없어요!",
+                        style = PaperlogyType.body01
+                    )
+
+                    Spacer(modifier = Modifier.height(dp6))
+
+                    OMTeamText(
+                        text = "OMT와 함께 미션을 수행하며 데이터를\n쌓아보아요!",
+                        style = PretendardType.body04_3,
+                        color = Gray09,
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(dp20))
         }
     }
 }
