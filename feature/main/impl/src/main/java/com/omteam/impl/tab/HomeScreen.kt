@@ -122,13 +122,15 @@ fun HomeScreen(
 
                     // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Start),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         // 진척도 프로그레스 바 (배경)
                         Box(
                             modifier = Modifier
-                                .width(dp270)
+                                .weight(1f)
                                 .height(dp20)
                                 .background(
                                     color = Gray05,
