@@ -56,6 +56,9 @@ class MainActivity : ComponentActivity() {
                             loginEntry(
                                 onNavigateToAccountLinkComplete = {
                                     navigator.navigateToAccountLinkComplete()
+                                },
+                                onNavigateToMain = {
+                                    navigator.navigateToMain()
                                 }
                             )
 

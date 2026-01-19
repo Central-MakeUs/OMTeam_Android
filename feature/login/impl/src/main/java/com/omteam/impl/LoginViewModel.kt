@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omteam.domain.model.LoginResult
 import com.omteam.domain.model.UserInfo
 import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.LogoutUseCase
+import com.omteam.domain.usecase.LoginWithIdTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.credentials.ClearCredentialStateRequest
-import com.kakao.sdk.auth.model.OAuthToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +23,7 @@ import javax.inject.Named
 class LoginViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase,
+    private val loginWithIdTokenUseCase: LoginWithIdTokenUseCase,
     private val credentialManager: CredentialManager,
     @param:Named("google_web_client_id") private val googleWebClientId: String
 ): ViewModel() {
@@ -49,17 +51,39 @@ class LoginViewModel @Inject constructor(
             }
 
             result.onSuccess { oAuthToken ->
-                Timber.d("## 카카오 로그인 성공 - Access Token : ${oAuthToken.accessToken}")
+                Timber.d("## 카카오 로그인 성공 - ID Token: ${oAuthToken.idToken?.take(20)}...")
 
-                getUserInfoUseCase()
-                    .onSuccess { userInfo ->
-                        Timber.d("## 카카오 유저 정보 조회 성공 : ${userInfo.email}")
-                        _loginState.value = LoginState.Success(userInfo)
+                // idToken이 없을 때
+                val idToken = oAuthToken.idToken
+                if (idToken == null) {
+                    Timber.e("## 카카오 ID Token이 null입니다")
+                    currentLoginType = LoginType.NONE
+                    _loginState.value = LoginState.Error("카카오 ID Token을 받을 수 없습니다")
+                    return@launch
+                }
+
+                // 서버에 idToken 전송하여 로그인
+                loginWithIdTokenUseCase("kakao", idToken).collect { apiResult ->
+                    apiResult.onSuccess { loginResult ->
+                        Timber.d("## 서버 로그인 성공 - 온보딩 완료: ${loginResult.onboardingCompleted}")
+                        
+                        // 사용자 정보 조회
+                        getUserInfoUseCase()
+                            .onSuccess { userInfo ->
+                                Timber.d("## 카카오 유저 정보 조회 성공: ${userInfo.email}")
+                                _loginState.value = LoginState.Success(loginResult, userInfo)
+                            }
+                            .onFailure { error ->
+                                Timber.e("## 카카오 유저 정보 조회 실패: ${error.message}")
+                                currentLoginType = LoginType.NONE
+                                _loginState.value = LoginState.Error(error.message ?: "유저 정보 조회 실패")
+                            }
+                    }.onFailure { error ->
+                        Timber.e("## 서버 로그인 실패 : ${error.message}")
+                        currentLoginType = LoginType.NONE
+                        _loginState.value = LoginState.Error(error.message ?: "서버 로그인 실패")
                     }
-                    .onFailure { error ->
-                        Timber.e("## 카카오 유저 정보 조회 실패 : ${error.message}")
-                        _loginState.value = LoginState.Error(error.message ?: "카카오 유저 정보 조회 실패")
-                    }
+                }
             }.onFailure { error ->
                 Timber.e("## 카카오 로그인 실패 : ${error.message}")
                 currentLoginType = LoginType.NONE
@@ -82,15 +106,30 @@ class LoginViewModel @Inject constructor(
                 credentialManager = credentialManager,
                 webClientId = googleWebClientId
             ).onSuccess { googleCredential ->
-                Timber.d("## 구글 로그인 성공")
-                // 구글 로그인 성공 시 GoogleIdTokenCredential에서 직접 정보 추출
-                val userInfo = UserInfo(
-                    id = googleCredential.id.hashCode().toLong(),
-                    nickname = googleCredential.displayName,
-                    email = googleCredential.id  // email
-                )
-                Timber.d("## 구글 유저 정보 생성 성공 : ${userInfo.email}")
-                _loginState.value = LoginState.Success(userInfo)
+                Timber.d("## 구글 로그인 성공 - ID Token: ${googleCredential.idToken.take(20)}...")
+
+                // 서버에 idToken 전송하여 로그인
+                loginWithIdTokenUseCase("google", googleCredential.idToken).collect { apiResult ->
+                    apiResult.onSuccess { loginResult ->
+                        Timber.d("## 서버 로그인 성공 - 온보딩 완료: ${loginResult.onboardingCompleted}")
+                        
+                        // 사용자 정보 조회
+                        getUserInfoUseCase()
+                            .onSuccess { userInfo ->
+                                Timber.d("## 구글 유저 정보 조회 성공: ${userInfo.email}")
+                                _loginState.value = LoginState.Success(loginResult, userInfo)
+                            }
+                            .onFailure { error ->
+                                Timber.e("## 구글 유저 정보 조회 실패: ${error.message}")
+                                currentLoginType = LoginType.NONE
+                                _loginState.value = LoginState.Error(error.message ?: "유저 정보 조회 실패")
+                            }
+                    }.onFailure { error ->
+                        Timber.e("## 서버 로그인 실패 : ${error.message}")
+                        currentLoginType = LoginType.NONE
+                        _loginState.value = LoginState.Error(error.message ?: "서버 로그인 실패")
+                    }
+                }
             }.onFailure { error ->
                 Timber.e("## 구글 로그인 실패 : ${error.message}")
                 currentLoginType = LoginType.NONE
@@ -143,7 +182,10 @@ class LoginViewModel @Inject constructor(
     sealed interface LoginState {
         data object Idle : LoginState
         data object Loading : LoginState
-        data class Success(val userInfo: UserInfo) : LoginState
+        data class Success(
+            val loginResult: LoginResult,
+            val userInfo: UserInfo
+        ) : LoginState
         data class Error(val message: String) : LoginState
     }
 

@@ -3,6 +3,7 @@ package com.omteam.data.di
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.LogoutUseCase
+import com.omteam.domain.usecase.LoginWithIdTokenUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +25,10 @@ object UseCaseModule {
     fun provideLogoutUseCase(
         authRepository: AuthRepository
     ): LogoutUseCase = LogoutUseCase(authRepository)
+    
+    @Provides
+    @Singleton
+    fun provideLoginWithIdTokenUseCase(
+        authRepository: AuthRepository
+    ): LoginWithIdTokenUseCase = LoginWithIdTokenUseCase(authRepository)
 }
