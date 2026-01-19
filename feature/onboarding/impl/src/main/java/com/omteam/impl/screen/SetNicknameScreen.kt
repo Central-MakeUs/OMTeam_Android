@@ -18,9 +18,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.component.textfield.OMTeamTextField
-import com.omteam.designsystem.foundation.dp20
-import com.omteam.designsystem.theme.OMTeamTheme
-import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 import com.omteam.impl.R
 import com.omteam.impl.viewmodel.NicknameErrorType
 import com.omteam.impl.viewmodel.OnboardingViewModel
@@ -64,6 +63,7 @@ fun SetNicknameScreen(
             onClick = {
                 onNext()
             },
+            backgroundColor = if (onboardingData.nickname.isNotEmpty() && nicknameErrorType == NicknameErrorType.NONE) Green07 else Green04,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = dp20)

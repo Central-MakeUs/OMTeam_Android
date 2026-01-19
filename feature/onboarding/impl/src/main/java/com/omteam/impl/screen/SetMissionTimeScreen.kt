@@ -31,18 +31,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.dp12
-import com.omteam.designsystem.foundation.dp126
-import com.omteam.designsystem.foundation.dp20
-import com.omteam.designsystem.foundation.dp200
-import com.omteam.designsystem.foundation.dp32
-import com.omteam.designsystem.foundation.dp60
-import com.omteam.designsystem.foundation.dp8
-import com.omteam.designsystem.foundation.dp9
-import com.omteam.designsystem.theme.GreenSub03Button
-import com.omteam.designsystem.theme.GreenSub07Button
-import com.omteam.designsystem.theme.PaperlogyType
-import com.omteam.designsystem.theme.White
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 import com.omteam.impl.R
 import com.omteam.impl.screen.component.OnboardingBottomSheet
 
@@ -172,6 +162,7 @@ fun SetMissionTimeScreen(
                     onClick = { onNext() },
                     height = dp60,
                     cornerRadius = dp8,
+                    backgroundColor = if (selectedMissionTime.isNotEmpty()) Green07 else Green04,
                     modifier = Modifier.width(dp200)
                 )
             }
