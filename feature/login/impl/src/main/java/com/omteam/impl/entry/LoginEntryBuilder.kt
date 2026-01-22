@@ -19,10 +19,12 @@ import timber.log.Timber
 /**
  * 로그인 화면 Entry Builder
  *
- * @param onNavigateToAccountLinkComplete 계정 연동 완료 화면 이동
+ * @param onNavigateToAccountLinkComplete 계정 연동 완료 화면 이동 (신규 사용자 - 온보딩 미완료)
+ * @param onNavigateToMain 메인 화면 이동 (기존 사용자 - 온보딩 완료)
  */
 fun EntryProviderScope<NavKey>.loginEntry(
-    onNavigateToAccountLinkComplete: () -> Unit
+    onNavigateToAccountLinkComplete: () -> Unit,
+    onNavigateToMain: () -> Unit
 ) {
     entry<LoginNavKey> {
         val loginViewModel: LoginViewModel = hiltViewModel()
@@ -38,7 +40,20 @@ fun EntryProviderScope<NavKey>.loginEntry(
 
         LaunchedEffect(loginState) {
             if (loginState is LoginViewModel.LoginState.Success) {
-                onNavigateToAccountLinkComplete()
+                val success = loginState as LoginViewModel.LoginState.Success
+                val loginResult = success.loginResult
+                val userInfo = success.userInfo
+                
+                Timber.d("## 로그인 성공 - 온보딩 완료 : ${loginResult.onboardingCompleted}, 유저 : $userInfo")
+                
+                if (loginResult.onboardingCompleted) {
+                    // 온보딩을 이미 완료한 기존 유저 → 메인 화면 바로 이동
+                    onNavigateToMain()
+                } else {
+                    // 온보딩이 필요한 신규 유저 → 계정 연동 완료 화면 → 온보딩 화면
+                    onNavigateToAccountLinkComplete()
+                }
+                
                 loginViewModel.resetLoginState()
             }
         }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.AccountLinkCompleteNavKey
 import com.omteam.api.LoginNavKey
+import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
 
 class AppNavigator(
@@ -49,4 +50,11 @@ class AppNavigator(
             popUpTo = AccountLinkCompleteNavKey,
             inclusive = true,
         )
+    
+    /**
+     * 로그인 스택 제거 후 메인 화면 이동
+     */
+    fun navigateToMain() {
+        backStackState.value = listOf(MainNavKey)
+    }
 }

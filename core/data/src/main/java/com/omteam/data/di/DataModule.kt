@@ -44,10 +44,4 @@ object DataModule {
         credentialManager: CredentialManager,
         @Named("google_web_client_id") webClientId: String
     ): AuthDataSource = GoogleAuthDataSource(context, credentialManager, webClientId)
-
-    @Provides
-    @Singleton
-    fun provideAuthDataSource(
-        @KakaoAuth kakaoAuthDataSource: AuthDataSource
-    ): AuthDataSource = kakaoAuthDataSource
 }
