@@ -5,8 +5,8 @@ import com.omteam.domain.model.UserInfo
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-    suspend fun getUserInfo(): Result<UserInfo>
-    suspend fun logout(): Result<Unit>
+    suspend fun getUserInfo(provider: String): Result<UserInfo>
+    suspend fun logout(provider: String): Result<Unit>
     
     /**
      * idToken으로 서버 로그인 (구글, 카카오)

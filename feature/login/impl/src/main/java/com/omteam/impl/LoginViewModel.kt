@@ -71,10 +71,10 @@ class LoginViewModel @Inject constructor(
 
                         // 토큰 저장
                         tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
-                        Timber.d("## 토큰 저장 완료")
+                        Timber.d("## 카카오 로그인 후 토큰 저장 완료")
 
                         // 사용자 정보 조회
-                        getUserInfoUseCase()
+                        getUserInfoUseCase("kakao")
                             .onSuccess { userInfo ->
                                 Timber.d("## 카카오 유저 정보 조회 성공: ${userInfo.email}")
                                 _loginState.value = LoginState.Success(loginResult, userInfo)
@@ -114,26 +114,23 @@ class LoginViewModel @Inject constructor(
             ).onSuccess { googleCredential ->
                 Timber.d("## 구글 로그인 성공 - ID Token: ${googleCredential.idToken.take(20)}...")
 
-                // 서버에 idToken 전송하여 로그인
+                val userInfo = UserInfo(
+                    id = googleCredential.id.hashCode().toLong(),
+                    nickname = googleCredential.displayName,
+                    email = googleCredential.id
+                )
+
+                // 서버에 idToken 보내 로그인
                 loginWithIdTokenUseCase("google", googleCredential.idToken).collect { apiResult ->
                     apiResult.onSuccess { loginResult ->
                         Timber.d("## 서버 로그인 성공 - 온보딩 완료: ${loginResult.onboardingCompleted}")
 
-                        // 토큰 저장
                         tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
-                        Timber.d("## 토큰 저장 완료")
-
-                        // 사용자 정보 조회
-                        getUserInfoUseCase()
-                            .onSuccess { userInfo ->
-                                Timber.d("## 구글 유저 정보 조회 성공: ${userInfo.email}")
-                                _loginState.value = LoginState.Success(loginResult, userInfo)
-                            }
-                            .onFailure { error ->
-                                Timber.e("## 구글 유저 정보 조회 실패: ${error.message}")
-                                currentLoginType = LoginType.NONE
-                                _loginState.value = LoginState.Error(error.message ?: "유저 정보 조회 실패")
-                            }
+                        Timber.d("## 구글 로그인 후 토큰 저장 완료")
+                        
+                        // 로그인 시 받은 유저 정보 확인
+                        Timber.d("## 구글 유저 정보 : ${userInfo.email}")
+                        _loginState.value = LoginState.Success(loginResult, userInfo)
                     }.onFailure { error ->
                         Timber.e("## 서버 로그인 실패 : ${error.message}")
                         currentLoginType = LoginType.NONE
@@ -164,7 +161,7 @@ class LoginViewModel @Inject constructor(
             when (previousLoginType) {
                 LoginType.KAKAO -> {
                     Timber.d("## 카카오 로그아웃 시작")
-                    logoutUseCase()
+                    logoutUseCase("kakao")
                         .onSuccess {
                             Timber.d("## 카카오 로그아웃 성공")
                         }
@@ -174,14 +171,13 @@ class LoginViewModel @Inject constructor(
                 }
                 LoginType.GOOGLE -> {
                     Timber.d("## 구글 로그아웃 시작")
-                    try {
-                        credentialManager.clearCredentialState(
-                            ClearCredentialStateRequest()
-                        )
-                        Timber.d("## 구글 로그아웃 성공")
-                    } catch (e: Exception) {
-                        Timber.e("## 구글 로그아웃 실패 : ${e.message}")
-                    }
+                    logoutUseCase("google")
+                        .onSuccess {
+                            Timber.d("## 구글 로그아웃 성공")
+                        }
+                        .onFailure { error ->
+                            Timber.e("## 구글 로그아웃 실패 : ${error.message}")
+                        }
                 }
                 LoginType.NONE -> {}
             }

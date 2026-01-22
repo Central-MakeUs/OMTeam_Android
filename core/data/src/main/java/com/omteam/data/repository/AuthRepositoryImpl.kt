@@ -1,6 +1,8 @@
 package com.omteam.data.repository
 
 import com.omteam.data.datasource.AuthDataSource
+import com.omteam.data.di.GoogleAuth
+import com.omteam.data.di.KakaoAuth
 import com.omteam.data.mapper.toDomain
 import com.omteam.domain.model.LoginResult
 import com.omteam.domain.model.UserInfo
@@ -16,13 +18,28 @@ import javax.inject.Inject
  * AuthDataSource 통해 구글, 카카오 로그인 지원
  */
 class AuthRepositoryImpl @Inject constructor(
-    private val authDataSource: AuthDataSource,
+    @param:KakaoAuth private val kakaoAuthDataSource: AuthDataSource,
+    @param:GoogleAuth private val googleAuthDataSource: AuthDataSource,
     private val authApiService: AuthApiService
 ) : AuthRepository {
 
-    override suspend fun getUserInfo(): Result<UserInfo> = authDataSource.getUserInfo()
+    override suspend fun getUserInfo(provider: String): Result<UserInfo> {
+        val dataSource = when (provider.lowercase()) {
+            "kakao" -> kakaoAuthDataSource
+            "google" -> googleAuthDataSource
+            else -> return Result.failure(Exception("지원하지 않는 provider입니다 : $provider"))
+        }
+        return dataSource.getUserInfo()
+    }
 
-    override suspend fun logout(): Result<Unit> = authDataSource.logout()
+    override suspend fun logout(provider: String): Result<Unit> {
+        val dataSource = when (provider.lowercase()) {
+            "kakao" -> kakaoAuthDataSource
+            "google" -> googleAuthDataSource
+            else -> return Result.failure(Exception("지원하지 않는 provider입니다 : $provider"))
+        }
+        return dataSource.logout()
+    }
     
     override fun loginWithIdToken(provider: String, idToken: String): Flow<Result<LoginResult>> = flow {
         try {
