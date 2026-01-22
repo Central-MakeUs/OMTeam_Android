@@ -12,7 +12,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -55,8 +54,6 @@ object NetworkModule {
         json: Json
     ): Retrofit {
         val contentType = "application/json".toMediaType()
-        
-        Timber.d("## BASE_URL: ${BuildConfig.BASE_URL}")
         
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)

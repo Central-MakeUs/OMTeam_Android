@@ -20,6 +20,7 @@ googleServices = "4.4.4"
 firebaseBom = "34.7.0"
 firebaseCrashlyticsGradle = "3.0.2"
 timber = "5.0.1"
+datastore = "1.1.1"
 
 # network
 retrofit = "2.11.0"
@@ -77,6 +78,9 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 # timber
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# datastore
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 # network
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }

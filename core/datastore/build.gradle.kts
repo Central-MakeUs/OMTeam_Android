@@ -7,8 +7,11 @@ android {
 }
 
 dependencies {
-    // DataStore (Android 전용)
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // dataStore
+    implementation(libs.androidx.datastore.preferences)
+    
+    // hilt
+    implementation(libs.hilt.android)
     
     // android 의존성
     implementation(libs.androidx.core.ktx)

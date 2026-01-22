@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omteam.datastore.TokenDataStore
 import com.omteam.domain.model.LoginResult
 import com.omteam.domain.model.UserInfo
 import com.omteam.domain.usecase.GetUserInfoUseCase
@@ -25,6 +26,7 @@ class LoginViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val loginWithIdTokenUseCase: LoginWithIdTokenUseCase,
     private val credentialManager: CredentialManager,
+    private val tokenDataStore: TokenDataStore,
     @param:Named("google_web_client_id") private val googleWebClientId: String
 ): ViewModel() {
 
@@ -66,7 +68,11 @@ class LoginViewModel @Inject constructor(
                 loginWithIdTokenUseCase("kakao", idToken).collect { apiResult ->
                     apiResult.onSuccess { loginResult ->
                         Timber.d("## 서버 로그인 성공 - 온보딩 완료: ${loginResult.onboardingCompleted}")
-                        
+
+                        // 토큰 저장
+                        tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
+                        Timber.d("## 토큰 저장 완료")
+
                         // 사용자 정보 조회
                         getUserInfoUseCase()
                             .onSuccess { userInfo ->
@@ -112,7 +118,11 @@ class LoginViewModel @Inject constructor(
                 loginWithIdTokenUseCase("google", googleCredential.idToken).collect { apiResult ->
                     apiResult.onSuccess { loginResult ->
                         Timber.d("## 서버 로그인 성공 - 온보딩 완료: ${loginResult.onboardingCompleted}")
-                        
+
+                        // 토큰 저장
+                        tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
+                        Timber.d("## 토큰 저장 완료")
+
                         // 사용자 정보 조회
                         getUserInfoUseCase()
                             .onSuccess { userInfo ->
@@ -147,6 +157,10 @@ class LoginViewModel @Inject constructor(
         _loginState.value = LoginState.Idle
 
         viewModelScope.launch {
+            // 저장된 토큰 삭제
+            tokenDataStore.clearTokens()
+            Timber.d("## 토큰 삭제 완료")
+
             when (previousLoginType) {
                 LoginType.KAKAO -> {
                     Timber.d("## 카카오 로그아웃 시작")

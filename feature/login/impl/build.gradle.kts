@@ -17,6 +17,7 @@ dependencies {
     implementation(project(":core:presentation"))
     implementation(project(":core:data")) // GetUserInfoUseCase 사용 위해 필요
     implementation(project(":core:domain"))
+    implementation(project(":core:datastore")) // 토큰 저장 위해 필요
 
     // nav3
     implementation(libs.androidx.navigation3.runtime)
