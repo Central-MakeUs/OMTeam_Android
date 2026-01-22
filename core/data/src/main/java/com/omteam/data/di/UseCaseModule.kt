@@ -1,6 +1,8 @@
 package com.omteam.data.di
 
 import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.usecase.CheckAutoLoginUseCase
+import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.LogoutUseCase
 import com.omteam.domain.usecase.LoginWithIdTokenUseCase
@@ -31,4 +33,16 @@ object UseCaseModule {
     fun provideLoginWithIdTokenUseCase(
         authRepository: AuthRepository
     ): LoginWithIdTokenUseCase = LoginWithIdTokenUseCase(authRepository)
+    
+    @Provides
+    @Singleton
+    fun provideGetOnboardingInfoUseCase(
+        authRepository: AuthRepository
+    ): GetOnboardingInfoUseCase = GetOnboardingInfoUseCase(authRepository)
+    
+    @Provides
+    @Singleton
+    fun provideCheckAutoLoginUseCase(
+        authRepository: AuthRepository
+    ): CheckAutoLoginUseCase = CheckAutoLoginUseCase(authRepository)
 }

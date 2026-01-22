@@ -1,6 +1,7 @@
 package com.omteam.domain.repository
 
 import com.omteam.domain.model.LoginResult
+import com.omteam.domain.model.OnboardingInfo
 import com.omteam.domain.model.UserInfo
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +17,23 @@ interface AuthRepository {
      * @return 서버 로그인 결과 (accessToken, refreshToken 등) Flow
      */
     fun loginWithIdToken(provider: String, idToken: String): Flow<Result<LoginResult>>
+
+    /**
+     * 온보딩 정보 조회
+     * 
+     * @return 온보딩 정보 (완료하지 않은 경우 실패)
+     */
+    suspend fun getOnboardingInfo(): Result<OnboardingInfo>
+
+    /**
+     * 저장된 액세스 토큰 존재 여부 확인
+     * 
+     * @return 토큰이 존재하면 true
+     */
+    suspend fun hasAccessToken(): Boolean
+
+    /**
+     * 저장된 토큰 삭제
+     */
+    suspend fun clearTokens()
 }

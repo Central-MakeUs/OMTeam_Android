@@ -2,6 +2,7 @@ package com.omteam.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.omteam.network.api.AuthApiService
+import com.omteam.network.interceptor.TokenInterceptor
 import com.omteam.omt.core.network.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -34,12 +35,13 @@ object NetworkModule {
     
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(tokenInterceptor: TokenInterceptor): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         
         return OkHttpClient.Builder()
+            .addInterceptor(tokenInterceptor)
             .addInterceptor(loggingInterceptor)
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
