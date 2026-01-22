@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
             }
 
             result.onSuccess { oAuthToken ->
-                Timber.d("## 카카오 로그인 성공 - ID Token: ${oAuthToken.idToken?.take(20)}...")
+                Timber.d("## 카카오 로그인 성공 - idToken: ${oAuthToken.idToken}")
 
                 // idToken이 없을 때
                 val idToken = oAuthToken.idToken
@@ -112,7 +112,7 @@ class LoginViewModel @Inject constructor(
                 credentialManager = credentialManager,
                 webClientId = googleWebClientId
             ).onSuccess { googleCredential ->
-                Timber.d("## 구글 로그인 성공 - ID Token: ${googleCredential.idToken.take(20)}...")
+                Timber.d("## 구글 로그인 성공 - idToken: ${googleCredential.idToken}")
 
                 val userInfo = UserInfo(
                     id = googleCredential.id.hashCode().toLong(),
