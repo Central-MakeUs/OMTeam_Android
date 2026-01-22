@@ -38,6 +38,9 @@ dependencies {
     // domain 모듈
     implementation(project(":core:domain"))
     
+    // datastore 모듈 (TokenInterceptor에서 사용)
+    implementation(project(":core:datastore"))
+    
     // retrofit, okhttp
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization.converter)
