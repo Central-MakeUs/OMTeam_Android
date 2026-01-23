@@ -2,6 +2,7 @@ package com.omteam.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.omteam.network.api.AuthApiService
+import com.omteam.network.interceptor.TokenAuthenticator
 import com.omteam.network.interceptor.TokenInterceptor
 import com.omteam.omt.core.network.BuildConfig
 import dagger.Module
@@ -35,14 +36,18 @@ object NetworkModule {
     
     @Provides
     @Singleton
-    fun provideOkHttpClient(tokenInterceptor: TokenInterceptor): OkHttpClient {
+    fun provideOkHttpClient(
+        tokenInterceptor: TokenInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+    ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
         
         return OkHttpClient.Builder()
-            .addInterceptor(tokenInterceptor)
+            .addInterceptor(tokenInterceptor) // Authorization 헤더 자동 추가
             .addInterceptor(loggingInterceptor)
+            .authenticator(tokenAuthenticator) // 401, 403 시 토큰 갱신 및 재시도
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)

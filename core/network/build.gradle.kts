@@ -35,7 +35,7 @@ android {
 }
 
 dependencies {
-    // domain 모듈
+    // domain 모듈 (AuthRepository, TokenAuthenticator에서 사용)
     implementation(project(":core:domain"))
     
     // datastore 모듈 (TokenInterceptor에서 사용)
