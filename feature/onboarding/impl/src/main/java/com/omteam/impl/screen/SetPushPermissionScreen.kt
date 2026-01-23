@@ -12,13 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.omteam.impl.viewmodel.OnboardingViewModel
+import com.omteam.impl.viewmodel.SubmitState
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -28,14 +35,37 @@ import com.omteam.impl.R
 
 @Composable
 fun SetPushPermissionScreen(
+    viewModel: OnboardingViewModel = hiltViewModel(),
     onPushGranted: (String) -> Unit = {},
-    onNext: () -> Unit = {},
+    onNavigateToMain: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     var selectedFavoriteExercise by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val submitState by viewModel.submitState.collectAsStateWithLifecycle()
     
     val grantText = stringResource(R.string.grant)
     val notGrantText = stringResource(R.string.not_grant)
+
+    // submitState 관찰 및 처리
+    LaunchedEffect(submitState) {
+        when (submitState) {
+            is SubmitState.Success -> {
+                // 성공 시 메인 화면으로 이동
+                onNavigateToMain()
+                viewModel.resetSubmitState()
+            }
+            is SubmitState.Error -> {
+                // 에러 메시지 표시
+                errorMessage = (submitState as SubmitState.Error).message
+                showError = true
+                viewModel.resetSubmitState()
+            }
+            else -> {}
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -67,11 +97,14 @@ fun SetPushPermissionScreen(
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == grantText) {
-                            ""
+                        val isGranted = if (selectedFavoriteExercise == grantText) {
+                            selectedFavoriteExercise = ""
+                            false
                         } else {
-                            grantText
+                            selectedFavoriteExercise = grantText
+                            true
                         }
+                        viewModel.updatePushPermission(isGranted)
                         onPushGranted(selectedFavoriteExercise)
                     },
                 )
@@ -84,11 +117,14 @@ fun SetPushPermissionScreen(
                     textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
-                        selectedFavoriteExercise = if (selectedFavoriteExercise == notGrantText) {
-                            ""
+                        val isGranted = if (selectedFavoriteExercise == notGrantText) {
+                            selectedFavoriteExercise = ""
+                            false
                         } else {
-                            notGrantText
+                            selectedFavoriteExercise = notGrantText
+                            false  // "허용 안 함" 선택 시 false
                         }
+                        viewModel.updatePushPermission(isGranted)
                         onPushGranted(selectedFavoriteExercise)
                     }
                 )
@@ -117,12 +153,35 @@ fun SetPushPermissionScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        // 온보딩 정보 제출
+                        viewModel.submitOnboarding()
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedFavoriteExercise.isNotEmpty()) Green07 else Green04,
-                    modifier = Modifier.width(dp200)
+                    modifier = Modifier.width(dp200),
+                    enabled = selectedFavoriteExercise.isNotEmpty() && submitState !is SubmitState.Loading
                 )
+            }
+        }
+
+        // 로딩 표시
+        if (submitState is SubmitState.Loading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Green07)
+            }
+        }
+
+        // 에러 메시지 표시
+        if (showError) {
+            // TODO: 에러 다이얼로그 또는 스낵바 표시
+            // 현재는 로그로만 표시
+            LaunchedEffect(Unit) {
+                showError = false
             }
         }
     }

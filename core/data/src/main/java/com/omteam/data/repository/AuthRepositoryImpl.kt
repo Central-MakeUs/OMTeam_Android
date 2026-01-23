@@ -11,6 +11,7 @@ import com.omteam.domain.model.UserInfo
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.network.api.AuthApiService
 import com.omteam.network.dto.LoginWithIdTokenRequest
+import com.omteam.network.dto.OnboardingRequest
 import com.omteam.network.dto.OnboardingResponse
 import com.omteam.network.dto.RefreshTokenRequest
 import kotlinx.coroutines.flow.Flow
@@ -128,6 +129,59 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun clearTokens() {
         tokenDataStore.clearTokens()
         Timber.d("## 토큰 삭제 완료")
+    }
+    
+    override suspend fun submitOnboarding(onboardingInfo: OnboardingInfo): Result<OnboardingInfo> {
+        return try {
+            Timber.d("## 온보딩 정보 제출 시작")
+
+            val request = OnboardingRequest(
+                nickname = onboardingInfo.nickname,
+                appGoalText = onboardingInfo.appGoalText,
+                workTimeType = onboardingInfo.workTimeType.name,
+                availableStartTime = onboardingInfo.availableStartTime,
+                availableEndTime = onboardingInfo.availableEndTime,
+                minExerciseMinutes = onboardingInfo.minExerciseMinutes,
+                preferredExerciseText = onboardingInfo.preferredExerciseText,
+                lifestyleType = onboardingInfo.lifestyleType.name,
+                remindEnabled = onboardingInfo.remindEnabled,
+                checkInEnabled = onboardingInfo.checkInEnabled,
+                reviewEnabled = onboardingInfo.reviewEnabled
+            )
+
+            val response = authApiService.submitOnboarding(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 온보딩 정보 제출 성공")
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "온보딩 정보 제출 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 온보딩 정보 제출 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val errorResponse = json.decodeFromString<OnboardingResponse>(errorBody)
+                    val errorCode = errorResponse.error?.code
+                    val errorMessage = errorResponse.error?.message ?: "온보딩 정보 제출 실패"
+                    Timber.e("## 온보딩 정보 제출 실패 (HTTP ${e.code()}) - $errorCode : $errorMessage")
+                    Result.failure(Exception("$errorCode: $errorMessage"))
+                } else {
+                    Timber.e(e, "## 온보딩 정보 제출 에러 (HTTP ${e.code()}) - 응답 본문 없음")
+                    Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+                }
+            } catch (parseException: Exception) {
+                Timber.e(parseException, "## 에러 응답 파싱 실패 (HTTP ${e.code()})")
+                Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 온보딩 정보 제출 예외 발생")
+            Result.failure(e)
+        }
     }
     
     override suspend fun refreshToken(): Result<LoginResult> {

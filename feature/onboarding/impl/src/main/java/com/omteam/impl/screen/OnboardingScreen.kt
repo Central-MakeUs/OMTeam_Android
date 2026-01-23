@@ -30,6 +30,7 @@ fun OnboardingScreen(
     onNext: () -> Unit,
     onBack: () -> Unit,
     onSkip: () -> Unit,
+    onNavigateToMain: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
@@ -112,7 +113,8 @@ fun OnboardingScreen(
                     onBack = onBack,
                 )
                 7 -> SetPushPermissionScreen(
-                    onNext = onNext,
+                    viewModel = viewModel,
+                    onNavigateToMain = onNavigateToMain,
                     onBack = onBack,
                 )
             }

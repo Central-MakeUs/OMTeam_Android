@@ -9,6 +9,7 @@ package com.omteam.impl.model
  * @property missionTime 미션 수행에 투자 가능한 시간
  * @property favoriteExercise 선호하는 운동
  * @property pattern 최근 1달 간의 생활패턴과 가장 유사한 것
+ * @property pushPermissionGranted 푸시 알림 허용 여부
  */
 data class OnboardingData(
     val nickname: String = "",
@@ -17,4 +18,5 @@ data class OnboardingData(
     val missionTime: String = "",
     val favoriteExercise: String = "",
     val pattern: String = "",
+    val pushPermissionGranted: Boolean = false,
 )

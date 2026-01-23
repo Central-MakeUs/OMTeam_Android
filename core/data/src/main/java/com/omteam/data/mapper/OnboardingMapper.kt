@@ -15,6 +15,6 @@ fun OnboardingData.toDomain(): OnboardingInfo = OnboardingInfo(
     preferredExerciseText = preferredExerciseText,
     lifestyleType = LifestyleType.valueOf(lifestyleType),
     remindEnabled = remindEnabled,
-    checkinEnabled = checkinEnabled,
+    checkInEnabled = checkinEnabled,
     reviewEnabled = reviewEnabled
 )
