@@ -31,9 +31,23 @@ interface AuthRepository {
      * @return 토큰이 존재하면 true
      */
     suspend fun hasAccessToken(): Boolean
+    
+    /**
+     * 현재 저장된 액세스 토큰 가져오기
+     * 
+     * @return 현재 액세스 토큰 (없으면 null)
+     */
+    suspend fun getCurrentAccessToken(): String?
 
     /**
      * 저장된 토큰 삭제
      */
     suspend fun clearTokens()
+    
+    /**
+     * 토큰 갱신
+     * 
+     * @return 새로운 액세스 토큰, 리프레시 토큰
+     */
+    suspend fun refreshToken(): Result<LoginResult>
 }

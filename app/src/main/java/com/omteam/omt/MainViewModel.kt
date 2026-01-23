@@ -2,7 +2,6 @@ package com.omteam.omt
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omteam.domain.repository.AuthRepository
 import com.omteam.domain.usecase.AutoLoginResult
 import com.omteam.domain.usecase.CheckAutoLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val checkAutoLoginUseCase: CheckAutoLoginUseCase,
-    private val authRepository: AuthRepository
+    private val checkAutoLoginUseCase: CheckAutoLoginUseCase
 ) : ViewModel() {
     
     private val _autoLoginState = MutableStateFlow<AutoLoginState>(AutoLoginState.Checking)
@@ -32,26 +30,20 @@ class MainViewModel @Inject constructor(
 
         _autoLoginState.value = when (result) {
             is AutoLoginResult.NeedLogin -> {
-                Timber.d("## 자동 로그인 : 로그인 필요")
+                Timber.d("## [자동 로그인] 로그인 필요")
                 AutoLoginState.NeedLogin
             }
             is AutoLoginResult.NeedOnboarding -> {
-                Timber.d("## 자동 로그인 : 온보딩 필요")
+                Timber.d("## [자동 로그인] 온보딩 필요")
                 AutoLoginState.NeedOnboarding
             }
             is AutoLoginResult.OnboardingCompleted -> {
-                Timber.d("## 자동 로그인 : 온보딩 완료 → 메인 화면")
+                Timber.d("## [자동 로그인] 온보딩 완료 → 메인 화면")
                 AutoLoginState.NavigateToMain
             }
             is AutoLoginResult.TokenExpired -> {
-                Timber.e("## 자동 로그인 : 토큰 만료 → 토큰 삭제 후 로그인 화면")
-                // 만료된 토큰 삭제
-                authRepository.clearTokens()
-                AutoLoginState.NeedLogin
-            }
-            is AutoLoginResult.NetworkError -> {
-                Timber.e("## 자동 로그인 : 네트워크 에러 - ${result.message}")
-                // 네트워크 오류는 토큰을 유지하되 로그인 화면으로
+                Timber.e("## [자동 로그인] 토큰 만료 → 로그인 화면")
+                // TokenAuthenticator가 이미 토큰 삭제했으므로 중복 삭제 불필요
                 AutoLoginState.NeedLogin
             }
         }

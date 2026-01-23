@@ -12,6 +12,7 @@ import com.omteam.domain.repository.AuthRepository
 import com.omteam.network.api.AuthApiService
 import com.omteam.network.dto.LoginWithIdTokenRequest
 import com.omteam.network.dto.OnboardingResponse
+import com.omteam.network.dto.RefreshTokenRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -118,12 +119,48 @@ class AuthRepositoryImpl @Inject constructor(
     
     override suspend fun hasAccessToken(): Boolean {
         val token = tokenDataStore.getAccessToken().firstOrNull()
-
         return !token.isNullOrEmpty()
     }
+    
+    override suspend fun getCurrentAccessToken(): String? =
+        tokenDataStore.getAccessToken().firstOrNull()
     
     override suspend fun clearTokens() {
         tokenDataStore.clearTokens()
         Timber.d("## 토큰 삭제 완료")
+    }
+    
+    override suspend fun refreshToken(): Result<LoginResult> {
+        return try {
+            Timber.d("## 토큰 갱신 시작")
+
+            val refreshToken = tokenDataStore.getRefreshToken().firstOrNull()
+            if (refreshToken.isNullOrEmpty()) {
+                Timber.e("## refreshToken이 없습니다")
+                return Result.failure(Exception("refreshToken이 없습니다"))
+            }
+
+            val request = RefreshTokenRequest(refreshToken)
+            val response = authApiService.refreshToken(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 토큰 갱신 성공")
+
+                // 새 토큰들을 dataStore에 저장
+                tokenDataStore.saveTokens(data.accessToken, data.refreshToken)
+                Timber.d("## 새 토큰 저장 완료")
+
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "토큰 갱신 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 토큰 갱신 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 토큰 갱신 예외 발생")
+            Result.failure(e)
+        }
     }
 }

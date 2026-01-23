@@ -12,34 +12,31 @@ class CheckAutoLoginUseCase(
      * @return AutoLoginResult (토큰 유무, 온보딩 완료 여부)
      */
     suspend operator fun invoke(): AutoLoginResult {
-        val hasToken = authRepository.hasAccessToken()
-        
-        if (!hasToken) {
+        val hasAccessToken = authRepository.hasAccessToken()
+        if (!hasAccessToken) {
             return AutoLoginResult.NeedLogin
         }
         
         // 온보딩 정보 조회
+        // 401, 403은 TokenAuthenticator가 자동 처리
+        // - 갱신 성공 시 재시도 -> 200 OK 받음
+        // - 갱신 실패 시 TokenAuthenticator가 토큰 삭제 후 에러 발생
         return authRepository.getOnboardingInfo()
             .fold(
                 onSuccess = { onboardingInfo ->
-                    // 온보딩 다 끝냈으면 메인 화면 이동
+                    // 온보딩 완료 → 메인 화면
                     AutoLoginResult.OnboardingCompleted(onboardingInfo)
                 },
                 onFailure = { error ->
                     val errorMessage = error.message ?: ""
                     
-                    // 온보딩 미완이면 온보딩 1번 화면으로 이동
+                    // 온보딩 미완료 (U003)
                     if (errorMessage.contains("U003") || errorMessage.contains("온보딩")) {
                         AutoLoginResult.NeedOnboarding
-                    }
-                    // 토큰 만료 or 인증 에러 (401, 403 등) → 토큰 삭제
-                    else if (errorMessage.contains("403") || errorMessage.contains("401") || 
-                             errorMessage.contains("Unauthorized") || errorMessage.contains("Forbidden")) {
+                    } else {
+                        // TokenAuthenticator가 토큰 갱신 실패 시(네트워크, 서버 에러 포함) 토큰 삭제하고 예외 발생
+                        // 로그인 화면으로 이동
                         AutoLoginResult.TokenExpired
-                    }
-                    // 기타 네트워크 에러
-                    else {
-                        AutoLoginResult.NetworkError(errorMessage)
                     }
                 }
             )
@@ -59,9 +56,6 @@ sealed interface AutoLoginResult {
     // 온보딩 완료 (메인 화면 이동)
     data class OnboardingCompleted(val onboardingInfo: OnboardingInfo) : AutoLoginResult
     
-    // 토큰 만료 or 인증 에러 (로그인 화면 이동하며 토큰 삭제)
+    // 토큰 만료 or 에러 (로그인 화면으로 이동, TokenAuthenticator가 토큰 삭제 완료)
     data object TokenExpired : AutoLoginResult
-    
-    // 네트워크 에러 (재시도해야 함)
-    data class NetworkError(val message: String) : AutoLoginResult
 }
