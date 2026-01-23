@@ -16,6 +16,6 @@ data class OnboardingRequest(
     val preferredExerciseText: String,
     val lifestyleType: String,
     val remindEnabled: Boolean,
-    val checkInEnabled: Boolean,
+    val checkinEnabled: Boolean,
     val reviewEnabled: Boolean
 )

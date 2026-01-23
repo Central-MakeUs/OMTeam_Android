@@ -13,7 +13,7 @@ data class OnboardingInfo(
     val preferredExerciseText: String,
     val lifestyleType: LifestyleType,
     val remindEnabled: Boolean,
-    val checkInEnabled: Boolean,
+    val checkinEnabled: Boolean,
     val reviewEnabled: Boolean
 )
 

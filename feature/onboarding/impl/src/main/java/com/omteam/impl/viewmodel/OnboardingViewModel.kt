@@ -130,7 +130,7 @@ class OnboardingViewModel @Inject constructor(
                     preferredExerciseText = data.favoriteExercise,
                     lifestyleType = parseLifestyleType(data.pattern),
                     remindEnabled = data.pushPermissionGranted,
-                    checkInEnabled = data.pushPermissionGranted,
+                    checkinEnabled = data.pushPermissionGranted,
                     reviewEnabled = data.pushPermissionGranted
                 )
 

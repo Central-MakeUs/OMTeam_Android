@@ -145,7 +145,7 @@ class AuthRepositoryImpl @Inject constructor(
                 preferredExerciseText = onboardingInfo.preferredExerciseText,
                 lifestyleType = onboardingInfo.lifestyleType.name,
                 remindEnabled = onboardingInfo.remindEnabled,
-                checkInEnabled = onboardingInfo.checkInEnabled,
+                checkinEnabled = onboardingInfo.checkinEnabled,
                 reviewEnabled = onboardingInfo.reviewEnabled
             )
 
