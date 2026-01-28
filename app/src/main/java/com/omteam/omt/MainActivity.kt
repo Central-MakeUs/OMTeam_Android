@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.omteam.api.LoginNavKey
@@ -38,7 +37,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: AutoLoginViewModel by viewModels()
+    private val loginViewModel: com.omteam.impl.LoginViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +52,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             OMTeamTheme {
                 val autoLoginState by viewModel.autoLoginState.collectAsStateWithLifecycle()
-                
+
                 // 자동 로그인 상태 따라 초기 화면 결정
                 val initialNavKey = when (autoLoginState) {
-                    MainViewModel.AutoLoginState.Checking -> null // TODO : 로딩 화면은 뭘로 보여주나?
-                    MainViewModel.AutoLoginState.NeedLogin -> LoginNavKey
-                    MainViewModel.AutoLoginState.NeedOnboarding -> OnboardingNavKey(step = 1)
-                    MainViewModel.AutoLoginState.NavigateToMain -> MainNavKey
+                    AutoLoginViewModel.AutoLoginState.Checking -> null // TODO : 로딩 화면은 뭘로 보여주나?
+                    AutoLoginViewModel.AutoLoginState.NeedLogin -> LoginNavKey
+                    AutoLoginViewModel.AutoLoginState.NeedOnboarding -> OnboardingNavKey(step = 1)
+                    AutoLoginViewModel.AutoLoginState.NavigateToMain -> MainNavKey
                 }
-                
+
                 // 로딩 중이면 로딩 화면 표시
                 if (initialNavKey == null) {
                     Box(
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
 
                     return@OMTeamTheme
                 }
-                
+
                 val backStackState = remember { mutableStateOf(listOf(initialNavKey)) }
                 val navigator = remember { AppNavigator(backStackState) }
 
@@ -116,7 +116,12 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
 
-                            mainEntry()
+                            mainEntry(
+                                onSignOut = {
+                                    loginViewModel.logout()
+                                    navigator.navigateToLogin()
+                                }
+                            )
                         },
                         modifier = Modifier.padding(innerPadding),
                     )
@@ -125,7 +130,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

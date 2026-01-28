@@ -36,7 +36,10 @@ import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
 @Composable
-fun MyPageScreen(modifier: Modifier = Modifier) {
+fun MyPageScreen(
+    modifier: Modifier = Modifier,
+    onSignOut: () -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -183,6 +186,12 @@ fun MyPageScreen(modifier: Modifier = Modifier) {
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.other),
             onClick = { Timber.d("## 기타 클릭") },
+        )
+        MyPageMenuDivider()
+
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.logout),
+            onClick = onSignOut,
             showDivider = false
         )
     }

@@ -34,8 +34,7 @@ import com.omteam.omt.core.designsystem.R
 fun LoginScreen(
     modifier: Modifier = Modifier,
     onKakaoLogin: () -> Unit = {},
-    onGoogleLogin: () -> Unit = {},
-    onSignOut: () -> Unit = {},
+    onGoogleLogin: () -> Unit = {}
 ) {
     Box(
         modifier = modifier.fillMaxSize()
@@ -75,17 +74,6 @@ fun LoginScreen(
                 .padding(bottom = dp52),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // TODO : 로그아웃 기능 구현 시 제거
-            OMTeamSnsButton(
-                iconRes = R.drawable.kakao_symbol,
-                text = "SNS 로그아웃 (제거예정)",
-                onClick = onSignOut,
-                backgroundColor = Color.Gray,
-            )
-
-            Spacer(modifier = Modifier.height(dp12))
-            // TODO : 로그아웃 기능 구현 시 제거
-
             OMTeamSnsButton(
                 iconRes = R.drawable.kakao_symbol,
                 text = stringResource(com.omteam.login.impl.R.string.login_with_kakao),

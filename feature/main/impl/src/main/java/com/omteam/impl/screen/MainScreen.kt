@@ -27,7 +27,8 @@ import com.omteam.impl.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    onSignOut: () -> Unit = {}
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
@@ -45,7 +46,7 @@ fun MainScreen(
                 0 -> HomeScreen(viewModel = viewModel)
                 1 -> ChatScreen()
                 2 -> ReportScreen()
-                3 -> MyPageScreen()
+                3 -> MyPageScreen(onSignOut = onSignOut)
             }
         }
 

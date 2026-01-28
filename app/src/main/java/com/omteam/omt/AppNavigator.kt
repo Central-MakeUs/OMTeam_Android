@@ -57,4 +57,11 @@ class AppNavigator(
     fun navigateToMain() {
         backStackState.value = listOf(MainNavKey)
     }
+    
+    /**
+     * 로그아웃 시 모든 스택 제거 후 로그인 화면 이동
+     */
+    fun navigateToLogin() {
+        backStackState.value = listOf(LoginNavKey)
+    }
 }
