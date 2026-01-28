@@ -50,7 +50,7 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.character_normal),
-                contentDescription = null,
+                contentDescription = "로그인 화면 캐릭터",
                 modifier = Modifier.size(dp200)
             )
 

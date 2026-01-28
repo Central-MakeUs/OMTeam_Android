@@ -14,15 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.dp1
-import com.omteam.designsystem.foundation.dp10
-import com.omteam.designsystem.foundation.dp14
-import com.omteam.designsystem.foundation.dp64
-import com.omteam.designsystem.theme.Gray09
-import com.omteam.designsystem.theme.Green01
-import com.omteam.designsystem.theme.Green04
-import com.omteam.designsystem.theme.GreenSub03Card
-import com.omteam.designsystem.theme.PaperlogyType
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 
 @Composable
 fun OMTeamCard(
@@ -43,7 +36,7 @@ fun OMTeamCard(
             )
             .border(
                 width = dp1,
-                color = GreenSub03Card,  // #B5F5E5
+                color = Green03,
                 shape = RoundedCornerShape(dp10)
             )
             .clickable { onClick() }
