@@ -13,7 +13,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class AutoLoginViewModel @Inject constructor(
     private val checkAutoLoginUseCase: CheckAutoLoginUseCase
 ) : ViewModel() {
     

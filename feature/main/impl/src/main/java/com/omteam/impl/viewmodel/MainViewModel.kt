@@ -78,6 +78,16 @@ class MainViewModel @Inject constructor() : ViewModel() {
     }
 
     /**
+     * 탭 인덱스를 초기값(0 - HOME)으로 리셋
+     *
+     * [com.omteam.impl.entry.mainEntry] 에서 호출해 로그아웃 후 재로그인 시 홈 화면부터 시작하게 함
+     */
+    fun resetTabIndex() {
+        _selectedTabIndex.value = 0
+        Timber.d("## 탭 인덱스 초기화")
+    }
+
+    /**
      * 날짜를 "yyyy M월 n주" 형식으로 변환
      */
     private fun formatWeekDisplayText(date: LocalDate): String {

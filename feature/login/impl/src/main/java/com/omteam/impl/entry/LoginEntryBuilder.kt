@@ -32,8 +32,7 @@ fun EntryProviderScope<NavKey>.loginEntry(
 
         LoginScreen(
             onKakaoLogin = { loginViewModel.loginWithKakao(context) },
-            onGoogleLogin = { loginViewModel.loginWithGoogle(context) },
-            onSignOut = { loginViewModel.logout() }
+            onGoogleLogin = { loginViewModel.loginWithGoogle(context) }
         )
 
         val loginState by loginViewModel.loginState.collectAsState()
