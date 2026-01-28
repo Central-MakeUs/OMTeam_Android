@@ -119,7 +119,7 @@ class OnboardingViewModel @Inject constructor(
             try {
                 val data = _onboardingData.value
 
-                // OnboardingData를 OnboardingInfo로 변환
+                // OnboardingData -> OnboardingInfo 변환
                 val onboardingInfo = OnboardingInfo(
                     nickname = data.nickname,
                     appGoalText = data.goal,
@@ -133,6 +133,7 @@ class OnboardingViewModel @Inject constructor(
                     checkinEnabled = data.pushPermissionGranted,
                     reviewEnabled = data.pushPermissionGranted
                 )
+                Timber.d("## 온보딩 정보 제출 전 : $onboardingInfo")
 
                 val result = authRepository.submitOnboarding(onboardingInfo)
 
@@ -162,21 +163,27 @@ class OnboardingViewModel @Inject constructor(
 
     /**
      * 운동 가능 시작 시간 파싱 (HH:mm)
-     *
-     * api 요청값 스펙 정해지면 구현
      */
-    private fun parseStartTime(time: String): String {
-        // TODO: 실제 시간 파싱 로직 구현
-        return "18:30"
-    }
+    private fun parseStartTime(time: String): String =
+        when {
+            time.contains("18:00 이전") -> "00:00"
+            time.contains("18:00 이후") -> "18:00"
+            time.contains("19:00 이후") -> "19:00"
+            time.contains("20:00 이후") -> "20:00"
+            else -> "18:00"
+        }
 
     /**
      * 운동 가능 종료 시간 파싱 (HH:mm)
      */
-    private fun parseEndTime(time: String): String {
-        // TODO: 실제 시간 파싱 로직 구현
-        return "22:00"
-    }
+    private fun parseEndTime(time: String): String =
+        when {
+            time.contains("18:00 이전") -> "17:59"
+            time.contains("18:00 이후") -> "23:59"
+            time.contains("19:00 이후") -> "23:59"
+            time.contains("20:00 이후") -> "23:59"
+            else -> "23:59"
+        }
 
     /**
      * 미션 시간을 분 단위로 파싱
