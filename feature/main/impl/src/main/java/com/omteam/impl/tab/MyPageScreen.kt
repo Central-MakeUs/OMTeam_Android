@@ -183,6 +183,12 @@ fun MyPageScreen(modifier: Modifier = Modifier) {
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.other),
             onClick = { Timber.d("## 기타 클릭") },
+        )
+        MyPageMenuDivider()
+
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.logout),
+            onClick = { Timber.d("## 로그아웃 클릭") },
             showDivider = false
         )
     }
