@@ -153,7 +153,6 @@ class AuthRepositoryImpl @Inject constructor(
 
             val data = response.data
             if (response.success && data != null) {
-                Timber.d("## 온보딩 정보 제출 성공")
                 Result.success(data.toDomain())
             } else {
                 val errorMessage = response.error?.message ?: "온보딩 정보 제출 실패"

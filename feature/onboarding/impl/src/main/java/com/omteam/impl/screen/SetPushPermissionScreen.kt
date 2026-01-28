@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.impl.viewmodel.OnboardingViewModel
 import com.omteam.impl.viewmodel.SubmitState
+import timber.log.Timber
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -49,7 +50,7 @@ fun SetPushPermissionScreen(
     val grantText = stringResource(R.string.grant)
     val notGrantText = stringResource(R.string.not_grant)
 
-    // submitState 관찰 및 처리
+    // 온보딩 값 제출 상태 관찰
     LaunchedEffect(submitState) {
         when (submitState) {
             is SubmitState.Success -> {
