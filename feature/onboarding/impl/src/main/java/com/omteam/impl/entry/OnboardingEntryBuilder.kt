@@ -38,7 +38,8 @@ fun EntryProviderScope<NavKey>.onboardingEntry(
             onBack = {
                 // 이전 온보딩 화면 이동
                 onNavigateBack()
-            }
+            },
+            onNavigateToMain = onNavigateToMain
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.omteam.network.interceptor
 
 import com.omteam.domain.repository.AuthRepository
+import dagger.Lazy
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -21,7 +22,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class TokenAuthenticator @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: Lazy<AuthRepository>
 ) : Authenticator {
 
     // 동시성 제어용 Mutex
@@ -36,7 +37,7 @@ class TokenAuthenticator @Inject constructor(
             Timber.e("## [TokenAuthenticator] 토큰 갱신 API 실패 → 재시도 중단, 로그아웃 처리")
             // 토큰 삭제 후 null 반환 -> 로그아웃 처리
             runBlocking {
-                authRepository.clearTokens()
+                authRepository.get().clearTokens()
             }
 
             return null
@@ -57,7 +58,7 @@ class TokenAuthenticator @Inject constructor(
         return runBlocking {
             mutex.withLock {
                 // 다른 요청에서 토큰을 갱신했는지 확인 (중복 갱신 방지)
-                val currentToken = authRepository.getCurrentAccessToken()
+                val currentToken = authRepository.get().getCurrentAccessToken()
                 if (currentToken != null && currentToken != requestToken) {
                     // 이미 다른 요청이 토큰 갱신 → 저장된 새 토큰으로 재시도
                     Timber.d("## [TokenAuthenticator] 이미 갱신됨 → 새 토큰으로 재시도")
@@ -68,7 +69,7 @@ class TokenAuthenticator @Inject constructor(
                 }
 
                 Timber.d("## [TokenAuthenticator] 토큰 갱신 시작")
-                val result = authRepository.refreshToken()
+                val result = authRepository.get().refreshToken()
                 result.fold(
                     onSuccess = { loginResult ->
                         Timber.d("## [TokenAuthenticator] 토큰 갱신 성공 → 요청 재시도")
@@ -83,7 +84,7 @@ class TokenAuthenticator @Inject constructor(
                         Timber.e("## [TokenAuthenticator] 토큰 갱신 실패 - ${error.message}")
 
                         // 갱신 실패 시 토큰 삭제해서 로그아웃 처리
-                        authRepository.clearTokens()
+                        authRepository.get().clearTokens()
                         null
                     }
                 )
