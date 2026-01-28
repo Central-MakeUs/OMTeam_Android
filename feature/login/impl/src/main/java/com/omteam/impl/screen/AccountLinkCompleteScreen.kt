@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
@@ -49,6 +49,8 @@ fun AccountLinkCompleteScreen(
                 .padding(horizontal = dp20),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.weight(1f))
+
             Box(
                 modifier = Modifier
                     .size(dp200)
@@ -90,11 +92,15 @@ fun AccountLinkCompleteScreen(
                 fontSize = 15.sp
             )
 
-            Spacer(modifier = Modifier.height(dp16))
+            Spacer(modifier = Modifier.weight(1f))
 
-            Button(onClick = onNavigateToOnboarding) {
-                Text("온보딩 화면 이동 (제거예정)")
-            }
+            OMTeamButton(
+                text = "OMT 시작하기",
+                onClick = onNavigateToOnboarding,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = dp20)
+            )
         }
     }
 }
