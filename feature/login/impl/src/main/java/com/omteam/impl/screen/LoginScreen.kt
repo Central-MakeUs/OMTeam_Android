@@ -1,5 +1,6 @@
 package com.omteam.impl.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +24,7 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.Gray05
 import com.omteam.designsystem.theme.Gray09
+import com.omteam.designsystem.theme.Green02
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.designsystem.theme.PretendardType
 import com.omteam.designsystem.theme.Yellow14
@@ -36,6 +39,7 @@ fun LoginScreen(
 ) {
     Box(
         modifier = modifier.fillMaxSize()
+            .background(Green02)
     ) {
         Column(
             modifier = Modifier
@@ -44,13 +48,10 @@ fun LoginScreen(
                 .padding(horizontal = dp20),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(dp200)
-                    .background(
-                        color = Gray05,
-                        shape = CircleShape
-                    )
+            Image(
+                painter = painterResource(id = R.drawable.character_normal),
+                contentDescription = "로그인 화면 캐릭터",
+                modifier = Modifier.size(dp200)
             )
 
             Spacer(modifier = Modifier.height(dp48))
