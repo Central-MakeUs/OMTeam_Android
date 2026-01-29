@@ -1,4 +1,4 @@
-package com.omteam.domain.model
+package com.omteam.domain.model.auth
 
 data class UserInfo(
     val id: Long,

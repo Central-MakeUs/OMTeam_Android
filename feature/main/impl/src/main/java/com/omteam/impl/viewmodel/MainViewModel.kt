@@ -2,7 +2,7 @@ package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omteam.domain.model.DailyMissionStatus
+import com.omteam.domain.model.mission.DailyMissionStatus
 import com.omteam.domain.repository.MissionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

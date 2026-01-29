@@ -3,7 +3,7 @@ package com.omteam.data.repository
 import com.omteam.data.mapper.toDomain
 import com.omteam.data.util.ErrorInfo
 import com.omteam.data.util.safeApiCall
-import com.omteam.domain.model.DailyMissionStatus
+import com.omteam.domain.model.mission.DailyMissionStatus
 import com.omteam.domain.repository.MissionRepository
 import com.omteam.network.api.MissionApiService
 import kotlinx.coroutines.flow.Flow

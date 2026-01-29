@@ -1,16 +1,16 @@
 package com.omteam.data.mapper
 
-import com.omteam.domain.model.CurrentMission
-import com.omteam.domain.model.DailyMissionStatus
-import com.omteam.domain.model.Mission
-import com.omteam.domain.model.MissionResult
-import com.omteam.domain.model.MissionResultType
-import com.omteam.domain.model.MissionStatus
-import com.omteam.domain.model.MissionType
-import com.omteam.network.dto.CurrentMissionDto
-import com.omteam.network.dto.DailyMissionStatusData
-import com.omteam.network.dto.MissionDto
-import com.omteam.network.dto.MissionResultDto
+import com.omteam.domain.model.mission.CurrentMission
+import com.omteam.domain.model.mission.DailyMissionStatus
+import com.omteam.domain.model.mission.Mission
+import com.omteam.domain.model.mission.MissionResult
+import com.omteam.domain.model.mission.MissionResultType
+import com.omteam.domain.model.mission.MissionStatus
+import com.omteam.domain.model.mission.MissionType
+import com.omteam.network.dto.mission.CurrentMissionDto
+import com.omteam.network.dto.mission.DailyMissionStatusData
+import com.omteam.network.dto.mission.MissionDto
+import com.omteam.network.dto.mission.MissionResultDto
 import java.time.LocalDate
 
 /**

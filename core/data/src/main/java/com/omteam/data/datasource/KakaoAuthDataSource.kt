@@ -1,7 +1,7 @@
 package com.omteam.data.datasource
 
 import com.kakao.sdk.user.UserApiClient
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.UserInfo
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

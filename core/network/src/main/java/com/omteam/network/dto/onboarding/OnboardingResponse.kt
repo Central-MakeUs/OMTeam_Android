@@ -1,12 +1,19 @@
-package com.omteam.network.dto
+package com.omteam.network.dto.onboarding
 
 import kotlinx.serialization.Serializable
 
 /**
- * 온보딩 정보 제출 요청
+ * 온보딩 정보 조회 응답
  */
 @Serializable
-data class OnboardingRequest(
+data class OnboardingResponse(
+    val success: Boolean,
+    val data: OnboardingData? = null,
+    val error: ApiError? = null
+)
+
+@Serializable
+data class OnboardingData(
     val nickname: String,
     val appGoalText: String,
     val workTimeType: String,
@@ -18,4 +25,10 @@ data class OnboardingRequest(
     val remindEnabled: Boolean,
     val checkinEnabled: Boolean,
     val reviewEnabled: Boolean
+)
+
+@Serializable
+data class ApiError(
+    val code: String,
+    val message: String
 )

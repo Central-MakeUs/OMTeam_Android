@@ -1,6 +1,6 @@
 package com.omteam.network.api
 
-import com.omteam.network.dto.DailyMissionStatusResponse
+import com.omteam.network.dto.mission.DailyMissionStatusResponse
 import retrofit2.http.GET
 
 interface MissionApiService {

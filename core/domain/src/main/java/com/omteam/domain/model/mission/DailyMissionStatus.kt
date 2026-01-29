@@ -1,4 +1,4 @@
-package com.omteam.domain.model
+package com.omteam.domain.model.mission
 
 import java.time.LocalDate
 
@@ -24,9 +24,9 @@ data class DailyMissionStatus(
 /**
  * 현재 미션 정보
  * 
- * @property recommendedMissionId 추천 미션 ID
+ * @property recommendedMissionId 추천 미션 id
  * @property missionDate 미션 날짜
- * @property status 미션 상태 (예: RECOMMENDED)
+ * @property status 미션 상태 (RECOMMENDED)
  * @property mission 미션 상세 정보
  */
 data class CurrentMission(
@@ -39,9 +39,9 @@ data class CurrentMission(
 /**
  * 미션 결과 정보
  * 
- * @property id 결과 ID
+ * @property id
  * @property missionDate 미션 날짜
- * @property result 미션 결과 (성공/실패)
+ * @property result 미션 결과 (성공 / 실패)
  * @property failureReason 실패 사유 (실패한 경우)
  * @property mission 미션 상세 정보
  */
@@ -56,9 +56,9 @@ data class MissionResult(
 /**
  * 미션 상세 정보
  * 
- * @property id 미션 ID
+ * @property id
  * @property name 미션 이름
- * @property type 미션 타입 (예: EXERCISE)
+ * @property type 미션 타입 (EXERCISE)
  * @property difficulty 난이도
  * @property estimatedMinutes 예상 소요 시간 (분)
  * @property estimatedCalories 예상 소모 칼로리
