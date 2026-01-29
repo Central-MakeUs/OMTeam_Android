@@ -2,7 +2,6 @@ package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omteam.domain.model.mission.DailyMissionStatus
 import com.omteam.domain.repository.MissionRepository
 import com.omteam.domain.usecase.GetCharacterInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,75 +18,9 @@ import java.util.Locale
 import javax.inject.Inject
 
 /**
- * 사과 상태를 나타내는 타입
- */
-enum class AppleStatus {
-    DEFAULT,  // 기본 상태
-    SUCCESS,  // 성공
-    FAILED    // 실패
-}
-
-/**
- * 일별 사과 상태 데이터
- */
-data class DailyAppleData(
-    val date: LocalDate,
-    val dayOfMonth: Int,
-    val status: AppleStatus
-)
-
-/**
- * 일일 미션 UI 상태
- */
-sealed class DailyMissionUiState {
-    /**
-     * 초기 상태. 아직 로드하지 않음
-     */
-    data object Idle : DailyMissionUiState()
-
-    /**
-     * 로딩 중
-     */
-    data object Loading : DailyMissionUiState()
-
-    /**
-     * 로드 성공
-     */
-    data class Success(val data: DailyMissionStatus) : DailyMissionUiState()
-
-    /**
-     * 로드 실패
-     */
-    data class Error(val message: String) : DailyMissionUiState()
-}
-
-/**
- * 캐릭터 정보 UI 상태
- */
-sealed class CharacterUiState {
-    /**
-     * 초기 상태. 아직 로드하지 않음
-     */
-    data object Idle : CharacterUiState()
-    
-    /**
-     * 로딩 중
-     */
-    data object Loading : CharacterUiState()
-    
-    /**
-     * 로드 성공
-     */
-    data class Success(val data: com.omteam.domain.model.character.CharacterInfo) : CharacterUiState()
-    
-    /**
-     * 로드 실패
-     */
-    data class Error(val message: String) : CharacterUiState()
-}
-
-/**
- * [com.omteam.impl.screen.MainScreen]에서 쓰는 뷰모델
+ * [com.omteam.impl.screen.MainScreen], [com.omteam.impl.tab.HomeScreen]에서 쓰는 뷰모델
+ *
+ * 일일 미션, 캐릭터 정보 API 호출 결과, MainScreen 탭 인덱스, 날짜 값 관리
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -225,13 +158,6 @@ class MainViewModel @Inject constructor(
                 )
             }
     }
-
-    /**
-     * 미션 상태를 Idle로 초기화
-     */
-    fun resetMissionState() {
-        _dailyMissionUiState.value = DailyMissionUiState.Idle
-    }
     
     /**
      * 캐릭터 정보 조회
@@ -252,13 +178,6 @@ class MainViewModel @Inject constructor(
                     }
                 )
             }
-    }
-    
-    /**
-     * 캐릭터 상태를 Idle로 초기화
-     */
-    fun resetCharacterState() {
-        _characterUiState.value = CharacterUiState.Idle
     }
 
 }
