@@ -36,6 +36,31 @@ data class DailyAppleData(
 )
 
 /**
+ * 일일 미션 UI 상태
+ */
+sealed class DailyMissionUiState {
+    /**
+     * 초기 상태. 아직 로드하지 않음
+     */
+    data object Idle : DailyMissionUiState()
+
+    /**
+     * 로딩 중
+     */
+    data object Loading : DailyMissionUiState()
+
+    /**
+     * 로드 성공
+     */
+    data class Success(val data: DailyMissionStatus) : DailyMissionUiState()
+
+    /**
+     * 로드 실패
+     */
+    data class Error(val message: String) : DailyMissionUiState()
+}
+
+/**
  * [com.omteam.impl.screen.MainScreen]에서 쓰는 뷰모델
  */
 @HiltViewModel
@@ -51,17 +76,9 @@ class MainViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
     
-    // 일일 미션 상태
-    private val _dailyMissionStatus = MutableStateFlow<DailyMissionStatus?>(null)
-    val dailyMissionStatus: StateFlow<DailyMissionStatus?> = _dailyMissionStatus.asStateFlow()
-    
-    // 미션 로딩 상태
-    private val _isLoadingMission = MutableStateFlow(false)
-    val isLoadingMission: StateFlow<Boolean> = _isLoadingMission.asStateFlow()
-    
-    // 미션 에러 메시지
-    private val _missionError = MutableStateFlow<String?>(null)
-    val missionError: StateFlow<String?> = _missionError.asStateFlow()
+    // 일일 미션 UI State
+    private val _dailyMissionUiState = MutableStateFlow<DailyMissionUiState>(DailyMissionUiState.Idle)
+    val dailyMissionUiState: StateFlow<DailyMissionUiState> = _dailyMissionUiState.asStateFlow()
 
     // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
     val weekDisplayText: StateFlow<String> = MutableStateFlow("").apply {
@@ -150,30 +167,29 @@ class MainViewModel @Inject constructor(
     /**
      * 일일 미션 상태 조회
      */
-    fun fetchDailyMissionStatus() {
-        viewModelScope.launch {
-            _isLoadingMission.value = true
-            _missionError.value = null
+    fun fetchDailyMissionStatus() = viewModelScope.launch {
+        _dailyMissionUiState.value = DailyMissionUiState.Loading
 
-            missionRepository.getDailyMissionStatus()
-                .collect { result ->
-                    result.onSuccess { status ->
+        missionRepository.getDailyMissionStatus()
+            .collect { result ->
+                _dailyMissionUiState.value = result.fold(
+                    onSuccess = { status ->
                         Timber.d("## 일일 미션 상태 조회 성공 : $status")
-                        _dailyMissionStatus.value = status
-                    }.onFailure { error ->
+                        DailyMissionUiState.Success(status)
+                    },
+                    onFailure = { error ->
                         Timber.e("## 일일 미션 상태 조회 실패 : ${error.message}")
-                        _missionError.value = error.message
+                        DailyMissionUiState.Error(error.message ?: "알 수 없는 오류")
                     }
-                    _isLoadingMission.value = false
-                }
-        }
+                )
+            }
     }
 
     /**
-     * 에러 메시지 초기화
+     * 미션 상태를 Idle로 초기화
      */
-    fun clearMissionError() {
-        _missionError.value = null
+    fun resetMissionState() {
+        _dailyMissionUiState.value = DailyMissionUiState.Idle
     }
 
 }
