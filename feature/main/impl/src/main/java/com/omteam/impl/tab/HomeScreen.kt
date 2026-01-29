@@ -21,6 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -32,8 +35,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.AppleStatus
 import com.omteam.impl.viewmodel.DailyAppleData
+import com.omteam.impl.viewmodel.DailyMissionUiState
 import com.omteam.impl.viewmodel.MainViewModel
 import com.omteam.omt.core.designsystem.R
 import java.time.LocalDate
@@ -43,6 +48,13 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val dailyMissionUiState by viewModel.dailyMissionUiState.collectAsStateWithLifecycle()
+
+    // 화면 진입 시 미션 상태 조회
+    LaunchedEffect(Unit) {
+        viewModel.fetchDailyMissionStatus()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -105,7 +117,8 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(dp9))
 
                     Box(
-                        modifier = Modifier.background(Yellow02)
+                        modifier = Modifier
+                            .background(Yellow02)
                             .padding(
                                 vertical = dp6,
                                 horizontal = dp7
@@ -188,39 +201,14 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = dp32),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(dp81)
-                        .background(
-                            color = ErrorBottomSheetBackground,
-                            shape = CircleShape
-                        )
+            when (val state = dailyMissionUiState) {
+                is DailyMissionUiState.Idle -> MissionEmptyView(
+                    title = "아직 미션이 생성되지 않았어요!",
+                    description = "개인 설정을 완료하여 미션을 받아보세요."
                 )
-
-                Spacer(modifier = Modifier.width(dp16))
-
-                Column(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(vertical = 21.5.dp)
-                ) {
-                    OMTeamText(
-                        text = "아직 미션이 생성되지 않았어요!",
-                        style = PaperlogyType.body01
-                    )
-
-                    Spacer(modifier = Modifier.height(dp6))
-
-                    OMTeamText(
-                        text = "개인 설정을 완료하여 미션을 받아보세요.",
-                        style = PretendardType.body04_3,
-                        color = Gray09,
-                    )
-                }
+                is DailyMissionUiState.Loading -> MissionLoadingView()
+                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = state.data)
+                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = state.message)
             }
 
             Spacer(modifier = Modifier.height(dp64))
@@ -248,7 +236,8 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(dp24))
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(start = dp32),
             ) {
                 Box(

@@ -175,7 +175,17 @@ class MainViewModel @Inject constructor(
                 _dailyMissionUiState.value = result.fold(
                     onSuccess = { status ->
                         Timber.d("## 일일 미션 상태 조회 성공 : $status")
-                        DailyMissionUiState.Success(status)
+                        when {
+                            status.currentMission != null || status.missionResult != null -> {
+                                // 진행 중 or 완료된 미션 있음
+                                DailyMissionUiState.Success(status)
+                            }
+                            else -> {
+                                // 미션 데이터 없음 (아직 생성되지 않음)
+                                Timber.d("## 미션 데이터 없음 - Idle 상태 유지")
+                                DailyMissionUiState.Idle
+                            }
+                        }
                     },
                     onFailure = { error ->
                         Timber.e("## 일일 미션 상태 조회 실패 : ${error.message}")
