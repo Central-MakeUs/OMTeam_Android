@@ -5,66 +5,43 @@ import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
 /**
- * API 에러 정보의 공통 인터페이스
- */
-interface ErrorInfo {
-    val code: String
-    val message: String
-}
-
-/**
- * API 호출 결과를 나타내는 공통 구조
+ * API 호출 처리 후 Flow<Result<Domain>>로 반환
  * 
- * 모든 API 응답이 { success, data, error } 형태를 따름
- */
-data class ApiResult<T, E : ErrorInfo?>(
-    val success: Boolean,
-    val data: T?,
-    val error: E
-)
-
-/**
- * API 호출을 안전하게 처리하고 Flow<Result<Domain>>로 반환
+ * API 응답이 { success, data, error } 구조인 경우 사용
  * 
- * 서버 API 응답이 { success, data, error } 구조를 따르는 경우 사용
- * 
- * @param logTag 로그에 표시될 태그 (예: "일일 미션 상태 조회")
- * @param defaultErrorMessage 에러 발생 시 기본 에러 메시지
- * @param apiCall API 호출 및 ApiResult 변환 람다
- * @param mapper 응답 데이터를 도메인 모델로 변환하는 함수
+ * @param logTag 로그에 표시될 태그
+ * @param defaultErrorMessage 에러 발생 시 표시할 기본 에러 메시지
+ * @param apiCall API 호출하는 suspend fun
+ * @param transform 응답 -> 도메인 모델 변환하는 함수
+ * @param getErrorInfo 응답에서 에러 정보 추출하는 함수
  * @return Flow<Result<Domain>> 도메인 모델을 감싼 Result Flow
  */
-fun <Data, Domain, E : ErrorInfo?> safeApiCall(
+fun <Response, Domain> safeApiCall(
     logTag: String,
-    defaultErrorMessage: String,
-    apiCall: suspend () -> ApiResult<Data, E>,
-    mapper: (Data) -> Domain
+    defaultErrorMessage: String = "알 수 없는 에러",
+    apiCall: suspend () -> Response,
+    transform: (Response) -> Domain?,
+    getErrorInfo: (Response) -> ErrorInfo
 ): Flow<Result<Domain>> = flow {
     try {
         Timber.d("## $logTag 시작")
-        
-        val result = apiCall()
-        val data = result.data
-        
-        if (result.success && data != null) {
-            Timber.d("## $logTag 성공")
-            emit(Result.success(mapper(data)))
+
+        val response = apiCall()
+        val domain = transform(response)
+
+        if (domain != null) {
+            emit(Result.success(domain))
         } else {
-            val errorMessage = result.error?.message ?: defaultErrorMessage
-            val errorCode = result.error?.code
-            Timber.e("## $logTag 실패 - $errorCode: $errorMessage")
+            val errorInfo = getErrorInfo(response)
+            val errorMessage = errorInfo.message ?: defaultErrorMessage
             emit(Result.failure(Exception(errorMessage)))
         }
     } catch (e: Exception) {
-        Timber.e(e, "## $logTag 예외 발생")
         emit(Result.failure(e))
     }
 }
 
-/**
- * Response를 ApiResult로 변환하는 헬퍼 함수
- * 
- * 모든 API Response 타입에서 공통적으로 사용 가능
- */
-fun <T, E : ErrorInfo?> toApiResult(success: Boolean, data: T?, error: E): ApiResult<T, E> =
-    ApiResult(success, data, error)
+data class ErrorInfo(
+    val code: String?,
+    val message: String?
+)
