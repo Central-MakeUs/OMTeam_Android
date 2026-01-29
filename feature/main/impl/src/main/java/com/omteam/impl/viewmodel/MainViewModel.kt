@@ -1,10 +1,14 @@
 package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.omteam.domain.model.DailyMissionStatus
+import com.omteam.domain.repository.MissionRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -35,7 +39,9 @@ data class DailyAppleData(
  * [com.omteam.impl.screen.MainScreen]에서 쓰는 뷰모델
  */
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val missionRepository: MissionRepository
+) : ViewModel() {
 
     // 현재 선택된 탭의 인덱스 (0 : HOME, 1 : CHAT, 2 : REPORT, 3 : MY PAGE)
     private val _selectedTabIndex = MutableStateFlow(0)
@@ -44,6 +50,18 @@ class MainViewModel @Inject constructor() : ViewModel() {
     // 리포트 화면에서 선택된 날짜 (기본값 : 오늘)
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+    
+    // 일일 미션 상태
+    private val _dailyMissionStatus = MutableStateFlow<DailyMissionStatus?>(null)
+    val dailyMissionStatus: StateFlow<DailyMissionStatus?> = _dailyMissionStatus.asStateFlow()
+    
+    // 미션 로딩 상태
+    private val _isLoadingMission = MutableStateFlow(false)
+    val isLoadingMission: StateFlow<Boolean> = _isLoadingMission.asStateFlow()
+    
+    // 미션 에러 메시지
+    private val _missionError = MutableStateFlow<String?>(null)
+    val missionError: StateFlow<String?> = _missionError.asStateFlow()
 
     // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
     val weekDisplayText: StateFlow<String> = MutableStateFlow("").apply {
@@ -128,4 +146,34 @@ class MainViewModel @Inject constructor() : ViewModel() {
             else -> AppleStatus.DEFAULT
         }
     }
+
+    /**
+     * 일일 미션 상태 조회
+     */
+    fun fetchDailyMissionStatus() {
+        viewModelScope.launch {
+            _isLoadingMission.value = true
+            _missionError.value = null
+
+            missionRepository.getDailyMissionStatus()
+                .collect { result ->
+                    result.onSuccess { status ->
+                        Timber.d("## 일일 미션 상태 조회 성공 : $status")
+                        _dailyMissionStatus.value = status
+                    }.onFailure { error ->
+                        Timber.e("## 일일 미션 상태 조회 실패 : ${error.message}")
+                        _missionError.value = error.message
+                    }
+                    _isLoadingMission.value = false
+                }
+        }
+    }
+
+    /**
+     * 에러 메시지 초기화
+     */
+    fun clearMissionError() {
+        _missionError.value = null
+    }
+
 }

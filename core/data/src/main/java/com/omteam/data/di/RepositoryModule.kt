@@ -1,7 +1,9 @@
 package com.omteam.data.di
 
 import com.omteam.data.repository.AuthRepositoryImpl
+import com.omteam.data.repository.MissionRepositoryImpl
 import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.MissionRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,4 +19,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindMissionRepository(
+        missionRepositoryImpl: MissionRepositoryImpl
+    ): MissionRepository
 }
