@@ -1,8 +1,10 @@
 package com.omteam.data.di
 
 import com.omteam.data.repository.AuthRepositoryImpl
+import com.omteam.data.repository.CharacterRepositoryImpl
 import com.omteam.data.repository.MissionRepositoryImpl
 import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.CharacterRepository
 import com.omteam.domain.repository.MissionRepository
 import dagger.Binds
 import dagger.Module
@@ -25,4 +27,10 @@ abstract class RepositoryModule {
     abstract fun bindMissionRepository(
         missionRepositoryImpl: MissionRepositoryImpl
     ): MissionRepository
+    
+    @Binds
+    @Singleton
+    abstract fun bindCharacterRepository(
+        characterRepositoryImpl: CharacterRepositoryImpl
+    ): CharacterRepository
 }

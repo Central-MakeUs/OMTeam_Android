@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.domain.model.mission.DailyMissionStatus
 import com.omteam.domain.repository.MissionRepository
+import com.omteam.domain.usecase.GetCharacterInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -61,11 +62,37 @@ sealed class DailyMissionUiState {
 }
 
 /**
+ * 캐릭터 정보 UI 상태
+ */
+sealed class CharacterUiState {
+    /**
+     * 초기 상태. 아직 로드하지 않음
+     */
+    data object Idle : CharacterUiState()
+    
+    /**
+     * 로딩 중
+     */
+    data object Loading : CharacterUiState()
+    
+    /**
+     * 로드 성공
+     */
+    data class Success(val data: com.omteam.domain.model.character.CharacterInfo) : CharacterUiState()
+    
+    /**
+     * 로드 실패
+     */
+    data class Error(val message: String) : CharacterUiState()
+}
+
+/**
  * [com.omteam.impl.screen.MainScreen]에서 쓰는 뷰모델
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val missionRepository: MissionRepository
+    private val missionRepository: MissionRepository,
+    private val getCharacterInfoUseCase: GetCharacterInfoUseCase
 ) : ViewModel() {
 
     // 현재 선택된 탭의 인덱스 (0 : HOME, 1 : CHAT, 2 : REPORT, 3 : MY PAGE)
@@ -79,6 +106,10 @@ class MainViewModel @Inject constructor(
     // 일일 미션 UI State
     private val _dailyMissionUiState = MutableStateFlow<DailyMissionUiState>(DailyMissionUiState.Idle)
     val dailyMissionUiState: StateFlow<DailyMissionUiState> = _dailyMissionUiState.asStateFlow()
+    
+    // 캐릭터 정보 UI State
+    private val _characterUiState = MutableStateFlow<CharacterUiState>(CharacterUiState.Idle)
+    val characterUiState: StateFlow<CharacterUiState> = _characterUiState.asStateFlow()
 
     // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
     val weekDisplayText: StateFlow<String> = MutableStateFlow("").apply {
@@ -200,6 +231,34 @@ class MainViewModel @Inject constructor(
      */
     fun resetMissionState() {
         _dailyMissionUiState.value = DailyMissionUiState.Idle
+    }
+    
+    /**
+     * 캐릭터 정보 조회
+     */
+    fun fetchCharacterInfo() = viewModelScope.launch {
+        _characterUiState.value = CharacterUiState.Loading
+
+        getCharacterInfoUseCase()
+            .collect { result ->
+                _characterUiState.value = result.fold(
+                    onSuccess = { characterInfo ->
+                        Timber.d("## 캐릭터 정보 조회 성공 : $characterInfo")
+                        CharacterUiState.Success(characterInfo)
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 캐릭터 정보 조회 실패 : ${error.message}")
+                        CharacterUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
+    }
+    
+    /**
+     * 캐릭터 상태를 Idle로 초기화
+     */
+    fun resetCharacterState() {
+        _characterUiState.value = CharacterUiState.Idle
     }
 
 }

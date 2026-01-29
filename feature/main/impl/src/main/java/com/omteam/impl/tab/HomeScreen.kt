@@ -37,6 +37,7 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.AppleStatus
+import com.omteam.impl.viewmodel.CharacterUiState
 import com.omteam.impl.viewmodel.DailyAppleData
 import com.omteam.impl.viewmodel.DailyMissionUiState
 import com.omteam.impl.viewmodel.MainViewModel
@@ -49,10 +50,11 @@ fun HomeScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val dailyMissionUiState by viewModel.dailyMissionUiState.collectAsStateWithLifecycle()
+    val characterUiState by viewModel.characterUiState.collectAsStateWithLifecycle()
 
-    // 화면 진입 시 미션 상태 조회
     LaunchedEffect(Unit) {
         viewModel.fetchDailyMissionStatus()
+        viewModel.fetchCharacterInfo()
     }
 
     Column(
@@ -101,7 +103,15 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    TextWithTriangle(text = "텍스트 예시 텍스트 예시 텍스트 예시")
+                    // 격려 메시지 표시
+                    when (val state = characterUiState) {
+                        is CharacterUiState.Success -> {
+                            TextWithTriangle(text = state.data.encouragementMessage)
+                        }
+                        else -> {
+                            TextWithTriangle(text = "오늘도 힘내세요!")
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(dp20))
 
@@ -116,19 +126,40 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(dp9))
 
-                    Box(
-                        modifier = Modifier
-                            .background(Yellow02)
-                            .padding(
-                                vertical = dp6,
-                                horizontal = dp7
-                            )
-                            .align(Alignment.Start)
-                    ) {
-                        OMTeamText(
-                            text = "LEVEL 02",
-                            style = PretendardType.homeLevelText
-                        )
+                    // 레벨 표시
+                    when (val state = characterUiState) {
+                        is CharacterUiState.Success -> {
+                            Box(
+                                modifier = Modifier
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
+                                    )
+                                    .align(Alignment.Start)
+                            ) {
+                                OMTeamText(
+                                    text = "LEVEL ${String.format("%02d", state.data.level)}",
+                                    style = PretendardType.homeLevelText
+                                )
+                            }
+                        }
+                        else -> {
+                            Box(
+                                modifier = Modifier
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
+                                    )
+                                    .align(Alignment.Start)
+                            ) {
+                                OMTeamText(
+                                    text = "LEVEL 01",
+                                    style = PretendardType.homeLevelText
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(dp8))
@@ -151,7 +182,10 @@ fun HomeScreen(
                                 )
                         ) {
                             // 진행률 표시
-                            val progress = 0.4f
+                            val progress = when (val state = characterUiState) {
+                                is CharacterUiState.Success -> state.data.experiencePercent / 100f
+                                else -> 0f
+                            }
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
@@ -165,14 +199,27 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.width(dp9))
 
-                        // 진척도 % 텍스트
-                        OMTeamText(
-                            text = "40%", // "${(progress * 100).toInt()}%"
-                            style = PretendardType.skipButton.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = Black
-                            )
-                        )
+                        // 진척도 %
+                        when (val state = characterUiState) {
+                            is CharacterUiState.Success -> {
+                                OMTeamText(
+                                    text = "${state.data.experiencePercent}%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
+                                    )
+                                )
+                            }
+                            else -> {
+                                OMTeamText(
+                                    text = "0%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }
