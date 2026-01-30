@@ -1,41 +1,35 @@
 package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.omteam.domain.repository.MissionRepository
+import com.omteam.domain.usecase.GetCharacterInfoUseCase
+import com.omteam.domain.usecase.GetWeeklyReportUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
 
 /**
- * 사과 상태를 나타내는 타입
- */
-enum class AppleStatus {
-    DEFAULT,  // 기본 상태
-    SUCCESS,  // 성공
-    FAILED    // 실패
-}
-
-/**
- * 일별 사과 상태 데이터
- */
-data class DailyAppleData(
-    val date: LocalDate,
-    val dayOfMonth: Int,
-    val status: AppleStatus
-)
-
-/**
- * [com.omteam.impl.screen.MainScreen]에서 쓰는 뷰모델
+ * [com.omteam.impl.screen.MainScreen], [com.omteam.impl.tab.HomeScreen]에서 쓰는 뷰모델
+ *
+ * 일일 미션, 캐릭터 정보 API 호출 결과, MainScreen 탭 인덱스, 날짜 값 관리
  */
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val missionRepository: MissionRepository,
+    private val getCharacterInfoUseCase: GetCharacterInfoUseCase,
+    private val getWeeklyReportUseCase: GetWeeklyReportUseCase
+) : ViewModel() {
 
     // 현재 선택된 탭의 인덱스 (0 : HOME, 1 : CHAT, 2 : REPORT, 3 : MY PAGE)
     private val _selectedTabIndex = MutableStateFlow(0)
@@ -44,6 +38,18 @@ class MainViewModel @Inject constructor() : ViewModel() {
     // 리포트 화면에서 선택된 날짜 (기본값 : 오늘)
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate: StateFlow<LocalDate> = _selectedDate.asStateFlow()
+    
+    // 일일 미션 UI State
+    private val _dailyMissionUiState = MutableStateFlow<DailyMissionUiState>(DailyMissionUiState.Idle)
+    val dailyMissionUiState: StateFlow<DailyMissionUiState> = _dailyMissionUiState.asStateFlow()
+    
+    // 캐릭터 정보 UI State
+    private val _characterUiState = MutableStateFlow<CharacterUiState>(CharacterUiState.Idle)
+    val characterUiState: StateFlow<CharacterUiState> = _characterUiState.asStateFlow()
+    
+    // 주간 리포트 UI State
+    private val _weeklyReportUiState = MutableStateFlow<WeeklyReportUiState>(WeeklyReportUiState.Idle)
+    val weeklyReportUiState: StateFlow<WeeklyReportUiState> = _weeklyReportUiState.asStateFlow()
 
     // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
     val weekDisplayText: StateFlow<String> = MutableStateFlow("").apply {
@@ -128,4 +134,93 @@ class MainViewModel @Inject constructor() : ViewModel() {
             else -> AppleStatus.DEFAULT
         }
     }
+
+    /**
+     * 일일 미션 상태 조회
+     */
+    fun fetchDailyMissionStatus() = viewModelScope.launch {
+        _dailyMissionUiState.value = DailyMissionUiState.Loading
+
+        missionRepository.getDailyMissionStatus()
+            .collect { result ->
+                _dailyMissionUiState.value = result.fold(
+                    onSuccess = { status ->
+                        Timber.d("## 일일 미션 상태 조회 성공 : $status")
+                        when {
+                            status.currentMission != null || status.missionResult != null -> {
+                                // 진행 중 or 완료된 미션 있음
+                                DailyMissionUiState.Success(status)
+                            }
+                            else -> {
+                                // 미션 데이터 없음 (아직 생성되지 않음)
+                                Timber.d("## 미션 데이터 없음 - Idle 상태 유지")
+                                DailyMissionUiState.Idle
+                            }
+                        }
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 일일 미션 상태 조회 실패 : ${error.message}")
+                        DailyMissionUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
+    }
+    
+    /**
+     * 캐릭터 정보 조회
+     */
+    fun fetchCharacterInfo() = viewModelScope.launch {
+        _characterUiState.value = CharacterUiState.Loading
+
+        getCharacterInfoUseCase()
+            .collect { result ->
+                _characterUiState.value = result.fold(
+                    onSuccess = { characterInfo ->
+                        Timber.d("## 캐릭터 정보 조회 성공 : $characterInfo")
+                        CharacterUiState.Success(characterInfo)
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 캐릭터 정보 조회 실패 : ${error.message}")
+                        CharacterUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
+    }
+    
+    /**
+     * 주간 리포트 조회
+     * 
+     * @param useSelectedDate true :  selectedDate가 속한 주의 월요일을 기준으로 조회,
+     *
+     * false : 서버에서 현재 주 기준으로 조회 (기본값: true)
+     */
+    fun fetchWeeklyReport(useSelectedDate: Boolean = true) = viewModelScope.launch {
+        _weeklyReportUiState.value = WeeklyReportUiState.Loading
+        
+        // true를 받은 경우 selectedDate가 속한 주의 월요일 계산
+        val weekStartDate = if (useSelectedDate) {
+            _selectedDate.value
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .format(DateTimeFormatter.ISO_LOCAL_DATE)
+        } else {
+            null
+        }
+        
+        Timber.d("## 주간 리포트 조회 시작 - weekStartDate: $weekStartDate")
+        
+        getWeeklyReportUseCase(weekStartDate)
+            .collect { result ->
+                _weeklyReportUiState.value = result.fold(
+                    onSuccess = { weeklyReport ->
+                        Timber.d("## 주간 리포트 조회 성공 : $weeklyReport")
+                        WeeklyReportUiState.Success(weeklyReport)
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 주간 리포트 조회 실패 : ${error.message}")
+                        WeeklyReportUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
+    }
+
 }

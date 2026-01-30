@@ -1,10 +1,10 @@
 package com.omteam.network.api
 
-import com.omteam.network.dto.LoginWithIdTokenRequest
-import com.omteam.network.dto.LoginWithIdTokenResponse
-import com.omteam.network.dto.OnboardingRequest
-import com.omteam.network.dto.OnboardingResponse
-import com.omteam.network.dto.RefreshTokenRequest
+import com.omteam.network.dto.auth.LoginWithIdTokenRequest
+import com.omteam.network.dto.auth.LoginWithIdTokenResponse
+import com.omteam.network.dto.onboarding.OnboardingRequest
+import com.omteam.network.dto.onboarding.OnboardingResponse
+import com.omteam.network.dto.auth.RefreshTokenRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

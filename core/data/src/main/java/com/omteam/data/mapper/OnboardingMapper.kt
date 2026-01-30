@@ -1,9 +1,9 @@
 package com.omteam.data.mapper
 
-import com.omteam.domain.model.LifestyleType
-import com.omteam.domain.model.OnboardingInfo
-import com.omteam.domain.model.WorkTimeType
-import com.omteam.network.dto.OnboardingData
+import com.omteam.domain.model.onboarding.LifestyleType
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.onboarding.WorkTimeType
+import com.omteam.network.dto.onboarding.OnboardingData
 
 fun OnboardingData.toDomain(): OnboardingInfo = OnboardingInfo(
     nickname = nickname,

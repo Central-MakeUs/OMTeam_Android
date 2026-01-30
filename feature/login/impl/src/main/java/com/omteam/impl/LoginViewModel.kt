@@ -5,13 +5,12 @@ import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.datastore.TokenDataStore
-import com.omteam.domain.model.LoginResult
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.LoginResult
+import com.omteam.domain.model.auth.UserInfo
 import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.LogoutUseCase
 import com.omteam.domain.usecase.LoginWithIdTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import androidx.credentials.ClearCredentialStateRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

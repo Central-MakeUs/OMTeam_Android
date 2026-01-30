@@ -7,7 +7,7 @@ import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.UserInfo
 import timber.log.Timber
 import javax.inject.Inject
 

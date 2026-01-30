@@ -2,9 +2,9 @@ package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.omteam.domain.model.LifestyleType
-import com.omteam.domain.model.OnboardingInfo
-import com.omteam.domain.model.WorkTimeType
+import com.omteam.domain.model.onboarding.LifestyleType
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.onboarding.WorkTimeType
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.impl.model.OnboardingData
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,7 +1,7 @@
 package com.omteam.data.mapper
 
 import com.kakao.sdk.user.model.User
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.UserInfo
 
 object UserInfoMapper {
     fun toDomain(kakaoUser: User): UserInfo = UserInfo(

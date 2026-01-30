@@ -1,6 +1,6 @@
 package com.omteam.domain.usecase
 
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.UserInfo
 import com.omteam.domain.repository.AuthRepository
 
 class GetUserInfoUseCase(

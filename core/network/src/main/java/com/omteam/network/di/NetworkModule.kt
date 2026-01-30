@@ -2,6 +2,9 @@ package com.omteam.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.omteam.network.api.AuthApiService
+import com.omteam.network.api.CharacterApiService
+import com.omteam.network.api.MissionApiService
+import com.omteam.network.api.ReportApiService
 import com.omteam.network.interceptor.TokenAuthenticator
 import com.omteam.network.interceptor.TokenInterceptor
 import com.omteam.omt.core.network.BuildConfig
@@ -73,4 +76,19 @@ object NetworkModule {
     @Singleton
     fun provideAuthApiService(retrofit: Retrofit): AuthApiService =
         retrofit.create(AuthApiService::class.java)
+    
+    @Provides
+    @Singleton
+    fun provideMissionApiService(retrofit: Retrofit): MissionApiService =
+        retrofit.create(MissionApiService::class.java)
+    
+    @Provides
+    @Singleton
+    fun provideCharacterApiService(retrofit: Retrofit): CharacterApiService =
+        retrofit.create(CharacterApiService::class.java)
+    
+    @Provides
+    @Singleton
+    fun provideReportApiService(retrofit: Retrofit): ReportApiService =
+        retrofit.create(ReportApiService::class.java)
 }

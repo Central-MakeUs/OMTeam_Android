@@ -1,6 +1,6 @@
 package com.omteam.domain.usecase
 
-import com.omteam.domain.model.LoginResult
+import com.omteam.domain.model.auth.LoginResult
 import com.omteam.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 

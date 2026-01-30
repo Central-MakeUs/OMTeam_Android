@@ -1,9 +1,13 @@
 package com.omteam.data.di
 
 import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.CharacterRepository
+import com.omteam.domain.repository.ReportRepository
 import com.omteam.domain.usecase.CheckAutoLoginUseCase
+import com.omteam.domain.usecase.GetCharacterInfoUseCase
 import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.GetUserInfoUseCase
+import com.omteam.domain.usecase.GetWeeklyReportUseCase
 import com.omteam.domain.usecase.LogoutUseCase
 import com.omteam.domain.usecase.LoginWithIdTokenUseCase
 import dagger.Module
@@ -45,4 +49,16 @@ object UseCaseModule {
     fun provideCheckAutoLoginUseCase(
         authRepository: AuthRepository
     ): CheckAutoLoginUseCase = CheckAutoLoginUseCase(authRepository)
+    
+    @Provides
+    @Singleton
+    fun provideGetCharacterInfoUseCase(
+        characterRepository: CharacterRepository
+    ): GetCharacterInfoUseCase = GetCharacterInfoUseCase(characterRepository)
+    
+    @Provides
+    @Singleton
+    fun provideGetWeeklyReportUseCase(
+        reportRepository: ReportRepository
+    ): GetWeeklyReportUseCase = GetWeeklyReportUseCase(reportRepository)
 }

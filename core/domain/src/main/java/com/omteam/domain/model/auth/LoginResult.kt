@@ -1,4 +1,4 @@
-package com.omteam.domain.model
+package com.omteam.domain.model.auth
 
 /**
  * @property accessToken 액세스 토큰

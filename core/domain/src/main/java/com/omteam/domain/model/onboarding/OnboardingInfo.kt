@@ -1,4 +1,4 @@
-package com.omteam.domain.model
+package com.omteam.domain.model.onboarding
 
 /**
  * 온보딩 정보

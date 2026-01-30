@@ -1,6 +1,6 @@
 package com.omteam.data.datasource
 
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.UserInfo
 
 /**
  * 인증 datasource 인터페이스

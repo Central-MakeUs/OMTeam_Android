@@ -21,6 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -32,10 +35,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.AppleStatus
+import com.omteam.impl.viewmodel.CharacterUiState
 import com.omteam.impl.viewmodel.DailyAppleData
+import com.omteam.impl.viewmodel.DailyMissionUiState
 import com.omteam.impl.viewmodel.MainViewModel
 import com.omteam.omt.core.designsystem.R
+import timber.log.Timber
 import java.time.LocalDate
 
 @Composable
@@ -43,6 +50,19 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel()
 ) {
+    val dailyMissionUiState by viewModel.dailyMissionUiState.collectAsStateWithLifecycle()
+    val characterUiState by viewModel.characterUiState.collectAsStateWithLifecycle()
+    val weeklyReportUiState by viewModel.weeklyReportUiState.collectAsStateWithLifecycle()
+    Timber.e("[HomeScreen] 주간 레포트 상태 : $weeklyReportUiState")
+
+    LaunchedEffect(Unit) {
+        viewModel.apply {
+            fetchDailyMissionStatus()
+            fetchCharacterInfo()
+            fetchWeeklyReport()
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -89,7 +109,15 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    TextWithTriangle(text = "텍스트 예시 텍스트 예시 텍스트 예시")
+                    // 격려 메시지 표시
+                    when (val state = characterUiState) {
+                        is CharacterUiState.Success -> {
+                            TextWithTriangle(text = state.data.encouragementMessage)
+                        }
+                        else -> {
+                            TextWithTriangle(text = "오늘도 힘내세요!")
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(dp20))
 
@@ -104,18 +132,40 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(dp9))
 
-                    Box(
-                        modifier = Modifier.background(Yellow02)
-                            .padding(
-                                vertical = dp6,
-                                horizontal = dp7
-                            )
-                            .align(Alignment.Start)
-                    ) {
-                        OMTeamText(
-                            text = "LEVEL 02",
-                            style = PretendardType.homeLevelText
-                        )
+                    // 레벨 표시
+                    when (val state = characterUiState) {
+                        is CharacterUiState.Success -> {
+                            Box(
+                                modifier = Modifier
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
+                                    )
+                                    .align(Alignment.Start)
+                            ) {
+                                OMTeamText(
+                                    text = "LEVEL ${String.format("%02d", state.data.level)}",
+                                    style = PretendardType.homeLevelText
+                                )
+                            }
+                        }
+                        else -> {
+                            Box(
+                                modifier = Modifier
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
+                                    )
+                                    .align(Alignment.Start)
+                            ) {
+                                OMTeamText(
+                                    text = "LEVEL 01",
+                                    style = PretendardType.homeLevelText
+                                )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(dp8))
@@ -138,7 +188,10 @@ fun HomeScreen(
                                 )
                         ) {
                             // 진행률 표시
-                            val progress = 0.4f
+                            val progress = when (val state = characterUiState) {
+                                is CharacterUiState.Success -> state.data.experiencePercent / 100f
+                                else -> 0f
+                            }
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
@@ -152,14 +205,27 @@ fun HomeScreen(
 
                         Spacer(modifier = Modifier.width(dp9))
 
-                        // 진척도 % 텍스트
-                        OMTeamText(
-                            text = "40%", // "${(progress * 100).toInt()}%"
-                            style = PretendardType.skipButton.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = Black
-                            )
-                        )
+                        // 진척도 %
+                        when (val state = characterUiState) {
+                            is CharacterUiState.Success -> {
+                                OMTeamText(
+                                    text = "${state.data.experiencePercent}%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
+                                    )
+                                )
+                            }
+                            else -> {
+                                OMTeamText(
+                                    text = "0%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -188,39 +254,14 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = dp32),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(dp81)
-                        .background(
-                            color = ErrorBottomSheetBackground,
-                            shape = CircleShape
-                        )
+            when (val state = dailyMissionUiState) {
+                is DailyMissionUiState.Idle -> MissionEmptyView(
+                    title = "아직 미션이 생성되지 않았어요!",
+                    description = "개인 설정을 완료하여 미션을 받아보세요."
                 )
-
-                Spacer(modifier = Modifier.width(dp16))
-
-                Column(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(vertical = 21.5.dp)
-                ) {
-                    OMTeamText(
-                        text = "아직 미션이 생성되지 않았어요!",
-                        style = PaperlogyType.body01
-                    )
-
-                    Spacer(modifier = Modifier.height(dp6))
-
-                    OMTeamText(
-                        text = "개인 설정을 완료하여 미션을 받아보세요.",
-                        style = PretendardType.body04_3,
-                        color = Gray09,
-                    )
-                }
+                is DailyMissionUiState.Loading -> MissionLoadingView()
+                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = state.data)
+                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = state.message)
             }
 
             Spacer(modifier = Modifier.height(dp64))
@@ -248,7 +289,8 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(dp24))
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(start = dp32),
             ) {
                 Box(

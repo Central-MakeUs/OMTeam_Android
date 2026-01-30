@@ -4,19 +4,20 @@ import com.omteam.data.datasource.AuthDataSource
 import com.omteam.data.di.GoogleAuth
 import com.omteam.data.di.KakaoAuth
 import com.omteam.data.mapper.toDomain
+import com.omteam.data.util.ErrorInfo
+import com.omteam.data.util.safeApiCall
 import com.omteam.datastore.TokenDataStore
-import com.omteam.domain.model.LoginResult
-import com.omteam.domain.model.OnboardingInfo
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.LoginResult
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.auth.UserInfo
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.network.api.AuthApiService
-import com.omteam.network.dto.LoginWithIdTokenRequest
-import com.omteam.network.dto.OnboardingRequest
-import com.omteam.network.dto.OnboardingResponse
-import com.omteam.network.dto.RefreshTokenRequest
+import com.omteam.network.dto.auth.LoginWithIdTokenRequest
+import com.omteam.network.dto.onboarding.OnboardingRequest
+import com.omteam.network.dto.onboarding.OnboardingResponse
+import com.omteam.network.dto.auth.RefreshTokenRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import timber.log.Timber
@@ -51,27 +52,16 @@ class AuthRepositoryImpl @Inject constructor(
         return dataSource.logout()
     }
     
-    override fun loginWithIdToken(provider: String, idToken: String): Flow<Result<LoginResult>> = flow {
-        try {
-            Timber.d("## 서버 로그인 시작 - provider : $provider")
-            
-            val request = LoginWithIdTokenRequest(idToken = idToken)
-            val response = authApiService.loginWithIdToken(provider, request)
-            
-            val data = response.data
-            if (response.success && data != null) {
-                Timber.d("## 서버 로그인 API 성공")
-                emit(Result.success(data.toDomain()))
-            } else {
-                val errorMessage = response.error?.message ?: "알 수 없는 오류"
-                Timber.e("## 서버 로그인 API 실패 - ${response.error?.code}: $errorMessage")
-                emit(Result.failure(Exception(errorMessage)))
-            }
-        } catch (e: Exception) {
-            Timber.e("## 서버 로그인 API 예외 발생 : $e")
-            emit(Result.failure(e))
-        }
-    }
+    override fun loginWithIdToken(provider: String, idToken: String): Flow<Result<LoginResult>> =
+        safeApiCall(
+            logTag = "$provider 로그인",
+            apiCall = {
+                val request = LoginWithIdTokenRequest(idToken = idToken)
+                authApiService.loginWithIdToken(provider, request)
+            },
+            transform = { response -> response.data?.toDomain() },
+            getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
+        )
     
     override suspend fun getOnboardingInfo(): Result<OnboardingInfo> {
         return try {

@@ -1,8 +1,8 @@
 package com.omteam.domain.repository
 
-import com.omteam.domain.model.LoginResult
-import com.omteam.domain.model.OnboardingInfo
-import com.omteam.domain.model.UserInfo
+import com.omteam.domain.model.auth.LoginResult
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.auth.UserInfo
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
