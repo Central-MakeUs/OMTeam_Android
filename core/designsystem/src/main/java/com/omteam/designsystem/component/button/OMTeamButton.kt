@@ -42,8 +42,8 @@ fun OMTeamButton(
     modifier: Modifier = Modifier,
     height: Dp = dp56,
     cornerRadius: Dp = dp10,
-    backgroundColor: Color = Green04,
-    textColor: Color = Gray09,
+    backgroundColor: Color = Green07,
+    textColor: Color = Gray12,
     enabled: Boolean = true,
 ) {
     Box(
@@ -51,7 +51,7 @@ fun OMTeamButton(
             .height(height)
             .clip(RoundedCornerShape(cornerRadius))
             .background(
-                color = if (enabled) backgroundColor else backgroundColor.copy(alpha = 0.5f),
+                color = if (enabled) backgroundColor else Green04,
                 shape = RoundedCornerShape(cornerRadius)
             )
             .clickable(enabled = enabled, onClick = onClick),
@@ -60,7 +60,7 @@ fun OMTeamButton(
         Text(
             text = text,
             style = PaperlogyType.button01,
-            color = if (enabled) textColor else textColor.copy(alpha = 0.5f),
+            color = if (enabled) textColor else Gray09,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

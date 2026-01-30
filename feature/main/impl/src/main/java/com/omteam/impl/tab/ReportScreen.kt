@@ -32,16 +32,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
-import com.omteam.impl.viewmodel.MainViewModel
+import com.omteam.impl.viewmodel.ReportViewModel
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
 @Composable
 fun ReportScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
+    reportViewModel: ReportViewModel = hiltViewModel()
 ) {
-    val weekDisplayText by viewModel.weekDisplayText.collectAsState()
+    val weekDisplayText by reportViewModel.weekDisplayText.collectAsState()
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -67,7 +67,7 @@ fun ReportScreen(
                 contentDescription = "이전 주",
                 modifier = Modifier.size(dp24)
                     .clickable {
-                        viewModel.moveToPreviousWeek()
+                        reportViewModel.moveToPreviousWeek()
                     }
             )
 
@@ -97,7 +97,7 @@ fun ReportScreen(
                 contentDescription = "다음 주",
                 modifier = Modifier.size(dp24)
                     .clickable {
-                        viewModel.moveToNextWeek()
+                        reportViewModel.moveToNextWeek()
                     }
             )
 
@@ -108,7 +108,7 @@ fun ReportScreen(
                 contentDescription = "새로고침",
                 modifier = Modifier.size(dp24)
                     .clickable {
-                        viewModel.resetToCurrentWeek()
+                        reportViewModel.resetToCurrentWeek()
                     }
             )
         }

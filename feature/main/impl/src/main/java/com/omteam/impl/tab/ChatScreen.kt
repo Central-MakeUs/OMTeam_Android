@@ -1,6 +1,5 @@
 package com.omteam.impl.tab
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,15 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,52 +83,21 @@ fun SimpleChatBubbleWithX(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.size(180.dp, 170.dp)) {
-        Canvas(modifier = Modifier
-            .size(160.dp)
-            .offset(x = 0.dp, y = 10.dp)
-        ) {
-            drawCircle(color = Color(0xFFD9D9D9))
-        }
-
-        // 녹색 말풍선 전체
-        // 위치 옮기려면 offset 수정
-        Canvas(
+        Image(
+            painter = painterResource(id = R.drawable.character_embarrassed_yellow),
+            contentDescription = "대화 없음",
             modifier = Modifier
-                .size(48.dp, 54.dp)
-                .offset(x = 130.dp, y = 0.dp)
-        ) {
-            val path = Path().apply {
-                // 원 그리기
-                addOval(
-                    Rect(
-                        left = 0f,
-                        top = 0f,
-                        right = 48.dp.toPx(),
-                        bottom = 48.dp.toPx()
-                    )
-                )
+                .size(dp160)
+                .offset(x = dp0, y = dp10)
+        )
 
-                // 왼쪽 밑 꼬리
-                moveTo(2.4.dp.toPx(), 34.5.dp.toPx())    // 원의 왼쪽 하단
-                lineTo(0.8.dp.toPx(), 45.8.dp.toPx())    // 꼬리 끝
-                lineTo(2.3.dp.toPx(), 48.dp.toPx())      // 베이스 시작
-                lineTo(24.dp.toPx(), 48.dp.toPx())       // 베이스 끝
-                lineTo(24.dp.toPx(), 34.5.dp.toPx())     // 원으로 복귀
-                close()
-            }
-
-            drawPath(path, color = Color(0xFF45E7BD))
-        }
-
-        // X 아이콘
-        // 위치 옮기려면 offset 수정
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = "Close",
-            tint = Color(0xFF0B2F1F),
+        // 녹색 말풍선 이미지
+        Image(
+            painter = painterResource(id = R.drawable.x_green_background),
+            contentDescription = "녹색 말풍선",
             modifier = Modifier
-                .offset(x = 144.dp, y = 14.dp)
-                .size(20.dp)
+                .size(dp48, dp54)
+                .offset(x = dp130, y = dp0)
         )
     }
 }
