@@ -36,10 +36,10 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.mission.*
-import com.omteam.impl.viewmodel.AppleStatus
-import com.omteam.impl.viewmodel.CharacterUiState
-import com.omteam.impl.viewmodel.DailyAppleData
-import com.omteam.impl.viewmodel.DailyMissionUiState
+import com.omteam.impl.viewmodel.enum.AppleStatus
+import com.omteam.impl.viewmodel.state.CharacterUiState
+import com.omteam.impl.viewmodel.state.DailyAppleData
+import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import com.omteam.impl.viewmodel.HomeViewModel
 import com.omteam.omt.core.designsystem.R
 import java.time.LocalDate

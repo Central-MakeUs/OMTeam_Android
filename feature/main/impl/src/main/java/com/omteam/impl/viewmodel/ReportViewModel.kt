@@ -3,6 +3,7 @@ package com.omteam.impl.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.domain.usecase.GetWeeklyReportUseCase
+import com.omteam.impl.viewmodel.state.WeeklyReportUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

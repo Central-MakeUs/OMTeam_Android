@@ -4,6 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.domain.repository.MissionRepository
 import com.omteam.domain.usecase.GetCharacterInfoUseCase
+import com.omteam.impl.viewmodel.enum.AppleStatus
+import com.omteam.impl.viewmodel.state.CharacterUiState
+import com.omteam.impl.viewmodel.state.DailyAppleData
+import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
