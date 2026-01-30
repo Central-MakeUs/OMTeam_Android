@@ -45,7 +45,7 @@ fun ReportScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(White)
+            .background(Gray02)
             .padding(dp20)
             .verticalScroll(rememberScrollState()),
     ) {
