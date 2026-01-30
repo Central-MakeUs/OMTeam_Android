@@ -132,13 +132,10 @@ fun ReportContent(
                 .size(dp175)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(dp175)
-                    .background(
-                        color = ErrorBottomSheetBackground,
-                        shape = CircleShape
-                    )
+            Image(
+                painterResource(id = R.drawable.character_embarrassed_normal),
+                contentDescription = "레포트 탭 데이터 없음",
+                modifier = Modifier.size(dp175)
             )
         }
 
