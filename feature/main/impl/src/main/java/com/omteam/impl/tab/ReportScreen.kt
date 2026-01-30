@@ -42,6 +42,26 @@ fun ReportScreen(
     reportViewModel: ReportViewModel = hiltViewModel()
 ) {
     val weekDisplayText by reportViewModel.weekDisplayText.collectAsState()
+    
+    ReportContent(
+        modifier = modifier,
+        weekDisplayText = weekDisplayText,
+        onPreviousWeekClick = { reportViewModel.moveToPreviousWeek() },
+        onNextWeekClick = { reportViewModel.moveToNextWeek() },
+        onWeekSelectClick = { Timber.d("## 주 선택") },
+        onRefreshClick = { reportViewModel.resetToCurrentWeek() }
+    )
+}
+
+@Composable
+fun ReportContent(
+    modifier: Modifier = Modifier,
+    weekDisplayText: String,
+    onPreviousWeekClick: () -> Unit,
+    onNextWeekClick: () -> Unit,
+    onWeekSelectClick: () -> Unit,
+    onRefreshClick: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -66,9 +86,7 @@ fun ReportScreen(
                 painter = painterResource(id = R.drawable.icon_arrow_back),
                 contentDescription = "이전 주",
                 modifier = Modifier.size(dp24)
-                    .clickable {
-                        reportViewModel.moveToPreviousWeek()
-                    }
+                    .clickable { onPreviousWeekClick() }
             )
 
             Spacer(modifier = Modifier.height(dp12))
@@ -85,9 +103,7 @@ fun ReportScreen(
                 painter = painterResource(id = R.drawable.arrow_down),
                 contentDescription = "주 선택 아이콘",
                 modifier = Modifier.size(dp24)
-                    .clickable {
-                        Timber.d("## 주 선택")
-                    }
+                    .clickable { onWeekSelectClick() }
             )
 
             Spacer(modifier = Modifier.height(dp12))
@@ -96,9 +112,7 @@ fun ReportScreen(
                 painter = painterResource(id = R.drawable.icon_arrow_forth),
                 contentDescription = "다음 주",
                 modifier = Modifier.size(dp24)
-                    .clickable {
-                        reportViewModel.moveToNextWeek()
-                    }
+                    .clickable { onNextWeekClick() }
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -107,9 +121,7 @@ fun ReportScreen(
                 painter = painterResource(id = R.drawable.icon_update_able),
                 contentDescription = "새로고침",
                 modifier = Modifier.size(dp24)
-                    .clickable {
-                        reportViewModel.resetToCurrentWeek()
-                    }
+                    .clickable { onRefreshClick() }
             )
         }
 
@@ -158,5 +170,11 @@ fun ReportScreen(
 @Preview(showBackground = true)
 @Composable
 private fun ReportScreenPreview() {
-    ReportScreen()
+    ReportContent(
+        weekDisplayText = "이번 주",
+        onPreviousWeekClick = {},
+        onNextWeekClick = {},
+        onWeekSelectClick = {},
+        onRefreshClick = {}
+    )
 }
