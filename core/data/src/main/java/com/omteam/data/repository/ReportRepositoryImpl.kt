@@ -13,7 +13,7 @@ class ReportRepositoryImpl @Inject constructor(
     private val reportApiService: ReportApiService
 ) : ReportRepository {
 
-    override fun getWeeklyReport(weekStartDate: String): Flow<Result<WeeklyReport>> =
+    override fun getWeeklyReport(weekStartDate: String?): Flow<Result<WeeklyReport>> =
         safeApiCall(
             logTag = "주간 리포트 조회",
             defaultErrorMessage = "주간 리포트를 불러올 수 없습니다",

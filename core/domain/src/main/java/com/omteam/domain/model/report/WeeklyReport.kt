@@ -31,15 +31,15 @@ data class WeeklyReport(
  * @property date 날짜
  * @property dayOfWeek 요일
  * @property status 미션 상태
- * @property missionType 미션 타입
- * @property missionTitle 미션 제목
+ * @property missionType 미션 타입 (미션이 없는 경우 null)
+ * @property missionTitle 미션 제목 (미션이 없는 경우 null)
  */
 data class DailyResult(
     val date: LocalDate,
     val dayOfWeek: DayOfWeek,
     val status: DailyMissionStatus,
-    val missionType: String,
-    val missionTitle: String
+    val missionType: String? = null,
+    val missionTitle: String? = null
 )
 
 /**
@@ -71,11 +71,11 @@ data class TopFailureReason(
 /**
  * AI 피드백
  * 
- * @property mainFailureReason 주요 실패 사유
+ * @property mainFailureReason 주요 실패 사유 (분석 결과가 없는 경우 null)
  * @property overallFeedback 전체 피드백
  */
 data class AiFeedback(
-    val mainFailureReason: String,
+    val mainFailureReason: String? = null,
     val overallFeedback: String
 )
 
@@ -104,6 +104,7 @@ enum class DayOfWeek {
 enum class DailyMissionStatus {
     SUCCESS,
     FAILED,
+    NOT_PERFORMED,
     NONE,
     UNKNOWN;
 

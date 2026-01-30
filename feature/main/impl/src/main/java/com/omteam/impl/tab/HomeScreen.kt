@@ -42,6 +42,7 @@ import com.omteam.impl.viewmodel.DailyAppleData
 import com.omteam.impl.viewmodel.DailyMissionUiState
 import com.omteam.impl.viewmodel.MainViewModel
 import com.omteam.omt.core.designsystem.R
+import timber.log.Timber
 import java.time.LocalDate
 
 @Composable
@@ -51,10 +52,15 @@ fun HomeScreen(
 ) {
     val dailyMissionUiState by viewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by viewModel.characterUiState.collectAsStateWithLifecycle()
+    val weeklyReportUiState by viewModel.weeklyReportUiState.collectAsStateWithLifecycle()
+    Timber.e("[HomeScreen] 주간 레포트 상태 : $weeklyReportUiState")
 
     LaunchedEffect(Unit) {
-        viewModel.fetchDailyMissionStatus()
-        viewModel.fetchCharacterInfo()
+        viewModel.apply {
+            fetchDailyMissionStatus()
+            fetchCharacterInfo()
+            fetchWeeklyReport()
+        }
     }
 
     Column(

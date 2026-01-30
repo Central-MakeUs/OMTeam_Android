@@ -35,8 +35,8 @@ data class DailyResultDto(
     val date: String,
     val dayOfWeek: String,
     val status: String,
-    val missionType: String,
-    val missionTitle: String
+    val missionType: String? = null,
+    val missionTitle: String? = null
 )
 
 /**
@@ -64,7 +64,7 @@ data class TopFailureReasonDto(
  */
 @Serializable
 data class AiFeedbackDto(
-    val mainFailureReason: String,
+    val mainFailureReason: String? = null,
     val overallFeedback: String
 )
 
