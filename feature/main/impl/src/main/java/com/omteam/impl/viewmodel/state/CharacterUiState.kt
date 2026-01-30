@@ -1,4 +1,4 @@
-package com.omteam.impl.viewmodel
+package com.omteam.impl.viewmodel.state
 
 import com.omteam.domain.model.character.CharacterInfo
 

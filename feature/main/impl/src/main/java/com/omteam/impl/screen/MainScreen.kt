@@ -43,7 +43,7 @@ fun MainScreen(
                 .fillMaxWidth()
         ) {
             when (selectedTabIndex) {
-                0 -> HomeScreen(viewModel = viewModel)
+                0 -> HomeScreen()
                 1 -> ChatScreen()
                 2 -> ReportScreen()
                 3 -> MyPageScreen(onSignOut = onSignOut)

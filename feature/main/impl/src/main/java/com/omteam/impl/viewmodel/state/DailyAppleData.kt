@@ -1,5 +1,6 @@
-package com.omteam.impl.viewmodel
+package com.omteam.impl.viewmodel.state
 
+import com.omteam.impl.viewmodel.enum.AppleStatus
 import java.time.LocalDate
 
 /**

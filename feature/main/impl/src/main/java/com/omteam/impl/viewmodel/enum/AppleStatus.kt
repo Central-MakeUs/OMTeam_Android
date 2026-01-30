@@ -1,4 +1,4 @@
-package com.omteam.impl.viewmodel
+package com.omteam.impl.viewmodel.enum
 
 /**
  * 사과 상태
