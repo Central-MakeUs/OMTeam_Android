@@ -1,0 +1,73 @@
+package com.omteam.data.mapper
+
+import com.omteam.domain.model.report.AiFeedback
+import com.omteam.domain.model.report.DailyMissionStatus
+import com.omteam.domain.model.report.DailyResult
+import com.omteam.domain.model.report.DayOfWeek
+import com.omteam.domain.model.report.TopFailureReason
+import com.omteam.domain.model.report.TypeSuccessCount
+import com.omteam.domain.model.report.WeeklyReport
+import com.omteam.network.dto.report.AiFeedbackDto
+import com.omteam.network.dto.report.DailyResultDto
+import com.omteam.network.dto.report.TopFailureReasonDto
+import com.omteam.network.dto.report.TypeSuccessCountDto
+import com.omteam.network.dto.report.WeeklyReportData
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+/**
+ * WeeklyReportData -> WeeklyReport 도메인 모델
+ */
+fun WeeklyReportData.toDomain(): WeeklyReport = WeeklyReport(
+    weekStartDate = weekStartDate.toLocalDate(),
+    weekEndDate = weekEndDate.toLocalDate(),
+    thisWeekSuccessRate = thisWeekSuccessRate,
+    lastWeekSuccessRate = lastWeekSuccessRate,
+    dailyResults = dailyResults.map { it.toDomain() },
+    typeSuccessCounts = typeSuccessCounts.map { it.toDomain() },
+    topFailureReasons = topFailureReasons.map { it.toDomain() },
+    aiFeedback = aiFeedback.toDomain()
+)
+
+/**
+ * DailyResultDto -> DailyResult 도메인 모델
+ */
+fun DailyResultDto.toDomain(): DailyResult = DailyResult(
+    date = date.toLocalDate(),
+    dayOfWeek = DayOfWeek.fromString(dayOfWeek),
+    status = DailyMissionStatus.fromString(status),
+    missionType = missionType,
+    missionTitle = missionTitle
+)
+
+/**
+ * TypeSuccessCountDto -> TypeSuccessCount 도메인 모델
+ */
+fun TypeSuccessCountDto.toDomain(): TypeSuccessCount = TypeSuccessCount(
+    type = type,
+    typeName = typeName,
+    successCount = successCount
+)
+
+/**
+ * TopFailureReasonDto -> TopFailureReason 도메인 모델
+ */
+fun TopFailureReasonDto.toDomain(): TopFailureReason = TopFailureReason(
+    rank = rank,
+    reason = reason,
+    count = count
+)
+
+/**
+ * AiFeedbackDto -> AiFeedback 도메인 모델
+ */
+fun AiFeedbackDto.toDomain(): AiFeedback = AiFeedback(
+    mainFailureReason = mainFailureReason,
+    overallFeedback = overallFeedback
+)
+
+/**
+ * 날짜 문자열 -> LocalDate
+ */
+private fun String.toLocalDate(): LocalDate =
+    LocalDate.parse(this, DateTimeFormatter.ISO_LOCAL_DATE)

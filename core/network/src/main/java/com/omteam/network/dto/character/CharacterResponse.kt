@@ -1,4 +1,4 @@
-package com.omteam.network.dto
+package com.omteam.network.dto.character
 
 import com.omteam.network.dto.onboarding.ApiError
 import kotlinx.serialization.Serializable

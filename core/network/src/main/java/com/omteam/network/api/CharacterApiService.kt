@@ -1,6 +1,6 @@
 package com.omteam.network.api
 
-import com.omteam.network.dto.CharacterResponse
+import com.omteam.network.dto.character.CharacterResponse
 import retrofit2.http.GET
 
 interface CharacterApiService {
