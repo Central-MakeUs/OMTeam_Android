@@ -40,27 +40,21 @@ import com.omteam.impl.viewmodel.AppleStatus
 import com.omteam.impl.viewmodel.CharacterUiState
 import com.omteam.impl.viewmodel.DailyAppleData
 import com.omteam.impl.viewmodel.DailyMissionUiState
-import com.omteam.impl.viewmodel.MainViewModel
+import com.omteam.impl.viewmodel.HomeViewModel
 import com.omteam.omt.core.designsystem.R
-import timber.log.Timber
 import java.time.LocalDate
 
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val dailyMissionUiState by viewModel.dailyMissionUiState.collectAsStateWithLifecycle()
-    val characterUiState by viewModel.characterUiState.collectAsStateWithLifecycle()
-    val weeklyReportUiState by viewModel.weeklyReportUiState.collectAsStateWithLifecycle()
-    Timber.e("[HomeScreen] 주간 레포트 상태 : $weeklyReportUiState")
+    val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
+    val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.apply {
-            fetchDailyMissionStatus()
-            fetchCharacterInfo()
-            fetchWeeklyReport()
-        }
+        homeViewModel.fetchDailyMissionStatus()
+        homeViewModel.fetchCharacterInfo()
     }
 
     Column(
@@ -92,7 +86,7 @@ fun HomeScreen(
             // 오늘이 속한 주를 표시
             // 14~20일 중 하나에 속하면 14~20 표시, 21일 되면 21~27 표시
             WeeklyAppleView(
-                weekDays = viewModel.getCurrentWeekDays(),
+                weekDays = homeViewModel.getCurrentWeekDays(),
                 modifier = Modifier.fillMaxWidth()
             )
 
