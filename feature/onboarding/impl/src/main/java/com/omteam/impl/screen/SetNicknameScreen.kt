@@ -61,7 +61,9 @@ fun SetNicknameScreen(
         OMTeamButton(
             text = stringResource(R.string.next),
             onClick = {
-                onNext()
+                if (onboardingData.nickname.isNotEmpty() && nicknameErrorType == NicknameErrorType.NONE) {
+                    onNext()
+                }
             },
             backgroundColor = if (onboardingData.nickname.isNotEmpty() && nicknameErrorType == NicknameErrorType.NONE) Green07 else Green04,
             modifier = Modifier

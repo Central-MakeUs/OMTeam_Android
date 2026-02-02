@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,7 +53,7 @@ fun SetGoalScreen(
     val dietText = stringResource(R.string.diet)
     val habitFormationText = stringResource(R.string.habit_formation)
     val directInputText = stringResource(R.string.direct_input)
-    
+
     // "직접 입력하기" 카드에 표시될 텍스트 (커스텀 입력이 있으면 그걸 표시, 없으면 "직접 입력하기")
     val directInputDisplayText = customGoalInput.ifEmpty { directInputText }
 
@@ -133,7 +132,11 @@ fun SetGoalScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        if (selectedGoal.isNotEmpty()) {
+                            onNext()
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedGoal.isNotEmpty()) Green07 else Green04,
@@ -154,17 +157,14 @@ fun SetGoalScreen(
                 showBottomSheet = false
             }
         }
-        
+
         ModalBottomSheet(
             onDismissRequest = {
                 // 외부 클릭으로 인한 dismiss는 무시
             },
             sheetState = rememberModalBottomSheetState(
                 skipPartiallyExpanded = true,
-                confirmValueChange = { false } // 모든 상태 변경을 무시해서 바텀 시트 바깥 클릭으로 닫히지 않음
-            ),
-            properties = ModalBottomSheetDefaults.properties(
-                shouldDismissOnBackPress = false
+                confirmValueChange = { false }
             ),
             containerColor = White,
             shape = RoundedCornerShape(

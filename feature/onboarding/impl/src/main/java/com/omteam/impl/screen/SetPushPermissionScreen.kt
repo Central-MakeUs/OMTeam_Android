@@ -26,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.impl.viewmodel.OnboardingViewModel
 import com.omteam.impl.viewmodel.SubmitState
-import timber.log.Timber
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -46,7 +45,7 @@ fun SetPushPermissionScreen(
     var errorMessage by remember { mutableStateOf("") }
 
     val submitState by viewModel.submitState.collectAsStateWithLifecycle()
-    
+
     val grantText = stringResource(R.string.grant)
     val notGrantText = stringResource(R.string.not_grant)
 
@@ -155,8 +154,10 @@ fun SetPushPermissionScreen(
                 OMTeamButton(
                     text = stringResource(R.string.next),
                     onClick = {
-                        // 온보딩 정보 제출
-                        viewModel.submitOnboarding()
+                        if (selectedFavoriteExercise.isNotEmpty()) {
+                            // 온보딩 정보 제출
+                            viewModel.submitOnboarding()
+                        }
                     },
                     height = dp60,
                     cornerRadius = dp8,
