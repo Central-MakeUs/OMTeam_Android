@@ -106,7 +106,11 @@ fun SetTimeScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        if (selectedTime.isNotEmpty()) {
+                            onNext()
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedTime.isNotEmpty()) Green07 else Green04,

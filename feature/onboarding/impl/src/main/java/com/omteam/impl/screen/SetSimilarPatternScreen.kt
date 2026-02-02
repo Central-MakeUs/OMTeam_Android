@@ -103,7 +103,11 @@ fun SetSimilarPatternScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        if (selectedPattern.isNotEmpty()) {
+                            onNext()
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedPattern.isNotEmpty()) Green07 else Green04,

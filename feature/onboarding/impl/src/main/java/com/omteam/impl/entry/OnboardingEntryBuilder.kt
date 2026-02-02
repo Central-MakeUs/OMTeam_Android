@@ -31,10 +31,6 @@ fun EntryProviderScope<NavKey>.onboardingEntry(
                     onNavigateToMain()
                 }
             },
-            onSkip = {
-                // 건너뛰기 → 메인 화면
-                onNavigateToMain()
-            },
             onBack = {
                 // 이전 온보딩 화면 이동
                 onNavigateBack()

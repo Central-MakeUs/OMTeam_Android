@@ -17,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalBottomSheetDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,12 +48,12 @@ fun SetMissionTimeScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-    
+
     val missionTimeFirstText = stringResource(R.string.mission_time_first)
     val missionTimeSecondText = stringResource(R.string.mission_time_second)
     val missionTimeThirdText = stringResource(R.string.mission_time_third)
     val directInputText = stringResource(R.string.direct_input)
-    
+
     // "직접 입력하기" 카드에 표시될 텍스트 (커스텀 입력이 있으면 그걸 표시, 없으면 "직접 입력하기")
     val directInputDisplayText = customMissionTimeInput.ifEmpty { directInputText }
 
@@ -159,7 +158,11 @@ fun SetMissionTimeScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        if (selectedMissionTime.isNotEmpty()) {
+                            onNext()
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedMissionTime.isNotEmpty()) Green07 else Green04,
@@ -187,10 +190,7 @@ fun SetMissionTimeScreen(
             },
             sheetState = rememberModalBottomSheetState(
                 skipPartiallyExpanded = true,
-                confirmValueChange = { false } // 모든 상태 변경을 무시해서 바텀 시트 바깥 클릭으로 닫히지 않음
-            ),
-            properties = ModalBottomSheetDefaults.properties(
-                shouldDismissOnBackPress = false
+                confirmValueChange = { false }
             ),
             containerColor = White,
             shape = RoundedCornerShape(

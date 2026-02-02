@@ -161,7 +161,11 @@ fun SetFavoriteExerciseScreen(
 
                 OMTeamButton(
                     text = stringResource(R.string.next),
-                    onClick = { onNext() },
+                    onClick = {
+                        if (selectedExercises.isNotEmpty()) {
+                            onNext()
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
                     backgroundColor = if (selectedExercises.isNotEmpty()) Green07 else Green04,
