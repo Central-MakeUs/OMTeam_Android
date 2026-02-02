@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.domain.model.character.CharacterInfo
 import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
@@ -57,6 +58,21 @@ fun HomeScreen(
         homeViewModel.fetchCharacterInfo()
     }
 
+    HomeScreenContent(
+        dailyMissionUiState = dailyMissionUiState,
+        characterUiState = characterUiState,
+        weekDays = homeViewModel.getCurrentWeekDays(),
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    dailyMissionUiState: DailyMissionUiState,
+    characterUiState: CharacterUiState,
+    weekDays: List<DailyAppleData>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -86,7 +102,7 @@ fun HomeScreen(
             // 오늘이 속한 주를 표시
             // 14~20일 중 하나에 속하면 14~20 표시, 21일 되면 21~27 표시
             WeeklyAppleView(
-                weekDays = homeViewModel.getCurrentWeekDays(),
+                weekDays = weekDays,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -436,8 +452,30 @@ fun DailyAppleItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreview() {
-    HomeScreen()
+private fun HomeScreenContentPreview() {
+    val weeklyData = listOf(
+        DailyAppleData(LocalDate.now(), 14, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 15, AppleStatus.SUCCESS),
+        DailyAppleData(LocalDate.now(), 16, AppleStatus.FAILED),
+        DailyAppleData(LocalDate.now(), 17, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 18, AppleStatus.SUCCESS),
+        DailyAppleData(LocalDate.now(), 19, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 20, AppleStatus.FAILED)
+    )
+    HomeScreenContent(
+        dailyMissionUiState = DailyMissionUiState.Idle,
+        characterUiState = CharacterUiState.Success(
+            data = CharacterInfo(
+                level = 5,
+                experiencePercent = 65,
+                successCount = 5,
+                successCountUntilNextLevel = 10,
+                encouragementTitle = "힘내세요!",
+                encouragementMessage = "오늘도 화이팅!"
+            )
+        ),
+        weekDays = weeklyData
+    )
 }
 
 @Preview(showBackground = true)
