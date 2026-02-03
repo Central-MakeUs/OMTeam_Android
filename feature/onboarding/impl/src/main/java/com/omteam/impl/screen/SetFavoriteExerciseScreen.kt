@@ -44,6 +44,7 @@ fun SetFavoriteExerciseScreen(
     val homeTrainingText = stringResource(R.string.home_training)
     val healthText = stringResource(R.string.health)
     val practicalExerciseText = stringResource(R.string.practical_exercise)
+    val maxToastMessage = stringResource(R.string.max_toast_message)
 
     // 선호 운동을 최대 3개까지 선택 제한, 토스트 표시하는 헬퍼 함수
     val toggleExerciseSelection: (String) -> Unit = { exercise ->
@@ -53,7 +54,7 @@ fun SetFavoriteExerciseScreen(
         } else {
             // 새로 선택할 경우 최대 3개 체크
             if (selectedExercises.size >= maxSelectionCount) {
-                Toast.makeText(context, "최대 3개까지만 선택할 수 있습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, maxToastMessage, Toast.LENGTH_SHORT).show()
                 selectedExercises
             } else {
                 selectedExercises + exercise

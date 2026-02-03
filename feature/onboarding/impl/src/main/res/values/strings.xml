@@ -36,6 +36,7 @@
     <string name="home_training">홈 트레이닝(맨몸 운동)</string>
     <string name="health">헬스</string>
     <string name="practical_exercise">생활 속 운동</string>
+    <string name="max_toast_message">3개 이상 선택할 수 없습니다</string>
 
     <!-- 6 : 최근 한 달 간의 생활 패턴과 가장 유사한 것 -->
     <string name="set_similar_pattern_screen_title">최근 한 달 간의 생활패턴과\n가장 유사한 것을 선택해주세요.</string>
