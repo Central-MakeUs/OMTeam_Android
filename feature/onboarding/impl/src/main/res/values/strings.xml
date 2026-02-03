@@ -30,7 +30,7 @@
     <string name="mission_time_third">15분</string>
 
     <!-- 5 : 평소 선호하는 운동 -->
-    <string name="set_favorite_exercise_screen_title">평소 선호하시는 운동을 선택해주세요.\n(중복 선택 가능)</string>
+    <string name="set_favorite_exercise_screen_title">평소 선호하시는 운동을 선택해주세요.\n(최대 3개까지 선택 가능)</string>
     <string name="walking">걷기</string>
     <string name="stretching_yoga">스트레칭/요가</string>
     <string name="home_training">홈 트레이닝(맨몸 운동)</string>
