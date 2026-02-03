@@ -7,4 +7,11 @@
 
     <string name="mission_not_created_title">아직 미션이 생성되지 않았어요!</string>
     <string name="mission_not_created_description">개인 설정을 완료하여 미션을 받아보세요.</string>
+
+    <string name="change_nickname_title">닉네임 변경하기</string>
+    <string name="new_nickname_first">새롭게 사용하실 닉네임</string>
+    <string name="new_nickname_second">을 입력해주세요.</string>
+    <string name="new_nickname_placeholder">닉네임을 입력해주세요. (최대 8글자)</string>
+    <string name="new_nickname_rule">한글, 영어, 숫자를 사용하여 8글자 이내로 닉네임을 설정해주세요.</string>
+    <string name="change">변경하기</string>
 </resources>

@@ -28,7 +28,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,12 +96,16 @@ fun MyPageScreen(
             // 편집 아이콘
             Image(
                 painter = painterResource(id = R.drawable.mypage_edit_able),
-                contentDescription = "프로필 편집",
+                contentDescription = "닉네임 수정",
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = dp8)
                     .size(dp36)
-                    .clickable {
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
                         showChangeNicknameBottomSheet = true
                     }
             )
@@ -254,6 +260,10 @@ fun MyPageScreen(
             shape = RoundedCornerShape(
                 topStart = dp32,
                 topEnd = dp32
+            ),
+            properties = ModalBottomSheetProperties(
+                securePolicy = SecureFlagPolicy.Inherit,
+                shouldDismissOnBackPress = false
             )
         ) {
             Box(modifier = Modifier.imePadding()) {

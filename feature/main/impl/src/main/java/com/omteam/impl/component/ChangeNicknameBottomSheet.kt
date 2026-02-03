@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +36,7 @@ import com.omteam.designsystem.theme.*
 import com.omteam.omt.core.designsystem.R
 
 /**
- * 닉네임 변경 바텀 시트 콘텐츠
+ * 닉네임 변경 바텀 시트
  *
  * @param onDismiss 바텀 시트 닫기 콜백
  * @param onNicknameChange 닉네임 변경 콜백
@@ -48,6 +49,8 @@ fun ChangeNicknameBottomSheetContent(
     onFocusChanged: (Boolean) -> Unit
 ) {
     var nickname by remember { mutableStateOf("") }
+    val noticeTextFirst = stringResource(R.string.new_nickname_first)
+    val noticeTextSecond = stringResource(R.string.new_nickname_second)
 
     Column(
         modifier = Modifier
@@ -67,16 +70,14 @@ fun ChangeNicknameBottomSheetContent(
 
         Spacer(modifier = Modifier.height(dp16))
 
-        // 닉네임 변경하기 제목
         OMTeamText(
-            text = "닉네임 변경하기",
+            text = stringResource(R.string.change_nickname_title),
             style = PaperlogyType.headline03,
             color = Gray12
         )
 
         Spacer(modifier = Modifier.height(dp11))
 
-        // "새롭게 사용하실 닉네임을 입력해주세요." - 색상 구분
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -88,7 +89,7 @@ fun ChangeNicknameBottomSheetContent(
                         letterSpacing = (-0.056).sp
                     )
                 ) {
-                    append("새롭게 사용하실 닉네임")
+                    append(noticeTextFirst)
                 }
                 withStyle(
                     style = SpanStyle(
@@ -99,7 +100,7 @@ fun ChangeNicknameBottomSheetContent(
                         letterSpacing = (-0.056).sp
                     )
                 ) {
-                    append("을 입력해주세요.")
+                    append(noticeTextSecond)
                 }
             },
             style = PretendardType.button03Abled
@@ -107,17 +108,16 @@ fun ChangeNicknameBottomSheetContent(
 
         Spacer(modifier = Modifier.height(dp28))
 
-        // 닉네임 입력 필드
         OMTeamTextField(
             value = nickname,
             onValueChange = { newValue ->
-                // 한글, 영어, 숫자만 허용하고 최대 8글자까지
+                // 한글, 영어, 숫자만 가능 + 최대 8글자
                 val filtered = newValue.filter { char ->
                     char.isLetterOrDigit() || char in '가'..'힣'
                 }.take(8)
                 nickname = filtered
             },
-            placeholder = "닉네임을 입력해주세요. (최대 8글자)",
+            placeholder = stringResource(R.string.new_nickname_placeholder),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,18 +128,16 @@ fun ChangeNicknameBottomSheetContent(
 
         Spacer(modifier = Modifier.height(dp16))
 
-        // 안내 텍스트
         OMTeamText(
-            text = "한글, 영어, 숫자를 사용하여 8글자 이내로 닉네임을 설정해주세요.",
+            text = stringResource(R.string.new_nickname_rule),
             style = PretendardType.body04_1,
             color = Gray09
         )
 
         Spacer(modifier = Modifier.height(dp56))
 
-        // 변경하기 버튼
         OMTeamButton(
-            text = "변경하기",
+            text = stringResource(R.string.change),
             onClick = {
                 if (nickname.isNotBlank()) {
                     onNicknameChange(nickname)
