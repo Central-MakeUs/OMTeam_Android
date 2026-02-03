@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,6 +45,7 @@ import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import com.omteam.impl.viewmodel.HomeViewModel
 import com.omteam.omt.core.designsystem.R
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -155,112 +155,119 @@ fun HomeScreenContent(
 
                         Spacer(modifier = Modifier.height(dp20))
 
-                        Box(
+                        // TODO : 캐릭터 상태에 따른 이미지 변경
+                        Image(
+                            painter = painterResource(id = R.drawable.character_normal),
+                            contentDescription = "캐릭터 이미지",
                             modifier = Modifier
-                                .size(dp120)
-                                .background(
-                                    color = ErrorBottomSheetBackground,
-                                    shape = CircleShape
+                                .size(
+                                    width = 150.dp,
+                                    height = 133.dp
                                 )
+                                .align(Alignment.CenterHorizontally),
                         )
+                    }
+                }
 
-                        Spacer(modifier = Modifier.height(dp9))
-
-                        // 레벨 표시
-                        when (val state = characterUiState) {
-                            is CharacterUiState.Success -> {
-                                Box(
-                                    modifier = Modifier
-                                        .background(Yellow02)
-                                        .padding(
-                                            vertical = dp6,
-                                            horizontal = dp7
-                                        )
-                                        .align(Alignment.Start)
-                                ) {
-                                    OMTeamText(
-                                        text = "LEVEL ${String.format("%02d", state.data.level)}",
-                                        style = PretendardType.homeLevelText
+                // 배경 이미지 하단 기준 레벨, 프로그레스 바 배치
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .padding(start = dp33, end = dp33, bottom = dp13),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    // 레벨 표시
+                    when (characterUiState) {
+                        is CharacterUiState.Success -> {
+                            Box(
+                                modifier = Modifier
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
                                     )
-                                }
-                            }
-
-                            else -> {
-                                Box(
-                                    modifier = Modifier
-                                        .background(Yellow02)
-                                        .padding(
-                                            vertical = dp6,
-                                            horizontal = dp7
-                                        )
-                                        .align(Alignment.Start)
-                                ) {
-                                    OMTeamText(
-                                        text = "LEVEL 01",
-                                        style = PretendardType.homeLevelText
-                                    )
-                                }
+                            ) {
+                                OMTeamText(
+                                    text = "LEVEL ${String.format(Locale.getDefault(), "%02d",
+                                        characterUiState.data.level)}",
+                                    style = PretendardType.homeLevelText
+                                )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(dp8))
-
-                        // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Start),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // 진척도 프로그레스 바 (배경)
+                        else -> {
                             Box(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .height(dp20)
-                                    .background(
-                                        color = Gray05,
-                                        shape = RoundedCornerShape(dp32)
+                                    .background(Yellow02)
+                                    .padding(
+                                        vertical = dp6,
+                                        horizontal = dp7
                                     )
                             ) {
-                                // 진행률 표시
-                                val progress = when (val state = characterUiState) {
-                                    is CharacterUiState.Success -> state.data.experiencePercent / 100f
-                                    else -> 0f
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .fillMaxWidth(progress)
-                                        .background(
-                                            color = Green05,
-                                            shape = RoundedCornerShape(dp32)
-                                        )
+                                OMTeamText(
+                                    text = "LEVEL 01",
+                                    style = PretendardType.homeLevelText
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(dp8))
+
+                    // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 진척도 프로그레스 바 (배경)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(dp20)
+                                .background(
+                                    color = Gray05,
+                                    shape = RoundedCornerShape(dp32)
+                                )
+                        ) {
+                            // 진행률 표시
+                            val progress = when (characterUiState) {
+                                is CharacterUiState.Success -> characterUiState.data.experiencePercent / 100f
+                                else -> 0f
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(progress)
+                                    .background(
+                                        color = Green05,
+                                        shape = RoundedCornerShape(dp32)
+                                    )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.width(dp9))
+
+                        // 진척도 %
+                        when (characterUiState) {
+                            is CharacterUiState.Success -> {
+                                OMTeamText(
+                                    text = "${characterUiState.data.experiencePercent}%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
+                                    )
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(dp9))
-
-                            // 진척도 %
-                            when (val state = characterUiState) {
-                                is CharacterUiState.Success -> {
-                                    OMTeamText(
-                                        text = "${state.data.experiencePercent}%",
-                                        style = PretendardType.skipButton.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = Black
-                                        )
+                            else -> {
+                                OMTeamText(
+                                    text = "0%",
+                                    style = PretendardType.skipButton.copy(
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Black
                                     )
-                                }
-
-                                else -> {
-                                    OMTeamText(
-                                        text = "0%",
-                                        style = PretendardType.skipButton.copy(
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = Black
-                                        )
-                                    )
-                                }
+                                )
                             }
                         }
                     }
@@ -291,15 +298,15 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            when (val state = dailyMissionUiState) {
+            when (dailyMissionUiState) {
                 is DailyMissionUiState.Idle -> MissionEmptyView(
                     title = "아직 미션이 생성되지 않았어요!",
                     description = "개인 설정을 완료하여 미션을 받아보세요."
                 )
 
                 is DailyMissionUiState.Loading -> MissionLoadingView()
-                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = state.data)
-                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = state.message)
+                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = dailyMissionUiState.data)
+                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = dailyMissionUiState.message)
             }
 
             Spacer(modifier = Modifier.height(dp64))
@@ -384,28 +391,19 @@ fun TextWithTriangle(
             modifier = Modifier
                 .wrapContentWidth()
                 .background(
-                    color = ErrorBottomSheetBackground,
-                    shape = RoundedCornerShape(dp4)
+                    color = White,
+                    shape = RoundedCornerShape(dp32)
                 )
                 .padding(horizontal = dp20, vertical = dp6),
             contentAlignment = Alignment.Center
         ) {
             OMTeamText(
                 text = text,
-                style = PretendardType.body05,
-                color = Black,
+                style = PretendardType.body04_2,
+                color = Gray11,
                 textAlign = TextAlign.Center
             )
         }
-
-        // 하단 중앙의 삼각형
-        Image(
-            painter = painterResource(id = R.drawable.bottom_triangle),
-            contentDescription = "하단 삼각형",
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = dp6) // 텍스트 박스 하단에서 살짝 겹치도록
-        )
     }
 }
 
