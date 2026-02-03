@@ -1,5 +1,6 @@
 package com.omteam.impl.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
@@ -32,13 +35,33 @@ fun SetFavoriteExerciseScreen(
     onNext: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     var selectedExercises by remember { mutableStateOf(setOf<String>()) }
+    val maxSelectionCount = 3
 
     val walkingText = stringResource(R.string.walking)
     val stretchingYogaText = stringResource(R.string.stretching_yoga)
     val homeTrainingText = stringResource(R.string.home_training)
     val healthText = stringResource(R.string.health)
     val practicalExerciseText = stringResource(R.string.practical_exercise)
+
+    // 운동 선택, 선택 해제 처리하는 헬퍼 함수
+    val toggleExerciseSelection: (String) -> Unit = { exercise ->
+        selectedExercises = if (selectedExercises.contains(exercise)) {
+            // 선택 해제
+            selectedExercises - exercise
+        } else {
+            // 새로 선택할 경우 최대 3개 체크
+            if (selectedExercises.size >= maxSelectionCount) {
+                Toast.makeText(context, "최대 3개까지만 선택할 수 있습니다", Toast.LENGTH_SHORT).show()
+                selectedExercises
+            } else {
+                selectedExercises + exercise
+            }
+        }
+
+        onExerciseChange(selectedExercises.joinToString(", "))
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -63,14 +86,7 @@ fun SetFavoriteExerciseScreen(
                     text = walkingText,
                     isSelected = selectedExercises.contains(walkingText),
                     textStyle = PaperlogyType.onboardingCardText,
-                    onClick = {
-                        selectedExercises = if (selectedExercises.contains(walkingText)) {
-                            selectedExercises - walkingText
-                        } else {
-                            selectedExercises + walkingText
-                        }
-                        onExerciseChange(selectedExercises.joinToString(", "))
-                    },
+                    onClick = { toggleExerciseSelection(walkingText) },
                 )
 
                 Spacer(modifier = Modifier.height(dp12))
@@ -79,14 +95,7 @@ fun SetFavoriteExerciseScreen(
                     text = stretchingYogaText,
                     isSelected = selectedExercises.contains(stretchingYogaText),
                     textStyle = PaperlogyType.onboardingCardText,
-                    onClick = {
-                        selectedExercises = if (selectedExercises.contains(stretchingYogaText)) {
-                            selectedExercises - stretchingYogaText
-                        } else {
-                            selectedExercises + stretchingYogaText
-                        }
-                        onExerciseChange(selectedExercises.joinToString(", "))
-                    }
+                    onClick = { toggleExerciseSelection(stretchingYogaText) }
                 )
 
                 Spacer(modifier = Modifier.height(dp12))
@@ -95,14 +104,7 @@ fun SetFavoriteExerciseScreen(
                     text = homeTrainingText,
                     isSelected = selectedExercises.contains(homeTrainingText),
                     textStyle = PaperlogyType.onboardingCardText,
-                    onClick = {
-                        selectedExercises = if (selectedExercises.contains(homeTrainingText)) {
-                            selectedExercises - homeTrainingText
-                        } else {
-                            selectedExercises + homeTrainingText
-                        }
-                        onExerciseChange(selectedExercises.joinToString(", "))
-                    }
+                    onClick = { toggleExerciseSelection(homeTrainingText) }
                 )
 
                 Spacer(modifier = Modifier.height(dp12))
@@ -111,14 +113,7 @@ fun SetFavoriteExerciseScreen(
                     text = healthText,
                     isSelected = selectedExercises.contains(healthText),
                     textStyle = PaperlogyType.onboardingCardText,
-                    onClick = {
-                        selectedExercises = if (selectedExercises.contains(healthText)) {
-                            selectedExercises - healthText
-                        } else {
-                            selectedExercises + healthText
-                        }
-                        onExerciseChange(selectedExercises.joinToString(", "))
-                    }
+                    onClick = { toggleExerciseSelection(healthText) }
                 )
 
                 Spacer(modifier = Modifier.height(dp12))
@@ -127,14 +122,7 @@ fun SetFavoriteExerciseScreen(
                     text = practicalExerciseText,
                     isSelected = selectedExercises.contains(practicalExerciseText),
                     textStyle = PaperlogyType.onboardingCardText,
-                    onClick = {
-                        selectedExercises = if (selectedExercises.contains(practicalExerciseText)) {
-                            selectedExercises - practicalExerciseText
-                        } else {
-                            selectedExercises + practicalExerciseText
-                        }
-                        onExerciseChange(selectedExercises.joinToString(", "))
-                    }
+                    onClick = { toggleExerciseSelection(practicalExerciseText) }
                 )
 
                 // 버튼과 안 겹치게 여백 추가
@@ -175,4 +163,12 @@ fun SetFavoriteExerciseScreen(
         }
     }
 
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SetFavoriteExerciseScreenPreview() {
+    OMTeamTheme {
+        SetFavoriteExerciseScreen()
+    }
 }
