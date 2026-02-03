@@ -115,3 +115,18 @@ enum class MissionResultType {
             MissionResultType.entries.find { it.name == value.uppercase() } ?: UNKNOWN
     }
 }
+
+/**
+ * 추천 미션 정보
+ * 
+ * @property recommendedMissionId 추천 미션 id
+ * @property missionDate 미션 날짜
+ * @property status 미션 상태
+ * @property mission 미션 상세 정보
+ */
+data class RecommendedMission(
+    val recommendedMissionId: Int,
+    val missionDate: LocalDate,
+    val status: MissionStatus,
+    val mission: Mission
+)

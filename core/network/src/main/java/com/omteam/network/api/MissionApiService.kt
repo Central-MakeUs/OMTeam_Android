@@ -1,6 +1,7 @@
 package com.omteam.network.api
 
 import com.omteam.network.dto.mission.DailyMissionStatusResponse
+import com.omteam.network.dto.mission.DailyRecommendedMissionsResponse
 import retrofit2.http.GET
 
 interface MissionApiService {
@@ -12,4 +13,12 @@ interface MissionApiService {
      */
     @GET("api/missions/daily/status")
     suspend fun getDailyMissionStatus(): DailyMissionStatusResponse
+    
+    /**
+     * 오늘의 추천 미션 목록 조회
+     * 
+     * @return 오늘의 추천 미션 목록
+     */
+    @GET("api/missions/daily/recommendations")
+    suspend fun getDailyRecommendedMissions(): DailyRecommendedMissionsResponse
 }

@@ -2,9 +2,11 @@ package com.omteam.data.di
 
 import com.omteam.domain.repository.AuthRepository
 import com.omteam.domain.repository.CharacterRepository
+import com.omteam.domain.repository.MissionRepository
 import com.omteam.domain.repository.ReportRepository
 import com.omteam.domain.usecase.CheckAutoLoginUseCase
 import com.omteam.domain.usecase.GetCharacterInfoUseCase
+import com.omteam.domain.usecase.GetDailyRecommendedMissionsUseCase
 import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.GetWeeklyReportUseCase
@@ -61,4 +63,10 @@ object UseCaseModule {
     fun provideGetWeeklyReportUseCase(
         reportRepository: ReportRepository
     ): GetWeeklyReportUseCase = GetWeeklyReportUseCase(reportRepository)
+    
+    @Provides
+    @Singleton
+    fun provideGetDailyRecommendedMissionsUseCase(
+        missionRepository: MissionRepository
+    ): GetDailyRecommendedMissionsUseCase = GetDailyRecommendedMissionsUseCase(missionRepository)
 }
