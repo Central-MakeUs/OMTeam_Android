@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,8 +20,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -165,9 +173,8 @@ fun MyPageScreen(
 
         Spacer(modifier = Modifier.height(dp50))
 
-        MyPageMenuItem(
-            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title),
-            onClick = { Timber.d("## 알림 설정하기 클릭") }
+        MyPageMenuItemWithSwitch(
+            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title)
         )
         MyPageMenuDivider()
         
@@ -193,6 +200,90 @@ fun MyPageScreen(
             text = stringResource(com.omteam.main.impl.R.string.logout),
             onClick = onSignOut,
             showDivider = false
+        )
+    }
+}
+
+// 커스텀 스위치를 포함하는 알림 설정하기 영역 표현
+@Composable
+private fun MyPageMenuItemWithSwitch(
+    text: String
+) {
+    var isChecked by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                // 물결 효과 제거
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                isChecked = !isChecked
+                Timber.d("## 알림 설정하기 클릭 : $isChecked")
+            }
+            .padding(end = dp32),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OMTeamText(
+            text = text,
+            style = PretendardType.body02_2,
+            color = Gray11
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        CustomSwitch(
+            checked = isChecked
+        )
+    }
+    
+    Spacer(modifier = Modifier.height(dp18))
+}
+
+@Composable
+private fun CustomSwitch(
+    checked: Boolean
+) {
+    // material3의 스위치는 off 상태의 thumb가 on 상태의 thumb보다 크기가 작음
+    // Box로 커스텀 스위치를 구현해 thumb 크기 통일 + 스프링 애니메이션 적용해 최대한 material3 스위치와 비슷하게 구현
+    val thumbOffset by animateDpAsState(
+        targetValue = if (checked) dp17 else dp0,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+    )
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (checked) Green07 else Gray03,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
+    )
+
+    // 스위치 배경
+    Box(
+        modifier = Modifier
+            .width(dp43)
+            .height(dp24)
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(dp12)
+            )
+            .padding(horizontal = dp3, vertical = dp2),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        // 스위치 thumb (온오프 모두 해당)
+        Box(
+            modifier = Modifier
+                .offset(x = thumbOffset)
+                .size(dp20)
+                .background(
+                    color = White,
+                    shape = CircleShape
+                )
         )
     }
 }
