@@ -214,6 +214,14 @@ object PretendardType {
         letterSpacing = (-0.06).sp
     )
 
+    val button03Abled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 14.sp,  // 100%
+        letterSpacing = (-0.056).sp
+    )
+
     val skipButton = TextStyle(
         fontFamily = PretendardFont,
         fontSize = 14.sp,

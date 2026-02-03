@@ -12,6 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF121212)
+val Black02 = Color(0xFF364642)
 val Error = Color(0xFFFF7F57)
 val ErrorBottomSheetBackground = Color(0xFFD9D9D9)
 

@@ -116,7 +116,7 @@ fun MyPageScreen(
                 modifier = Modifier
                     .height(dp32)
                     .background(
-                        color = Green03,
+                        color = Green07,
                         shape = RoundedCornerShape(dp4)
                     )
                     .padding(horizontal = dp10)
@@ -127,11 +127,8 @@ fun MyPageScreen(
             ) {
                 OMTeamText(
                     text = stringResource(com.omteam.main.impl.R.string.edit_button),
-                    style = PretendardType.button03Disabled.copy(
-                        fontSize = 14.sp,
-                        letterSpacing = (-0.056).sp
-                    ),
-                    color = Gray09,
+                    style = PretendardType.button03Abled,
+                    color = Black02,
                     textAlign = TextAlign.Center
                 )
             }
