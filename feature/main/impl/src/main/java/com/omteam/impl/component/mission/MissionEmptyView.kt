@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omteam.designsystem.component.text.OMTeamText
@@ -22,8 +23,8 @@ import com.omteam.omt.core.designsystem.R
 
 @Composable
 fun MissionEmptyView(
-    title: String,
-    description: String
+    title: String = stringResource(R.string.mission_not_created_title),
+    description: String = stringResource(R.string.mission_not_created_description)
 ) {
     Row(
         modifier = Modifier
@@ -66,8 +67,8 @@ private fun MissionEmptyViewPreview() {
     OMTeamTheme {
         Column {
             MissionEmptyView(
-                title = "",
-                description = ""
+                title = "아직 미션이 생성되지 않았어요!",
+                description = "개인 설정을 완료하여 미션을 받아보세요."
             )
         }
     }

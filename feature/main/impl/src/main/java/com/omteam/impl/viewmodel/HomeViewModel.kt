@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.domain.repository.MissionRepository
 import com.omteam.domain.usecase.GetCharacterInfoUseCase
+import com.omteam.domain.usecase.GetDailyRecommendedMissionsUseCase
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
 import com.omteam.impl.viewmodel.state.DailyAppleData
 import com.omteam.impl.viewmodel.state.DailyMissionUiState
+import com.omteam.impl.viewmodel.state.RecommendedMissionsUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val missionRepository: MissionRepository,
-    private val getCharacterInfoUseCase: GetCharacterInfoUseCase
+    private val getCharacterInfoUseCase: GetCharacterInfoUseCase,
+    private val getDailyRecommendedMissionsUseCase: GetDailyRecommendedMissionsUseCase
 ) : ViewModel() {
 
     // 일일 미션 UI State
@@ -37,6 +40,10 @@ class HomeViewModel @Inject constructor(
     // 캐릭터 정보 UI State
     private val _characterUiState = MutableStateFlow<CharacterUiState>(CharacterUiState.Idle)
     val characterUiState: StateFlow<CharacterUiState> = _characterUiState.asStateFlow()
+    
+    // 추천 미션 목록 UI State
+    private val _recommendedMissionsUiState = MutableStateFlow<RecommendedMissionsUiState>(RecommendedMissionsUiState.Idle)
+    val recommendedMissionsUiState: StateFlow<RecommendedMissionsUiState> = _recommendedMissionsUiState.asStateFlow()
 
     /**
      * 일일 미션 상태 조회
@@ -85,6 +92,27 @@ class HomeViewModel @Inject constructor(
                     onFailure = { error ->
                         Timber.e("## 캐릭터 정보 조회 실패 : ${error.message}")
                         CharacterUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
+    }
+    
+    /**
+     * 오늘의 추천 미션 목록 조회
+     */
+    fun fetchRecommendedMissions() = viewModelScope.launch {
+        _recommendedMissionsUiState.value = RecommendedMissionsUiState.Loading
+        
+        getDailyRecommendedMissionsUseCase()
+            .collect { result ->
+                _recommendedMissionsUiState.value = result.fold(
+                    onSuccess = { missions ->
+                        Timber.d("## 추천 미션 목록 조회 성공 : $missions")
+                        RecommendedMissionsUiState.Success(missions)
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 추천 미션 목록 조회 실패 : ${error.message}")
+                        RecommendedMissionsUiState.Error(error.message ?: "알 수 없는 오류")
                     }
                 )
             }

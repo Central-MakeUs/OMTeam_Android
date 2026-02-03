@@ -4,4 +4,7 @@
     <string name="error_bottom_sheet_title">일시적 오류가 발생했어요</string>
     <string name="error_bottom_sheet_message">잠시 후에 다시 시도해주세요.</string>
     <string name="error_bottom_sheet_button">홈으로 돌아가기</string>
+
+    <string name="mission_not_created_title">아직 미션이 생성되지 않았어요!</string>
+    <string name="mission_not_created_description">개인 설정을 완료하여 미션을 받아보세요.</string>
 </resources>

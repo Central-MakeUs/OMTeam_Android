@@ -49,3 +49,21 @@ data class MissionDto(
     val estimatedMinutes: Int,
     val estimatedCalories: Int
 )
+
+/**
+ * 오늘의 추천 미션 목록 조회 응답
+ */
+@Serializable
+data class DailyRecommendedMissionsResponse(
+    val success: Boolean,
+    val data: List<RecommendedMissionDto>? = null,
+    val error: ApiError? = null
+)
+
+@Serializable
+data class RecommendedMissionDto(
+    val recommendedMissionId: Int,
+    val missionDate: String,
+    val status: String,
+    val mission: MissionDto
+)

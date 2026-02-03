@@ -7,10 +7,12 @@ import com.omteam.domain.model.mission.MissionResult
 import com.omteam.domain.model.mission.MissionResultType
 import com.omteam.domain.model.mission.MissionStatus
 import com.omteam.domain.model.mission.MissionType
+import com.omteam.domain.model.mission.RecommendedMission
 import com.omteam.network.dto.mission.CurrentMissionDto
 import com.omteam.network.dto.mission.DailyMissionStatusData
 import com.omteam.network.dto.mission.MissionDto
 import com.omteam.network.dto.mission.MissionResultDto
+import com.omteam.network.dto.mission.RecommendedMissionDto
 import java.time.LocalDate
 
 /**
@@ -56,4 +58,14 @@ fun MissionDto.toDomain(): Mission = Mission(
     difficulty = difficulty,
     estimatedMinutes = estimatedMinutes,
     estimatedCalories = estimatedCalories
+)
+
+/**
+ * RecommendedMissionDto -> RecommendedMission 도메인 모델
+ */
+fun RecommendedMissionDto.toDomain(): RecommendedMission = RecommendedMission(
+    recommendedMissionId = recommendedMissionId,
+    missionDate = LocalDate.parse(missionDate),
+    status = MissionStatus.fromString(status),
+    mission = mission.toDomain()
 )
