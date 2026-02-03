@@ -279,7 +279,7 @@ fun MyPageScreen(
                     },
                     onNicknameChange = { newNickname ->
                         Timber.d("## 닉네임 변경 : $newNickname")
-                        // TODO: ViewModel을 통해 닉네임 변경 API 호출
+                        // TODO: 닉네임 변경 API 호출
                     },
                     onFocusChanged = { focused ->
                         isTextFieldFocused = focused
