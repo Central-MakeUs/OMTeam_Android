@@ -26,6 +26,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -106,134 +108,159 @@ fun HomeScreenContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // 화면 크기에 따라 다른 배경 이미지 선택 (600dp 이상이면 태블릿/폴드)
+            val configuration = LocalConfiguration.current
+            val isTabletOrFold = configuration.screenWidthDp >= 600
+            val backgroundImage = if (isTabletOrFold) {
+                R.drawable.home_character_background_fold
+            } else {
+                R.drawable.home_character_background
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Gray02)
-                    .padding(top = dp20, bottom = dp23)
             ) {
-                Column(
+                // 배경 이미지
+                Image(
+                    painter = painterResource(id = backgroundImage),
+                    contentDescription = "캐릭터 배경",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth
+                )
+
+                // 컨텐츠
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = dp33),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                        .fillMaxWidth()
+                        .padding(top = dp20, bottom = dp23)
                 ) {
-                    // 격려 메시지 표시
-                    when (val state = characterUiState) {
-                        is CharacterUiState.Success -> {
-                            TextWithTriangle(text = state.data.encouragementMessage)
-                        }
-                        else -> {
-                            TextWithTriangle(text = "오늘도 힘내세요!")
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(dp20))
-
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .size(dp120)
-                            .background(
-                                color = ErrorBottomSheetBackground,
-                                shape = CircleShape
-                            )
-                    )
-
-                    Spacer(modifier = Modifier.height(dp9))
-
-                    // 레벨 표시
-                    when (val state = characterUiState) {
-                        is CharacterUiState.Success -> {
-                            Box(
-                                modifier = Modifier
-                                    .background(Yellow02)
-                                    .padding(
-                                        vertical = dp6,
-                                        horizontal = dp7
-                                    )
-                                    .align(Alignment.Start)
-                            ) {
-                                OMTeamText(
-                                    text = "LEVEL ${String.format("%02d", state.data.level)}",
-                                    style = PretendardType.homeLevelText
-                                )
-                            }
-                        }
-                        else -> {
-                            Box(
-                                modifier = Modifier
-                                    .background(Yellow02)
-                                    .padding(
-                                        vertical = dp6,
-                                        horizontal = dp7
-                                    )
-                                    .align(Alignment.Start)
-                            ) {
-                                OMTeamText(
-                                    text = "LEVEL 01",
-                                    style = PretendardType.homeLevelText
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(dp8))
-
-                    // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Start),
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxSize()
+                            .padding(horizontal = dp33),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
                     ) {
-                        // 진척도 프로그레스 바 (배경)
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(dp20)
-                                .background(
-                                    color = Gray05,
-                                    shape = RoundedCornerShape(dp32)
-                                )
-                        ) {
-                            // 진행률 표시
-                            val progress = when (val state = characterUiState) {
-                                is CharacterUiState.Success -> state.data.experiencePercent / 100f
-                                else -> 0f
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(progress)
-                                    .background(
-                                        color = Green05,
-                                        shape = RoundedCornerShape(dp32)
-                                    )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(dp9))
-
-                        // 진척도 %
+                        // 격려 메시지 표시
                         when (val state = characterUiState) {
                             is CharacterUiState.Success -> {
-                                OMTeamText(
-                                    text = "${state.data.experiencePercent}%",
-                                    style = PretendardType.skipButton.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Black
+                                TextWithTriangle(text = state.data.encouragementMessage)
+                            }
+
+                            else -> {
+                                TextWithTriangle(text = "오늘도 힘내세요!")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(dp20))
+
+                        Box(
+                            modifier = Modifier
+                                .size(dp120)
+                                .background(
+                                    color = ErrorBottomSheetBackground,
+                                    shape = CircleShape
+                                )
+                        )
+
+                        Spacer(modifier = Modifier.height(dp9))
+
+                        // 레벨 표시
+                        when (val state = characterUiState) {
+                            is CharacterUiState.Success -> {
+                                Box(
+                                    modifier = Modifier
+                                        .background(Yellow02)
+                                        .padding(
+                                            vertical = dp6,
+                                            horizontal = dp7
+                                        )
+                                        .align(Alignment.Start)
+                                ) {
+                                    OMTeamText(
+                                        text = "LEVEL ${String.format("%02d", state.data.level)}",
+                                        style = PretendardType.homeLevelText
                                     )
+                                }
+                            }
+
+                            else -> {
+                                Box(
+                                    modifier = Modifier
+                                        .background(Yellow02)
+                                        .padding(
+                                            vertical = dp6,
+                                            horizontal = dp7
+                                        )
+                                        .align(Alignment.Start)
+                                ) {
+                                    OMTeamText(
+                                        text = "LEVEL 01",
+                                        style = PretendardType.homeLevelText
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(dp8))
+
+                        // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Start),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // 진척도 프로그레스 바 (배경)
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(dp20)
+                                    .background(
+                                        color = Gray05,
+                                        shape = RoundedCornerShape(dp32)
+                                    )
+                            ) {
+                                // 진행률 표시
+                                val progress = when (val state = characterUiState) {
+                                    is CharacterUiState.Success -> state.data.experiencePercent / 100f
+                                    else -> 0f
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .fillMaxWidth(progress)
+                                        .background(
+                                            color = Green05,
+                                            shape = RoundedCornerShape(dp32)
+                                        )
                                 )
                             }
-                            else -> {
-                                OMTeamText(
-                                    text = "0%",
-                                    style = PretendardType.skipButton.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Black
+
+                            Spacer(modifier = Modifier.width(dp9))
+
+                            // 진척도 %
+                            when (val state = characterUiState) {
+                                is CharacterUiState.Success -> {
+                                    OMTeamText(
+                                        text = "${state.data.experiencePercent}%",
+                                        style = PretendardType.skipButton.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Black
+                                        )
                                     )
-                                )
+                                }
+
+                                else -> {
+                                    OMTeamText(
+                                        text = "0%",
+                                        style = PretendardType.skipButton.copy(
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Black
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
@@ -269,6 +296,7 @@ fun HomeScreenContent(
                     title = "아직 미션이 생성되지 않았어요!",
                     description = "개인 설정을 완료하여 미션을 받아보세요."
                 )
+
                 is DailyMissionUiState.Loading -> MissionLoadingView()
                 is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = state.data)
                 is DailyMissionUiState.Error -> MissionErrorView(errorMessage = state.message)
