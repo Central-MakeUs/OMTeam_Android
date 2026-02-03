@@ -45,7 +45,7 @@ fun SetFavoriteExerciseScreen(
     val healthText = stringResource(R.string.health)
     val practicalExerciseText = stringResource(R.string.practical_exercise)
 
-    // 운동 선택, 선택 해제 처리하는 헬퍼 함수
+    // 선호 운동을 최대 3개까지 선택 제한, 토스트 표시하는 헬퍼 함수
     val toggleExerciseSelection: (String) -> Unit = { exercise ->
         selectedExercises = if (selectedExercises.contains(exercise)) {
             // 선택 해제
