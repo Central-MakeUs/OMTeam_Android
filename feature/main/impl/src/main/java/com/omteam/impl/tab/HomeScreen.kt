@@ -143,9 +143,9 @@ fun HomeScreenContent(
                         verticalArrangement = Arrangement.Center,
                     ) {
                         // 격려 메시지 표시
-                        when (val state = characterUiState) {
+                        when (characterUiState) {
                             is CharacterUiState.Success -> {
-                                TextWithTriangle(text = state.data.encouragementMessage)
+                                TextWithTriangle(text = characterUiState.data.encouragementMessage)
                             }
 
                             else -> {
