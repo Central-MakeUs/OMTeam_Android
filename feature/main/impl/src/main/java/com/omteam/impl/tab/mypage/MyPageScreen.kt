@@ -134,6 +134,7 @@ fun MyPageScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // 수정하기
             Box(
                 modifier = Modifier
                     .height(dp32)
@@ -142,7 +143,11 @@ fun MyPageScreen(
                         shape = RoundedCornerShape(dp4)
                     )
                     .padding(horizontal = dp10)
-                    .clickable {
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
                         Timber.d("## 수정하기 클릭")
                     },
                 contentAlignment = Alignment.Center
