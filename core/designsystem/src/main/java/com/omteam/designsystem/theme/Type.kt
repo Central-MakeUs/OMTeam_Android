@@ -59,6 +59,14 @@ object PaperlogyType {
         letterSpacing = 0.sp
     )
 
+    val headline02_2 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 22.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
     val headline03 = TextStyle(
         fontFamily = PaperlogyFont,
         fontSize = 20.sp,
@@ -149,6 +157,14 @@ object PretendardType {
         letterSpacing = (-0.4).sp
     )
 
+    val body04_1 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 12.sp,  // 100%
+        letterSpacing = (-0.048).sp
+    )
+
     val body04_2 = TextStyle(
         fontFamily = PretendardFont,
         fontSize = 12.sp,
@@ -212,6 +228,14 @@ object PretendardType {
         fontWeight = FontWeight.Normal, // 400
         lineHeight = 15.sp,  // 100%
         letterSpacing = (-0.06).sp
+    )
+
+    val button03Abled = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 14.sp,  // 100%
+        letterSpacing = (-0.056).sp
     )
 
     val skipButton = TextStyle(

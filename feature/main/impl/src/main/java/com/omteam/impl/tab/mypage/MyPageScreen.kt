@@ -1,5 +1,6 @@
-package com.omteam.impl.tab
+package com.omteam.impl.tab.mypage
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,30 +26,44 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.impl.component.ChangeNicknameBottomSheetContent
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit = {},
+    onNavigateToOther: () -> Unit = {}
 ) {
+    var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
+    var isTextFieldFocused by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -81,17 +97,23 @@ fun MyPageScreen(
             // 편집 아이콘
             Image(
                 painter = painterResource(id = R.drawable.mypage_edit_able),
-                contentDescription = "프로필 편집",
+                contentDescription = "닉네임 수정",
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = dp8)
                     .size(dp36)
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        showChangeNicknameBottomSheet = true
+                    }
             )
         }
 
         Spacer(modifier = Modifier.height(dp16))
 
-        // TODO : 닉네임을 카톡 / 구글 로그인 성공 후 클라가 여까지 땡겨오는 건지 or 서버에서 따로 주는지 확인
         OMTeamText(
             text = "닉네임",
             style = PaperlogyType.headline03,
@@ -112,26 +134,28 @@ fun MyPageScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
+            // 수정하기
             Box(
                 modifier = Modifier
                     .height(dp32)
                     .background(
-                        color = Green03,
+                        color = Green07,
                         shape = RoundedCornerShape(dp4)
                     )
                     .padding(horizontal = dp10)
-                    .clickable {
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
                         Timber.d("## 수정하기 클릭")
                     },
                 contentAlignment = Alignment.Center
             ) {
                 OMTeamText(
                     text = stringResource(com.omteam.main.impl.R.string.edit_button),
-                    style = PretendardType.button03Disabled.copy(
-                        fontSize = 14.sp,
-                        letterSpacing = (-0.056).sp
-                    ),
-                    color = Gray09,
+                    style = PretendardType.button03Abled,
+                    color = Black02,
                     textAlign = TextAlign.Center
                 )
             }
@@ -192,7 +216,7 @@ fun MyPageScreen(
         
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.other),
-            onClick = { Timber.d("## 기타 클릭") },
+            onClick = onNavigateToOther,
         )
         MyPageMenuDivider()
 
@@ -201,6 +225,74 @@ fun MyPageScreen(
             onClick = onSignOut,
             showDivider = false
         )
+    }
+
+    // 닉네임 변경 바텀 시트
+    if (showChangeNicknameBottomSheet) {
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true
+        )
+        val scope = rememberCoroutineScope()
+
+        // 바텀 시트보다 먼저 BackHandler 등록해서 키보드 표시될 때 뒤로가기 클릭 시 바텀 시트가 사라지지 않게
+        BackHandler(enabled = true) {
+            if (isTextFieldFocused) {
+                // TextField에 포커스가 있으면 키보드만 닫음
+                focusManager.clearFocus()
+            } else {
+                // 포커스가 없으면 바텀시트 닫음
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        showChangeNicknameBottomSheet = false
+                    }
+                }
+            }
+        }
+
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        showChangeNicknameBottomSheet = false
+                    }
+                }
+            },
+            sheetState = sheetState,
+            containerColor = White,
+            shape = RoundedCornerShape(
+                topStart = dp32,
+                topEnd = dp32
+            ),
+            properties = ModalBottomSheetProperties(
+                securePolicy = SecureFlagPolicy.Inherit,
+                shouldDismissOnBackPress = false
+            )
+        ) {
+            Box(modifier = Modifier.imePadding()) {
+                ChangeNicknameBottomSheetContent(
+                    onDismiss = {
+                        scope.launch {
+                            sheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!sheetState.isVisible) {
+                                showChangeNicknameBottomSheet = false
+                            }
+                        }
+                    },
+                    onNicknameChange = { newNickname ->
+                        Timber.d("## 닉네임 변경 : $newNickname")
+                        // TODO: 닉네임 변경 API 호출
+                    },
+                    onFocusChanged = { focused ->
+                        isTextFieldFocused = focused
+                    }
+                )
+            }
+        }
     }
 }
 
