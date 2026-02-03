@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,6 +25,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.domain.model.character.CharacterInfo
 import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
@@ -43,6 +45,7 @@ import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import com.omteam.impl.viewmodel.HomeViewModel
 import com.omteam.omt.core.designsystem.R
 import java.time.LocalDate
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -57,6 +60,21 @@ fun HomeScreen(
         homeViewModel.fetchCharacterInfo()
     }
 
+    HomeScreenContent(
+        dailyMissionUiState = dailyMissionUiState,
+        characterUiState = characterUiState,
+        weekDays = homeViewModel.getCurrentWeekDays(),
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    dailyMissionUiState: DailyMissionUiState,
+    characterUiState: CharacterUiState,
+    weekDays: List<DailyAppleData>,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -86,48 +104,81 @@ fun HomeScreen(
             // 오늘이 속한 주를 표시
             // 14~20일 중 하나에 속하면 14~20 표시, 21일 되면 21~27 표시
             WeeklyAppleView(
-                weekDays = homeViewModel.getCurrentWeekDays(),
+                weekDays = weekDays,
                 modifier = Modifier.fillMaxWidth()
             )
+
+            // 화면 크기에 따라 다른 배경 이미지 선택 (600dp 이상이면 태블릿/폴드)
+            val configuration = LocalConfiguration.current
+            val isTabletOrFold = configuration.screenWidthDp >= 600
+            val backgroundImage = if (isTabletOrFold) {
+                R.drawable.home_character_background_fold
+            } else {
+                R.drawable.home_character_background
+            }
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Gray02)
-                    .padding(top = dp20, bottom = dp23)
             ) {
+                // 배경 이미지
+                Image(
+                    painter = painterResource(id = backgroundImage),
+                    contentDescription = "캐릭터 배경",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.FillWidth
+                )
+
+                // 컨텐츠
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = dp20, bottom = dp23)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = dp33),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        // 격려 메시지 표시
+                        when (val state = characterUiState) {
+                            is CharacterUiState.Success -> {
+                                TextWithTriangle(text = state.data.encouragementMessage)
+                            }
+
+                            else -> {
+                                TextWithTriangle(text = "오늘도 힘내세요!")
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(dp20))
+
+                        // TODO : 캐릭터 상태에 따른 이미지 변경
+                        Image(
+                            painter = painterResource(id = R.drawable.character_normal),
+                            contentDescription = "캐릭터 이미지",
+                            modifier = Modifier
+                                .size(
+                                    width = 150.dp,
+                                    height = 133.dp
+                                )
+                                .align(Alignment.CenterHorizontally),
+                        )
+                    }
+                }
+
+                // 배경 이미지 하단 기준 레벨, 프로그레스 바 배치
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = dp33),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                        .align(Alignment.BottomStart)
+                        .fillMaxWidth()
+                        .padding(start = dp33, end = dp33, bottom = dp13),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    // 격려 메시지 표시
-                    when (val state = characterUiState) {
-                        is CharacterUiState.Success -> {
-                            TextWithTriangle(text = state.data.encouragementMessage)
-                        }
-                        else -> {
-                            TextWithTriangle(text = "오늘도 힘내세요!")
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(dp20))
-
-                    Box(
-                        modifier = Modifier
-                            .size(dp120)
-                            .background(
-                                color = ErrorBottomSheetBackground,
-                                shape = CircleShape
-                            )
-                    )
-
-                    Spacer(modifier = Modifier.height(dp9))
-
                     // 레벨 표시
-                    when (val state = characterUiState) {
+                    when (characterUiState) {
                         is CharacterUiState.Success -> {
                             Box(
                                 modifier = Modifier
@@ -136,14 +187,15 @@ fun HomeScreen(
                                         vertical = dp6,
                                         horizontal = dp7
                                     )
-                                    .align(Alignment.Start)
                             ) {
                                 OMTeamText(
-                                    text = "LEVEL ${String.format("%02d", state.data.level)}",
+                                    text = "LEVEL ${String.format(Locale.getDefault(), "%02d",
+                                        characterUiState.data.level)}",
                                     style = PretendardType.homeLevelText
                                 )
                             }
                         }
+
                         else -> {
                             Box(
                                 modifier = Modifier
@@ -152,7 +204,6 @@ fun HomeScreen(
                                         vertical = dp6,
                                         horizontal = dp7
                                     )
-                                    .align(Alignment.Start)
                             ) {
                                 OMTeamText(
                                     text = "LEVEL 01",
@@ -166,9 +217,7 @@ fun HomeScreen(
 
                     // 진척도 프로그레스 바, 진척도 % 텍스트를 포함한 Row
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.Start),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         // 진척도 프로그레스 바 (배경)
@@ -182,8 +231,8 @@ fun HomeScreen(
                                 )
                         ) {
                             // 진행률 표시
-                            val progress = when (val state = characterUiState) {
-                                is CharacterUiState.Success -> state.data.experiencePercent / 100f
+                            val progress = when (characterUiState) {
+                                is CharacterUiState.Success -> characterUiState.data.experiencePercent / 100f
                                 else -> 0f
                             }
                             Box(
@@ -200,16 +249,17 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(dp9))
 
                         // 진척도 %
-                        when (val state = characterUiState) {
+                        when (characterUiState) {
                             is CharacterUiState.Success -> {
                                 OMTeamText(
-                                    text = "${state.data.experiencePercent}%",
+                                    text = "${characterUiState.data.experiencePercent}%",
                                     style = PretendardType.skipButton.copy(
                                         fontWeight = FontWeight.SemiBold,
                                         color = Black
                                     )
                                 )
                             }
+
                             else -> {
                                 OMTeamText(
                                     text = "0%",
@@ -248,14 +298,15 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            when (val state = dailyMissionUiState) {
+            when (dailyMissionUiState) {
                 is DailyMissionUiState.Idle -> MissionEmptyView(
                     title = "아직 미션이 생성되지 않았어요!",
                     description = "개인 설정을 완료하여 미션을 받아보세요."
                 )
+
                 is DailyMissionUiState.Loading -> MissionLoadingView()
-                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = state.data)
-                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = state.message)
+                is DailyMissionUiState.Success -> MissionSuccessView(missionStatus = dailyMissionUiState.data)
+                is DailyMissionUiState.Error -> MissionErrorView(errorMessage = dailyMissionUiState.message)
             }
 
             Spacer(modifier = Modifier.height(dp64))
@@ -340,28 +391,19 @@ fun TextWithTriangle(
             modifier = Modifier
                 .wrapContentWidth()
                 .background(
-                    color = ErrorBottomSheetBackground,
-                    shape = RoundedCornerShape(dp4)
+                    color = White,
+                    shape = RoundedCornerShape(dp32)
                 )
                 .padding(horizontal = dp20, vertical = dp6),
             contentAlignment = Alignment.Center
         ) {
             OMTeamText(
                 text = text,
-                style = PretendardType.body05,
-                color = Black,
+                style = PretendardType.body04_2,
+                color = Gray11,
                 textAlign = TextAlign.Center
             )
         }
-
-        // 하단 중앙의 삼각형
-        Image(
-            painter = painterResource(id = R.drawable.bottom_triangle),
-            contentDescription = "하단 삼각형",
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .offset(y = dp6) // 텍스트 박스 하단에서 살짝 겹치도록
-        )
     }
 }
 
@@ -436,8 +478,30 @@ fun DailyAppleItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeScreenPreview() {
-    HomeScreen()
+private fun HomeScreenContentPreview() {
+    val weeklyData = listOf(
+        DailyAppleData(LocalDate.now(), 14, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 15, AppleStatus.SUCCESS),
+        DailyAppleData(LocalDate.now(), 16, AppleStatus.FAILED),
+        DailyAppleData(LocalDate.now(), 17, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 18, AppleStatus.SUCCESS),
+        DailyAppleData(LocalDate.now(), 19, AppleStatus.DEFAULT),
+        DailyAppleData(LocalDate.now(), 20, AppleStatus.FAILED)
+    )
+    HomeScreenContent(
+        dailyMissionUiState = DailyMissionUiState.Idle,
+        characterUiState = CharacterUiState.Success(
+            data = CharacterInfo(
+                level = 5,
+                experiencePercent = 65,
+                successCount = 5,
+                successCountUntilNextLevel = 10,
+                encouragementTitle = "힘내세요!",
+                encouragementMessage = "오늘도 화이팅!"
+            )
+        ),
+        weekDays = weeklyData
+    )
 }
 
 @Preview(showBackground = true)

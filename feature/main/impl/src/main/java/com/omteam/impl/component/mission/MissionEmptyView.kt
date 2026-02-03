@@ -1,7 +1,6 @@
 package com.omteam.impl.component.mission
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,19 +10,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.dp16
-import com.omteam.designsystem.foundation.dp32
-import com.omteam.designsystem.foundation.dp6
-import com.omteam.designsystem.foundation.dp81
-import com.omteam.designsystem.theme.ErrorBottomSheetBackground
-import com.omteam.designsystem.theme.Gray09
-import com.omteam.designsystem.theme.PaperlogyType
-import com.omteam.designsystem.theme.PretendardType
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
+import com.omteam.omt.core.designsystem.R
 
 @Composable
 fun MissionEmptyView(
@@ -35,13 +30,11 @@ fun MissionEmptyView(
             .fillMaxWidth()
             .padding(start = dp32)
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.character_embarrassed_green_apple),
+            contentDescription = "캐릭터 이미지",
             modifier = Modifier
-                .size(dp81)
-                .background(
-                    color = ErrorBottomSheetBackground,
-                    shape = CircleShape
-                )
+                .size(dp84),
         )
 
         Spacer(modifier = Modifier.width(dp16))
@@ -62,6 +55,19 @@ fun MissionEmptyView(
                 text = description,
                 style = PretendardType.body04_3,
                 color = Gray09
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MissionEmptyViewPreview() {
+    OMTeamTheme {
+        Column {
+            MissionEmptyView(
+                title = "",
+                description = ""
             )
         }
     }
