@@ -14,4 +14,9 @@
     <string name="new_nickname_placeholder">닉네임을 입력해주세요. (최대 8글자)</string>
     <string name="new_nickname_rule">한글, 영어, 숫자를 사용하여 8글자 이내로 닉네임을 설정해주세요.</string>
     <string name="change">변경하기</string>
+    
+    <!-- 기타 -->
+    <string name="notice_title">공지사항</string>
+    <string name="faq_title">FAQ</string>
+    <string name="inquiry_title">문의하기</string>
 </resources>

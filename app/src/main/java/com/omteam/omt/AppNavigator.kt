@@ -6,6 +6,7 @@ import com.omteam.api.AccountLinkCompleteNavKey
 import com.omteam.api.LoginNavKey
 import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
+import com.omteam.api.OtherNavKey
 
 class AppNavigator(
     private val backStackState: MutableState<List<NavKey>>
@@ -64,4 +65,9 @@ class AppNavigator(
     fun navigateToLogin() {
         backStackState.value = listOf(LoginNavKey)
     }
+    
+    /**
+     * 기타 화면 이동
+     */
+    fun navigateToOther() = navigate(destination = OtherNavKey)
 }

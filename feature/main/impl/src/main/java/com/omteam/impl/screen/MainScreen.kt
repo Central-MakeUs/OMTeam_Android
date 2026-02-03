@@ -15,7 +15,7 @@ import com.omteam.designsystem.theme.GreenTab
 import com.omteam.impl.component.BottomTabBar
 import com.omteam.impl.tab.ChatScreen
 import com.omteam.impl.tab.HomeScreen
-import com.omteam.impl.tab.MyPageScreen
+import com.omteam.impl.tab.mypage.MyPageScreen
 import com.omteam.impl.tab.ReportScreen
 import com.omteam.impl.viewmodel.MainViewModel
 
@@ -28,7 +28,8 @@ import com.omteam.impl.viewmodel.MainViewModel
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit = {},
+    onNavigateToOther: () -> Unit = {}
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
@@ -46,7 +47,10 @@ fun MainScreen(
                 0 -> HomeScreen()
                 1 -> ChatScreen()
                 2 -> ReportScreen()
-                3 -> MyPageScreen(onSignOut = onSignOut)
+                3 -> MyPageScreen(
+                    onSignOut = onSignOut,
+                    onNavigateToOther = onNavigateToOther
+                )
             }
         }
 

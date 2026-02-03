@@ -32,6 +32,7 @@ import com.omteam.impl.entry.accountLinkCompleteEntry
 import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
+import com.omteam.impl.entry.otherEntry
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -120,6 +121,15 @@ class MainActivity : ComponentActivity() {
                                 onSignOut = {
                                     loginViewModel.logout()
                                     navigator.navigateToLogin()
+                                },
+                                onNavigateToOther = {
+                                    navigator.navigateToOther()
+                                }
+                            )
+                            
+                            otherEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
                                 }
                             )
                         },

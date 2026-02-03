@@ -1,4 +1,4 @@
-package com.omteam.impl.tab
+package com.omteam.impl.tab.mypage
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -57,7 +57,8 @@ import timber.log.Timber
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit = {},
+    onNavigateToOther: () -> Unit = {}
 ) {
     var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -210,7 +211,7 @@ fun MyPageScreen(
         
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.other),
-            onClick = { Timber.d("## 기타 클릭") },
+            onClick = onNavigateToOther,
         )
         MyPageMenuDivider()
 

@@ -1,0 +1,152 @@
+package com.omteam.impl.tab.mypage
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.res.stringResource
+import com.omteam.designsystem.component.text.OMTeamText
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
+import com.omteam.omt.core.designsystem.R
+import timber.log.Timber
+
+@Composable
+fun OtherScreen(
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit = {}
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(White)
+            .padding(dp20)
+    ) {
+        // 상단 헤더
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.icon_arrow_back),
+                contentDescription = "뒤로가기",
+                modifier = Modifier
+                    .size(dp24)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        onBackClick()
+                    },
+                tint = Gray11
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            OMTeamText(
+                text = "기타",
+                style = PaperlogyType.headline02_2,
+                color = Gray11
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 대칭 맞추기 위한 여백
+            Box(modifier = Modifier.size(dp24))
+        }
+
+        Spacer(modifier = Modifier.height(dp50))
+
+        // 공지사항, FAQ, 문의하기
+        OtherMenuItem(
+            iconRes = R.drawable.icon_announcement,
+            text = stringResource(R.string.notice_title),
+            onClick = { Timber.d("## 공지사항 클릭") }
+        )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_faq,
+            text = stringResource(R.string.faq_title),
+            onClick = { Timber.d("## FAQ 클릭") }
+        )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_inquiry,
+            text = stringResource(R.string.inquiry_title),
+            onClick = { Timber.d("## 문의하기 클릭") }
+        )
+    }
+}
+
+@Composable
+private fun OtherMenuItem(
+    @DrawableRes iconRes: Int,
+    text: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { onClick() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = text,
+            modifier = Modifier.size(dp24)
+        )
+        
+        Spacer(modifier = Modifier.width(dp4))
+        
+        OMTeamText(
+            text = text,
+            style = PretendardType.body02_2,
+            color = Gray11
+        )
+    }
+
+    Spacer(modifier = Modifier.height(dp18))
+}
+
+@Composable
+private fun OtherMenuDivider() {
+    Spacer(
+        modifier = Modifier
+            .height(0.5.dp)
+            .fillMaxWidth()
+            .background(Gray03)
+    )
+    Spacer(modifier = Modifier.height(dp18))
+}
+
+@Preview
+@Composable
+private fun OtherScreenPreview() {
+    OMTeamTheme {
+        OtherScreen()
+    }
+}

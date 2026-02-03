@@ -12,9 +12,11 @@ import timber.log.Timber
  * 메인 화면 entry builder
  * 
  * @param onSignOut 로그아웃 콜백
+ * @param onNavigateToOther 기타 화면 이동 콜백
  */
 fun EntryProviderScope<NavKey>.mainEntry(
-    onSignOut: () -> Unit
+    onSignOut: () -> Unit,
+    onNavigateToOther: () -> Unit
 ) {
     entry<MainNavKey> {
         Timber.e("## 메인 화면 이동")
@@ -25,7 +27,8 @@ fun EntryProviderScope<NavKey>.mainEntry(
                 // 로그아웃 후 재로그인 시 홈 화면부터 표시되게 인덱스 리셋
                 mainViewModel.resetTabIndex()
                 onSignOut()
-            }
+            },
+            onNavigateToOther = onNavigateToOther
         )
     }
 }

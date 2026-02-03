@@ -8,3 +8,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 object MainNavKey : NavKey
+
+/**
+ * 기타 화면 NavKey
+ */
+@Serializable
+object OtherNavKey : NavKey
