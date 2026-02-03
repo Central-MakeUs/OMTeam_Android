@@ -149,6 +149,14 @@ object PretendardType {
         letterSpacing = (-0.4).sp
     )
 
+    val body04_1 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 12.sp,  // 100%
+        letterSpacing = (-0.048).sp
+    )
+
     val body04_2 = TextStyle(
         fontFamily = PretendardFont,
         fontSize = 12.sp,
