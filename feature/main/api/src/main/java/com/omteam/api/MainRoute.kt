@@ -14,3 +14,9 @@ object MainNavKey : NavKey
  */
 @Serializable
 object OtherNavKey : NavKey
+
+/**
+ * 나의 목표 수정하기 화면 NavKey
+ */
+@Serializable
+object EditMyGoalNavKey : NavKey

@@ -58,7 +58,8 @@ import timber.log.Timber
 fun MyPageScreen(
     modifier: Modifier = Modifier,
     onSignOut: () -> Unit = {},
-    onNavigateToOther: () -> Unit = {}
+    onNavigateToOther: () -> Unit = {},
+    onNavigateToEditMyGoal: () -> Unit = {}
 ) {
     var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -156,7 +157,8 @@ fun MyPageScreen(
                     text = stringResource(com.omteam.main.impl.R.string.edit_button),
                     style = PretendardType.button03Abled,
                     color = Black02,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    onClick = onNavigateToEditMyGoal
                 )
             }
         }

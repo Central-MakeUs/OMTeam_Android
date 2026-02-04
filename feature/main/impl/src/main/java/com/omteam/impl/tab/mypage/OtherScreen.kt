@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.impl.component.SubScreenHeader
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
@@ -42,37 +43,10 @@ fun OtherScreen(
             .padding(dp20)
     ) {
         // 상단 헤더
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.icon_arrow_back),
-                contentDescription = "뒤로가기",
-                modifier = Modifier
-                    .size(dp24)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        onBackClick()
-                    },
-                tint = Gray11
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            OMTeamText(
-                text = "기타",
-                style = PaperlogyType.headline02_2,
-                color = Gray11
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // 대칭 맞추기 위한 여백
-            Box(modifier = Modifier.size(dp24))
-        }
+        SubScreenHeader(
+            title = stringResource(R.string.other_title),
+            onBackClick = onBackClick
+        )
 
         Spacer(modifier = Modifier.height(dp50))
 
