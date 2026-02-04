@@ -20,6 +20,11 @@
     <string name="notice_title">공지사항</string>
     <string name="faq_title">FAQ</string>
     <string name="inquiry_title">문의하기</string>
+
+    <!-- 나의 목표 수정하기 -->
     <string name="edit_my_goal_title">나의 목표 수정하기</string>
     <string name="edit_my_goal_button_text">목표 수정하기</string>
+
+    <!-- 내 정보 수정하기 -->
+    <string name="edit_my_info_title">내 정보 수정하기</string>
 </resources>

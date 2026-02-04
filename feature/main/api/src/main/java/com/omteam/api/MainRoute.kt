@@ -20,3 +20,9 @@ object OtherNavKey : NavKey
  */
 @Serializable
 object EditMyGoalNavKey : NavKey
+
+/**
+ * 내 정보 수정하기 화면 NavKey
+ */
+@Serializable
+object EditMyInfoNavKey : NavKey

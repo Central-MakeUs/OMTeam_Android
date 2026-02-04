@@ -59,7 +59,8 @@ fun MyPageScreen(
     modifier: Modifier = Modifier,
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
-    onNavigateToEditMyGoal: () -> Unit = {}
+    onNavigateToEditMyGoal: () -> Unit = {},
+    onNavigateToEditMyInfo: () -> Unit = {}
 ) {
     var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
@@ -206,7 +207,7 @@ fun MyPageScreen(
         
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.edit_my_info),
-            onClick = { Timber.d("## 내 정보 수정하기 클릭") }
+            onClick = onNavigateToEditMyInfo
         )
         MyPageMenuDivider()
         

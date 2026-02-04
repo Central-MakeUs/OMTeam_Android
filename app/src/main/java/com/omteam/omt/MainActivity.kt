@@ -30,6 +30,7 @@ import com.omteam.api.OnboardingNavKey
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.impl.entry.accountLinkCompleteEntry
 import com.omteam.impl.entry.editMyGoalEntry
+import com.omteam.impl.entry.editMyInfoEntry
 import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
@@ -128,6 +129,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToEditMyGoal = {
                                     navigator.navigateToEditMyGoal()
+                                },
+                                onNavigateToEditMyInfo = {
+                                    navigator.navigateToEditMyInfo()
                                 }
                             )
                             
@@ -138,6 +142,12 @@ class MainActivity : ComponentActivity() {
                             )
                             
                             editMyGoalEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editMyInfoEntry(
                                 onBackClick = {
                                     navigator.popBackStack()
                                 }
