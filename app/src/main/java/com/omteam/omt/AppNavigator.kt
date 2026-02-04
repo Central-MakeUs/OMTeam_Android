@@ -3,8 +3,12 @@ package com.omteam.omt
 import androidx.compose.runtime.MutableState
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.AccountLinkCompleteNavKey
+import com.omteam.api.EditExerciseTimeNavKey
+import com.omteam.api.EditFavoriteExerciseNavKey
+import com.omteam.api.EditMissionTimeNavKey
 import com.omteam.api.EditMyGoalNavKey
 import com.omteam.api.EditMyInfoNavKey
+import com.omteam.api.EditPatternNavKey
 import com.omteam.api.LoginNavKey
 import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
@@ -82,4 +86,24 @@ class AppNavigator(
      * 내 정보 수정하기 화면 이동
      */
     fun navigateToEditMyInfo() = navigate(destination = EditMyInfoNavKey)
+    
+    /**
+     * 운동 가능 시간 수정 화면 이동
+     */
+    fun navigateToEditExerciseTime() = navigate(destination = EditExerciseTimeNavKey)
+    
+    /**
+     * 미션 투자 시간 수정 화면 이동
+     */
+    fun navigateToEditMissionTime() = navigate(destination = EditMissionTimeNavKey)
+    
+    /**
+     * 선호 운동 수정 화면 이동
+     */
+    fun navigateToEditFavoriteExercise() = navigate(destination = EditFavoriteExerciseNavKey)
+    
+    /**
+     * 생활 패턴 수정 화면 이동
+     */
+    fun navigateToEditPattern() = navigate(destination = EditPatternNavKey)
 }

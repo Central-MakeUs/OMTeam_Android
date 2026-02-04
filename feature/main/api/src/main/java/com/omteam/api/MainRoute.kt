@@ -26,3 +26,27 @@ object EditMyGoalNavKey : NavKey
  */
 @Serializable
 object EditMyInfoNavKey : NavKey
+
+/**
+ * 운동 가능 시간 수정 화면 NavKey
+ */
+@Serializable
+object EditExerciseTimeNavKey : NavKey
+
+/**
+ * 미션 투자 시간 수정 화면 NavKey
+ */
+@Serializable
+object EditMissionTimeNavKey : NavKey
+
+/**
+ * 선호 운동 수정 화면 NavKey
+ */
+@Serializable
+object EditFavoriteExerciseNavKey : NavKey
+
+/**
+ * 생활 패턴 수정 화면 NavKey
+ */
+@Serializable
+object EditPatternNavKey : NavKey
