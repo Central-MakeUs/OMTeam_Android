@@ -21,4 +21,5 @@
     <string name="faq_title">FAQ</string>
     <string name="inquiry_title">문의하기</string>
     <string name="edit_my_goal_title">나의 목표 수정하기</string>
+    <string name="edit_my_goal_button_text">목표 수정하기</string>
 </resources>

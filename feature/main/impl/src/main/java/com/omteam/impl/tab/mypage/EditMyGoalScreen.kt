@@ -90,7 +90,7 @@ fun EditMyGoalScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         OMTeamButton(
-            text = "목표 수정하기",
+            text = stringResource(R.string.edit_my_goal_button_text),
             onClick = {
                 // TODO : 나의 목표 수정하기 api 호출
             },
