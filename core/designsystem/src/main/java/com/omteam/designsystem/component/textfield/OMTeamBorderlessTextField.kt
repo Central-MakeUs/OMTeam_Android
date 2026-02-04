@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,19 +29,24 @@ fun OMTeamBorderlessTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "",
+    textStyle: TextStyle = PaperlogyType.headline03,
     enabled: Boolean = true,
     singleLine: Boolean = true,
     maxLines: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    inputFilter: ((String) -> String)? = null,
 ) {
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { newValue ->
+            val filteredValue = inputFilter?.invoke(newValue) ?: newValue
+            onValueChange(filteredValue)
+        },
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        textStyle = PaperlogyType.headline03.copy(
+        textStyle = textStyle.copy(
             color = Gray11,
             textAlign = TextAlign.Start
         ),
@@ -59,7 +65,7 @@ fun OMTeamBorderlessTextField(
                 if (value.isEmpty()) {
                     Text(
                         text = placeholder,
-                        style = PaperlogyType.headline03,
+                        style = textStyle,
                         color = Gray11,
                         textAlign = TextAlign.Start
                     )
