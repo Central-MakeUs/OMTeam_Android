@@ -29,6 +29,7 @@ import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.impl.entry.accountLinkCompleteEntry
+import com.omteam.impl.entry.editMyGoalEntry
 import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
@@ -124,10 +125,19 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToOther = {
                                     navigator.navigateToOther()
+                                },
+                                onNavigateToEditMyGoal = {
+                                    navigator.navigateToEditMyGoal()
                                 }
                             )
                             
                             otherEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editMyGoalEntry(
                                 onBackClick = {
                                     navigator.popBackStack()
                                 }

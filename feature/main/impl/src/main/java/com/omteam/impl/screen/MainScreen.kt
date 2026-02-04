@@ -29,7 +29,8 @@ fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
-    onNavigateToOther: () -> Unit = {}
+    onNavigateToOther: () -> Unit = {},
+    onNavigateToEditMyGoal: () -> Unit = {}
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
@@ -49,7 +50,8 @@ fun MainScreen(
                 2 -> ReportScreen()
                 3 -> MyPageScreen(
                     onSignOut = onSignOut,
-                    onNavigateToOther = onNavigateToOther
+                    onNavigateToOther = onNavigateToOther,
+                    onNavigateToEditMyGoal = onNavigateToEditMyGoal
                 )
             }
         }

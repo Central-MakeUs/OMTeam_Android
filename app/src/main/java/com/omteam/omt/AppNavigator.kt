@@ -3,6 +3,7 @@ package com.omteam.omt
 import androidx.compose.runtime.MutableState
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.AccountLinkCompleteNavKey
+import com.omteam.api.EditMyGoalNavKey
 import com.omteam.api.LoginNavKey
 import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
@@ -70,4 +71,9 @@ class AppNavigator(
      * 기타 화면 이동
      */
     fun navigateToOther() = navigate(destination = OtherNavKey)
+    
+    /**
+     * 나의 목표 수정하기 화면 이동
+     */
+    fun navigateToEditMyGoal() = navigate(destination = EditMyGoalNavKey)
 }
