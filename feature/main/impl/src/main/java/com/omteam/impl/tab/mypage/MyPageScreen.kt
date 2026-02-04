@@ -182,7 +182,7 @@ fun MyPageScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.icon_exercise),
+                    painter = painterResource(id = R.drawable.icon_red_pin),
                     contentDescription = "운동 습관 형성 아이콘",
                     modifier = Modifier.size(dp37)
                 )
