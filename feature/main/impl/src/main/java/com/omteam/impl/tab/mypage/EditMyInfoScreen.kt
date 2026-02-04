@@ -91,13 +91,13 @@ fun EditMyInfoScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             OMTeamText(
-                text = "회원정보를 삭제하시겠어요?",
+                text = stringResource(R.string.withdraw_message),
                 style = PretendardType.body03_1,
                 color = Gray07
             )
             Spacer(modifier = Modifier.weight(1f))
             OMTeamText(
-                text = "회원탈퇴",
+                text = stringResource(R.string.withdraw),
                 style = PretendardType.body03_1,
                 color = Gray07
             )
