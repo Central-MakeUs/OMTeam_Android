@@ -29,7 +29,12 @@ import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
 import com.omteam.designsystem.theme.OMTeamTheme
 import com.omteam.impl.entry.accountLinkCompleteEntry
+import com.omteam.impl.entry.editExerciseTimeEntry
+import com.omteam.impl.entry.editFavoriteExerciseEntry
+import com.omteam.impl.entry.editMissionTimeEntry
 import com.omteam.impl.entry.editMyGoalEntry
+import com.omteam.impl.entry.editMyInfoEntry
+import com.omteam.impl.entry.editPatternEntry
 import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
@@ -128,6 +133,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToEditMyGoal = {
                                     navigator.navigateToEditMyGoal()
+                                },
+                                onNavigateToEditMyInfo = {
+                                    navigator.navigateToEditMyInfo()
                                 }
                             )
                             
@@ -138,6 +146,48 @@ class MainActivity : ComponentActivity() {
                             )
                             
                             editMyGoalEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editMyInfoEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                },
+                                onNavigateToEditExerciseTime = {
+                                    navigator.navigateToEditExerciseTime()
+                                },
+                                onNavigateToEditMissionTime = {
+                                    navigator.navigateToEditMissionTime()
+                                },
+                                onNavigateToEditFavoriteExercise = {
+                                    navigator.navigateToEditFavoriteExercise()
+                                },
+                                onNavigateToEditPattern = {
+                                    navigator.navigateToEditPattern()
+                                }
+                            )
+                            
+                            editExerciseTimeEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editMissionTimeEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editFavoriteExerciseEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                }
+                            )
+                            
+                            editPatternEntry(
                                 onBackClick = {
                                     navigator.popBackStack()
                                 }
