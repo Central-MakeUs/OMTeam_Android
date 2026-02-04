@@ -27,4 +27,8 @@
 
     <!-- 내 정보 수정하기 -->
     <string name="edit_my_info_title">내 정보 수정하기</string>
+    <string name="available_exercise_hours">운동 가능 시간</string>
+    <string name="available_mission_hours">미션에 투자할 수 있는 시간</string>
+    <string name="favorite_exercises">선호 운동</string>
+    <string name="usual_pattern">평소 생활 패턴</string>
 </resources>
