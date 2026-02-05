@@ -81,7 +81,7 @@ fun EditExerciseTimeScreen(
             // 선택된 시간대 표시
             EditMyInfoItemWithInfo(
                 label = "운동 가능한 시간대를 선택해 주세요.",
-                infoMessage = "운동 가능한 시간대를 선택해 주세요",
+                infoMessage = "몇 시부터 운동할 수 있는지 입력해주세요",
                 chips = if (selectedTime.isNotEmpty()) listOf(selectedTime) else emptyList(),
                 onClick = {}
             )
