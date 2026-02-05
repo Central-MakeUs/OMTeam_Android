@@ -103,6 +103,16 @@ fun EditMyInfoItemWithInfo(
             }
             
             Spacer(modifier = Modifier.height(dp10))
+            
+            // 구분선
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dp1)
+                    .background(Gray05)
+            )
+
+            Spacer(modifier = Modifier.height(dp10))
         } else {
             OMTeamBorderlessTextField(
                 value = textFieldValue,
@@ -115,6 +125,7 @@ fun EditMyInfoItemWithInfo(
 
             Spacer(modifier = Modifier.height(dp8))
 
+            // 구분선
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
