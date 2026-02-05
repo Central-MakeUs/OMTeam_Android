@@ -153,7 +153,7 @@ fun EditMyInfoItemWithInfo(
             OMTeamText(
                 text = infoMessage,
                 style = PretendardType.body04_2,
-                color = Gray07
+                color = Gray08
             )
         }
     }
