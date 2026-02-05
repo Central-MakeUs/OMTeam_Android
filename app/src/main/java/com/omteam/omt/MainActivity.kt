@@ -39,6 +39,7 @@ import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
 import com.omteam.impl.entry.otherEntry
+import com.omteam.impl.entry.webViewEntry
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -140,6 +141,15 @@ class MainActivity : ComponentActivity() {
                             )
                             
                             otherEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
+                                },
+                                onNavigateToWebView = { url ->
+                                    navigator.navigateToWebView(url)
+                                }
+                            )
+                            
+                            webViewEntry(
                                 onBackClick = {
                                     navigator.popBackStack()
                                 }

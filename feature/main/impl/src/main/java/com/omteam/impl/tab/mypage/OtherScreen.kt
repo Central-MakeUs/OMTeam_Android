@@ -3,7 +3,6 @@ package com.omteam.impl.tab.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,12 +27,14 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.SubScreenHeader
 import com.omteam.omt.core.designsystem.R
+import com.omteam.main.impl.BuildConfig
 import timber.log.Timber
 
 @Composable
 fun OtherScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onNavigateToWebView: (url: String) -> Unit = { _ -> }
 ) {
     Column(
         modifier = modifier
@@ -59,17 +59,38 @@ fun OtherScreen(
         OtherMenuDivider()
 
         OtherMenuItem(
-            iconRes = R.drawable.icon_faq,
+            iconRes = R.drawable.icon_inquiry,
             text = stringResource(R.string.faq_title),
             onClick = { Timber.d("## FAQ 클릭") }
         )
         OtherMenuDivider()
 
         OtherMenuItem(
-            iconRes = R.drawable.icon_inquiry,
+            iconRes = R.drawable.icon_faq,
             text = stringResource(R.string.inquiry_title),
             onClick = { Timber.d("## 문의하기 클릭") }
         )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_check,
+            text = stringResource(R.string.privacy_terms),
+            onClick = {
+                Timber.d("## 개인정보 정책 클릭")
+                onNavigateToWebView(BuildConfig.PRIVACY_TERMS_WEBVIEW)
+            }
+        )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_info,
+            text = stringResource(R.string.terms_conditions),
+            onClick = {
+                Timber.d("## 이용약관 클릭")
+                onNavigateToWebView(BuildConfig.TERM_CONDITIONS_WEBVIEW)
+            }
+        )
+        OtherMenuDivider()
     }
 }
 

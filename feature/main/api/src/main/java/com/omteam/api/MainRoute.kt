@@ -50,3 +50,13 @@ object EditFavoriteExerciseNavKey : NavKey
  */
 @Serializable
 object EditPatternNavKey : NavKey
+
+/**
+ * 웹뷰 화면 NavKey
+ * 
+ * @param url 표시할 웹페이지 URL
+ */
+@Serializable
+data class WebViewNavKey(
+    val url: String
+) : NavKey
