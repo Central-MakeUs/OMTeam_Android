@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.res.stringResource
@@ -59,17 +60,32 @@ fun OtherScreen(
         OtherMenuDivider()
 
         OtherMenuItem(
-            iconRes = R.drawable.icon_faq,
+            iconRes = R.drawable.icon_inquiry,
             text = stringResource(R.string.faq_title),
             onClick = { Timber.d("## FAQ 클릭") }
         )
         OtherMenuDivider()
 
         OtherMenuItem(
-            iconRes = R.drawable.icon_inquiry,
+            iconRes = R.drawable.icon_faq,
             text = stringResource(R.string.inquiry_title),
             onClick = { Timber.d("## 문의하기 클릭") }
         )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_check,
+            text = stringResource(R.string.privacy_terms),
+            onClick = { Timber.d("## 개인정보 정책 클릭") }
+        )
+        OtherMenuDivider()
+
+        OtherMenuItem(
+            iconRes = R.drawable.icon_info,
+            text = stringResource(R.string.terms_conditions),
+            onClick = { Timber.d("## 이용약관 클릭") }
+        )
+        OtherMenuDivider()
     }
 }
 
