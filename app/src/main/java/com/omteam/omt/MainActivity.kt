@@ -165,17 +165,17 @@ class MainActivity : ComponentActivity() {
                                 onBackClick = {
                                     navigator.popBackStack()
                                 },
-                                onNavigateToEditExerciseTime = {
-                                    navigator.navigateToEditExerciseTime()
+                                onNavigateToEditExerciseTime = { exerciseTime ->
+                                    navigator.navigateToEditExerciseTime(exerciseTime)
                                 },
-                                onNavigateToEditMissionTime = {
-                                    navigator.navigateToEditMissionTime()
+                                onNavigateToEditMissionTime = { missionTime ->
+                                    navigator.navigateToEditMissionTime(missionTime)
                                 },
-                                onNavigateToEditFavoriteExercise = {
-                                    navigator.navigateToEditFavoriteExercise()
+                                onNavigateToEditFavoriteExercise = { favoriteExercises ->
+                                    navigator.navigateToEditFavoriteExercise(favoriteExercises)
                                 },
-                                onNavigateToEditPattern = {
-                                    navigator.navigateToEditPattern()
+                                onNavigateToEditPattern = { pattern ->
+                                    navigator.navigateToEditPattern(pattern)
                                 }
                             )
                             

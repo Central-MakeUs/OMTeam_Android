@@ -17,10 +17,10 @@ import timber.log.Timber
  */
 fun EntryProviderScope<NavKey>.editMyInfoEntry(
     onBackClick: () -> Unit,
-    onNavigateToEditExerciseTime: () -> Unit,
-    onNavigateToEditMissionTime: () -> Unit,
-    onNavigateToEditFavoriteExercise: () -> Unit,
-    onNavigateToEditPattern: () -> Unit
+    onNavigateToEditExerciseTime: (String) -> Unit,
+    onNavigateToEditMissionTime: (String) -> Unit,
+    onNavigateToEditFavoriteExercise: (List<String>) -> Unit,
+    onNavigateToEditPattern: (String) -> Unit
 ) {
     entry<EditMyInfoNavKey> {
         Timber.d("## 내 정보 수정하기 화면 이동")

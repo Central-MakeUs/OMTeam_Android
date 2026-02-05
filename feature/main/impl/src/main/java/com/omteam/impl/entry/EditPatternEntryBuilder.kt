@@ -14,9 +14,10 @@ import timber.log.Timber
 fun EntryProviderScope<NavKey>.editPatternEntry(
     onBackClick: () -> Unit
 ) {
-    entry<EditPatternNavKey> {
-        Timber.d("## 생활 패턴 수정 화면 이동")
+    entry<EditPatternNavKey> { navKey ->
+        Timber.d("## 생활 패턴 수정 화면 이동 - initialPattern : ${navKey.initialPattern}")
         EditPatternScreen(
+            initialPattern = navKey.initialPattern,
             onBackClick = onBackClick
         )
     }

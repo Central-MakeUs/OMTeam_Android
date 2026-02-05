@@ -40,10 +40,10 @@ fun EditMyInfoScreen(
     modifier: Modifier = Modifier,
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onNavigateToEditExerciseTime: () -> Unit = {},
-    onNavigateToEditMissionTime: () -> Unit = {},
-    onNavigateToEditFavoriteExercise: () -> Unit = {},
-    onNavigateToEditPattern: () -> Unit = {}
+    onNavigateToEditExerciseTime: (String) -> Unit = {},
+    onNavigateToEditMissionTime: (String) -> Unit = {},
+    onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
+    onNavigateToEditPattern: (String) -> Unit = {}
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
 
@@ -70,10 +70,11 @@ fun EditMyInfoScreen(
                 val data = (onboardingInfoState as MyPageOnboardingState.Success).data
                 
                 // 운동 가능 시간
+                val exerciseTimeString = getExerciseTimeString(data.availableStartTime)
                 EditMyInfoItem(
                     label = stringResource(R.string.available_exercise_hours),
-                    value = getExerciseTimeString(data.availableStartTime),
-                    onClick = onNavigateToEditExerciseTime
+                    value = exerciseTimeString,
+                    onClick = { onNavigateToEditExerciseTime(exerciseTimeString) }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -82,7 +83,7 @@ fun EditMyInfoScreen(
                 EditMyInfoItem(
                     label = stringResource(R.string.available_mission_hours),
                     value = "${data.minExerciseMinutes}분",
-                    onClick = onNavigateToEditMissionTime
+                    onClick = { onNavigateToEditMissionTime(data.minExerciseMinutes.toString()) }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -91,24 +92,25 @@ fun EditMyInfoScreen(
                 EditMyInfoItem(
                     label = stringResource(R.string.favorite_exercises),
                     chips = listOf(data.preferredExerciseText),
-                    onClick = onNavigateToEditFavoriteExercise
+                    onClick = { onNavigateToEditFavoriteExercise(listOf(data.preferredExerciseText)) }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
 
                 // 평소 생활 패턴
+                val lifestyleTypeString = getLifestyleTypeString(data.lifestyleType)
                 EditMyInfoItem(
                     label = stringResource(R.string.usual_pattern),
-                    value = getLifestyleTypeString(data.lifestyleType),
-                    onClick = onNavigateToEditPattern
+                    value = lifestyleTypeString,
+                    onClick = { onNavigateToEditPattern(lifestyleTypeString) }
                 )
             }
             else -> {
-                // 로딩 중이, 에러면 기본값 표시
+                // 로딩 중, 에러면 기본값 표시
                 EditMyInfoItem(
                     label = stringResource(R.string.available_exercise_hours),
                     value = "로딩 중...",
-                    onClick = onNavigateToEditExerciseTime
+                    onClick = { onNavigateToEditExerciseTime("") }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -116,7 +118,7 @@ fun EditMyInfoScreen(
                 EditMyInfoItem(
                     label = stringResource(R.string.available_mission_hours),
                     value = "로딩 중...",
-                    onClick = onNavigateToEditMissionTime
+                    onClick = { onNavigateToEditMissionTime("") }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -124,7 +126,7 @@ fun EditMyInfoScreen(
                 EditMyInfoItem(
                     label = stringResource(R.string.favorite_exercises),
                     value = "로딩 중...",
-                    onClick = onNavigateToEditFavoriteExercise
+                    onClick = { onNavigateToEditFavoriteExercise(emptyList()) }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -132,7 +134,7 @@ fun EditMyInfoScreen(
                 EditMyInfoItem(
                     label = stringResource(R.string.usual_pattern),
                     value = "로딩 중...",
-                    onClick = onNavigateToEditPattern
+                    onClick = { onNavigateToEditPattern("") }
                 )
             }
         }

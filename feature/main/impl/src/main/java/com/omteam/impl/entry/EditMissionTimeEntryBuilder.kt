@@ -14,9 +14,10 @@ import timber.log.Timber
 fun EntryProviderScope<NavKey>.editMissionTimeEntry(
     onBackClick: () -> Unit
 ) {
-    entry<EditMissionTimeNavKey> {
-        Timber.d("## 미션 투자 시간 수정 화면 이동")
+    entry<EditMissionTimeNavKey> { navKey ->
+        Timber.d("## 미션 투자 시간 수정 화면 이동 - initialAvailableTime : ${navKey.initialAvailableTime}")
         EditMissionTimeScreen(
+            initialAvailableTime = navKey.initialAvailableTime,
             onBackClick = onBackClick
         )
     }
