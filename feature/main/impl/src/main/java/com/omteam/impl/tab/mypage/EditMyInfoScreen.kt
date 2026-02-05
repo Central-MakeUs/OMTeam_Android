@@ -15,28 +15,42 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.chip.InfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.domain.model.onboarding.LifestyleType
 import com.omteam.impl.component.SubScreenHeader
+import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
 
 @Composable
 fun EditMyInfoScreen(
     modifier: Modifier = Modifier,
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onNavigateToEditExerciseTime: () -> Unit = {},
-    onNavigateToEditMissionTime: () -> Unit = {},
-    onNavigateToEditFavoriteExercise: () -> Unit = {},
-    onNavigateToEditPattern: () -> Unit = {}
+    onNavigateToEditExerciseTime: (String) -> Unit = {},
+    onNavigateToEditMissionTime: (String) -> Unit = {},
+    onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
+    onNavigateToEditPattern: (String) -> Unit = {}
 ) {
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        myPageViewModel.getOnboardingInfo()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -51,39 +65,79 @@ fun EditMyInfoScreen(
 
         Spacer(modifier = Modifier.height(dp36))
 
-        // 운동 가능 시간
-        EditMyInfoItem(
-            label = stringResource(R.string.available_exercise_hours),
-            value = "19:00 이후부터",
-            onClick = onNavigateToEditExerciseTime
-        )
+        when (onboardingInfoState) {
+            is MyPageOnboardingState.Success -> {
+                val data = (onboardingInfoState as MyPageOnboardingState.Success).data
+                
+                // 운동 가능 시간
+                val exerciseTimeString = getExerciseTimeString(data.availableStartTime)
+                EditMyInfoItem(
+                    label = stringResource(R.string.available_exercise_hours),
+                    value = exerciseTimeString,
+                    onClick = { onNavigateToEditExerciseTime(exerciseTimeString) }
+                )
 
-        Spacer(modifier = Modifier.height(dp36))
+                Spacer(modifier = Modifier.height(dp36))
 
-        // 미션에 투자할 수 있는 시간
-        EditMyInfoItem(
-            label = stringResource(R.string.available_mission_hours),
-            value = "30분",
-            onClick = onNavigateToEditMissionTime
-        )
+                // 미션에 투자할 수 있는 시간
+                EditMyInfoItem(
+                    label = stringResource(R.string.available_mission_hours),
+                    value = "${data.minExerciseMinutes}분",
+                    onClick = { onNavigateToEditMissionTime(data.minExerciseMinutes.toString()) }
+                )
 
-        Spacer(modifier = Modifier.height(dp36))
+                Spacer(modifier = Modifier.height(dp36))
 
-        // 선호 운동
-        EditMyInfoItem(
-            label = stringResource(R.string.favorite_exercises),
-            chips = listOf("생활 속 운동", "스트레칭/요가"),
-            onClick = onNavigateToEditFavoriteExercise
-        )
+                // 선호 운동
+                EditMyInfoItem(
+                    label = stringResource(R.string.favorite_exercises),
+                    chips = listOf(data.preferredExerciseText),
+                    onClick = { onNavigateToEditFavoriteExercise(listOf(data.preferredExerciseText)) }
+                )
 
-        Spacer(modifier = Modifier.height(dp36))
+                Spacer(modifier = Modifier.height(dp36))
 
-        // 평소 생활 패턴
-        EditMyInfoItem(
-            label = stringResource(R.string.usual_pattern),
-            value = "비교적 규칙적인 평일 주간 근무에요.",
-            onClick = onNavigateToEditPattern
-        )
+                // 평소 생활 패턴
+                val lifestyleTypeString = getLifestyleTypeString(data.lifestyleType)
+                EditMyInfoItem(
+                    label = stringResource(R.string.usual_pattern),
+                    value = lifestyleTypeString,
+                    onClick = { onNavigateToEditPattern(lifestyleTypeString) }
+                )
+            }
+            else -> {
+                // 로딩 중, 에러면 기본값 표시
+                EditMyInfoItem(
+                    label = stringResource(R.string.available_exercise_hours),
+                    value = "로딩 중...",
+                    onClick = { onNavigateToEditExerciseTime("") }
+                )
+
+                Spacer(modifier = Modifier.height(dp36))
+
+                EditMyInfoItem(
+                    label = stringResource(R.string.available_mission_hours),
+                    value = "로딩 중...",
+                    onClick = { onNavigateToEditMissionTime("") }
+                )
+
+                Spacer(modifier = Modifier.height(dp36))
+
+                EditMyInfoItem(
+                    label = stringResource(R.string.favorite_exercises),
+                    value = "로딩 중...",
+                    onClick = { onNavigateToEditFavoriteExercise(emptyList()) }
+                )
+
+                Spacer(modifier = Modifier.height(dp36))
+
+                EditMyInfoItem(
+                    label = stringResource(R.string.usual_pattern),
+                    value = "로딩 중...",
+                    onClick = { onNavigateToEditPattern("") }
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(dp62))
 
@@ -102,6 +156,34 @@ fun EditMyInfoScreen(
                 color = Gray07
             )
         }
+    }
+}
+
+/**
+ * availableStartTime 기준으로 운동 가능 시간 문자열 리소스 리턴
+ */
+@Composable
+private fun getExerciseTimeString(startTime: String): String {
+    val hour = startTime.take(2).toIntOrNull() ?: 18
+    
+    return when {
+        hour < 18 -> stringResource(R.string.before_18)
+        hour == 18 -> stringResource(R.string.after_18)
+        hour == 19 -> stringResource(R.string.after_19)
+        else -> stringResource(R.string.after_20)
+    }
+}
+
+/**
+ * LifestyleType -> 문자열 리소스 변환
+ */
+@Composable
+private fun getLifestyleTypeString(lifestyleType: LifestyleType): String {
+    return when (lifestyleType) {
+        LifestyleType.REGULAR_DAYTIME -> stringResource(R.string.pattern_first)
+        LifestyleType.IRREGULAR_OVERTIME -> stringResource(R.string.pattern_second)
+        LifestyleType.SHIFT_NIGHT -> stringResource(R.string.pattern_third)
+        LifestyleType.VARIABLE_DAILY -> stringResource(R.string.pattern_fourth)
     }
 }
 

@@ -79,23 +79,35 @@ class AppNavigator(
     
     /**
      * 운동 가능 시간 수정 화면 이동
+     * 
+     * @param initialExerciseTime 초기 운동 시간대 값
      */
-    fun navigateToEditExerciseTime() = navigate(destination = EditExerciseTimeNavKey)
+    fun navigateToEditExerciseTime(initialExerciseTime: String = "") = 
+        navigate(destination = EditExerciseTimeNavKey(initialExerciseTime = initialExerciseTime))
     
     /**
      * 미션 투자 시간 수정 화면 이동
+     * 
+     * @param initialAvailableTime 초기 미션 투자 시간 값
      */
-    fun navigateToEditMissionTime() = navigate(destination = EditMissionTimeNavKey)
+    fun navigateToEditMissionTime(initialAvailableTime: String = "") = 
+        navigate(destination = EditMissionTimeNavKey(initialAvailableTime = initialAvailableTime))
     
     /**
      * 선호 운동 수정 화면 이동
+     * 
+     * @param initialFavoriteExercises 초기 선호 운동 리스트
      */
-    fun navigateToEditFavoriteExercise() = navigate(destination = EditFavoriteExerciseNavKey)
+    fun navigateToEditFavoriteExercise(initialFavoriteExercises: List<String> = emptyList()) = 
+        navigate(destination = EditFavoriteExerciseNavKey(initialFavoriteExercises = initialFavoriteExercises))
     
     /**
      * 생활 패턴 수정 화면 이동
+     * 
+     * @param initialPattern 초기 생활 패턴 값
      */
-    fun navigateToEditPattern() = navigate(destination = EditPatternNavKey)
+    fun navigateToEditPattern(initialPattern: String = "") = 
+        navigate(destination = EditPatternNavKey(initialPattern = initialPattern))
     
     /**
      * 웹뷰 화면 이동

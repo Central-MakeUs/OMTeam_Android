@@ -14,9 +14,10 @@ import timber.log.Timber
 fun EntryProviderScope<NavKey>.editExerciseTimeEntry(
     onBackClick: () -> Unit
 ) {
-    entry<EditExerciseTimeNavKey> {
-        Timber.d("## 운동 가능 시간 수정 화면 이동")
+    entry<EditExerciseTimeNavKey> { navKey ->
+        Timber.d("## 운동 가능 시간 수정 화면 이동 - initialExerciseTime : ${navKey.initialExerciseTime}")
         EditExerciseTimeScreen(
+            initialExerciseTime = navKey.initialExerciseTime,
             onBackClick = onBackClick
         )
     }
