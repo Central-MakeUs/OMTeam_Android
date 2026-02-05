@@ -31,10 +31,12 @@ import com.omteam.omt.core.designsystem.R
 @Composable
 fun EditMissionTimeScreen(
     modifier: Modifier = Modifier,
+    initialAvailableTime: String = "", // 이전 화면에서 온보딩 정보로 가져온 시간 값
     onBackClick: () -> Unit = {}
 ) {
     // 숫자만 저장 (1~30)
-    var time by remember { mutableStateOf("") }
+    // remember(key)로 initialAvailableTime이 변경되면 자동으로 상태 업데이트
+    var time by remember(initialAvailableTime) { mutableStateOf(initialAvailableTime) }
 
     // 버튼 활성화 조건 : 1~30 범위의 숫자 입력
     val isValidTime = time.isNotEmpty() && time.toIntOrNull()?.let { it in 1..30 } == true
@@ -55,8 +57,8 @@ fun EditMissionTimeScreen(
         Spacer(modifier = Modifier.height(dp28))
 
         EditMyInfoItemWithInfo(
-            label = "미션에 투자할 수 있는 시간을 입력해주세요.",
-            infoMessage = "최대 30분까지 입력 가능하며, 숫자로 입력해 주세요",
+            label = stringResource(R.string.input_available_mission_hours),
+            infoMessage = stringResource(R.string.input_available_mission_hours_info),
             textFieldValue = time,
             onTextFieldValueChange = { time = it },
             textFieldPlaceholder = "",
@@ -87,7 +89,7 @@ fun EditMissionTimeScreen(
 
         OMTeamButton(
             modifier = Modifier.fillMaxWidth(),
-            text = "미션 투자 시간 수정하기",
+            text = stringResource(R.string.edit_available_mission_button),
             enabled = isValidTime,
             onClick = {
                 //

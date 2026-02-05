@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,14 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
-import com.omteam.designsystem.foundation.dp20
-import com.omteam.designsystem.foundation.dp28
-import com.omteam.designsystem.foundation.dp52
-import com.omteam.designsystem.foundation.dp8
-import com.omteam.designsystem.theme.Gray10
-import com.omteam.designsystem.theme.OMTeamTheme
-import com.omteam.designsystem.theme.PretendardType
-import com.omteam.designsystem.theme.White
+import com.omteam.designsystem.foundation.*
+import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.EditMyInfoItemWithInfo
 import com.omteam.impl.component.SubScreenHeader
 import com.omteam.omt.core.designsystem.R
@@ -47,11 +40,15 @@ fun EditExerciseTimeScreen(
     onBackClick: () -> Unit = {}
 ) {
     // 선택된 운동 시간대
-    var selectedTime by remember { mutableStateOf(initialExerciseTime) }
+    // remember(key)로 initialExerciseTime이 변경되면 자동으로 상태 업데이트
+    var selectedTime by remember(initialExerciseTime) { mutableStateOf(initialExerciseTime) }
 
     // 선택 가능한 시간대 목록
     val availableTimes = listOf(
-        "18:00 이전부터", "18:00 이후부터", "19:00 이후부터", "20:00 이후부터",
+        stringResource(R.string.before_18),
+        stringResource(R.string.after_18),
+        stringResource(R.string.after_19),
+        stringResource(R.string.after_20),
     )
     
     val scrollState = rememberScrollState()
@@ -80,8 +77,8 @@ fun EditExerciseTimeScreen(
 
             // 선택된 시간대 표시
             EditMyInfoItemWithInfo(
-                label = "운동 가능한 시간대를 선택해 주세요.",
-                infoMessage = "몇 시부터 운동할 수 있는지 선택해주세요",
+                label = stringResource(R.string.choose_available_hours),
+                infoMessage = stringResource(R.string.choose_available_hours_info),
                 chips = if (selectedTime.isNotEmpty()) listOf(selectedTime) else emptyList(),
                 onClick = {}
             )
@@ -89,7 +86,7 @@ fun EditExerciseTimeScreen(
             Spacer(modifier = Modifier.height(dp52))
 
             OMTeamText(
-                text = "운동 가능 시간대 목록",
+                text = stringResource(R.string.available_hours_list),
                 style = PretendardType.button03Abled,
                 color = Gray10
             )
@@ -126,7 +123,7 @@ fun EditExerciseTimeScreen(
                 .fillMaxWidth()
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
-            text = "시간대 수정하기",
+            text = stringResource(R.string.edit_exercise_time_button),
             enabled = selectedTime.isNotEmpty(),
             onClick = {
                 //

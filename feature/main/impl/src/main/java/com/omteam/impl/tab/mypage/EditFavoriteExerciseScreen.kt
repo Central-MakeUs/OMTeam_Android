@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,10 +37,12 @@ import com.omteam.omt.core.designsystem.R
 @Composable
 fun EditFavoriteExerciseScreen(
     modifier: Modifier = Modifier,
+    initialFavoriteExercises: List<String> = emptyList(), // 이전 화면에서 온보딩 정보로 가져온 선호 운동 값
     onBackClick: () -> Unit = {}
 ) {
     // 선택된 선호 운동 목록 (최대 3개)
-    var selectedExercises by remember { mutableStateOf(listOf<String>()) }
+    // remember(key)로 initialFavoriteExercises가 변경되면 자동으로 상태 업데이트
+    var selectedExercises by remember(initialFavoriteExercises) { mutableStateOf(initialFavoriteExercises) }
 
     // "직접 추가하기" chip 수정 가능 상태
     var isAddingCustom by remember { mutableStateOf(false) }
@@ -52,7 +53,11 @@ fun EditFavoriteExerciseScreen(
 
     // 선택 가능한 기본 운동 리스트
     val availableExercises = listOf(
-        "걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동",
+        stringResource(R.string.walking),
+        stringResource(R.string.stretching_yoga),
+        stringResource(R.string.home_training),
+        stringResource(R.string.health),
+        stringResource(R.string.usual_exercise),
     )
 
     // 기본 운동 리스트 + 커스텀 운동 3개
@@ -84,8 +89,8 @@ fun EditFavoriteExerciseScreen(
 
             // 선택된 선호 운동 표시
             EditMyInfoItemWithInfo(
-                label = "선호하는 운동을 선택해 주세요.",
-                infoMessage = "최대 3개까지 선택할 수 있어요.",
+                label = stringResource(R.string.choose_favorite_exercises),
+                infoMessage = stringResource(R.string.choose_favorite_exercises_info),
                 chips = selectedExercises,
                 onClick = {}
             )
@@ -93,7 +98,7 @@ fun EditFavoriteExerciseScreen(
             Spacer(modifier = Modifier.height(dp52))
 
             OMTeamText(
-                text = "선호 운동 선택 목록",
+                text = stringResource(R.string.favorite_exercises_list),
                 style = PretendardType.button03Abled,
                 color = Gray10
             )
@@ -157,7 +162,7 @@ fun EditFavoriteExerciseScreen(
                 .fillMaxWidth()
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
-            text = "선호 운동 수정하기",
+            text = stringResource(R.string.edit_favorite_exercise_button),
             enabled = selectedExercises.isNotEmpty(),
             onClick = {
                 //

@@ -24,6 +24,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.text.OMTeamText
@@ -117,7 +118,7 @@ fun AddCustomChip(
                 Spacer(modifier = Modifier.width(dp8))
 
                 OMTeamText(
-                    text = "직접 추가하기",
+                    text = stringResource(R.string.direct_add),
                     style = PretendardType.button02Disabled,
                     color = Gray09
                 )
