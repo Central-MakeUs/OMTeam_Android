@@ -71,7 +71,6 @@ fun SetGoalScreen(
             OMTeamCard(
                 text = dietText,
                 isSelected = (selectedGoal == dietText),
-                textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     // 같은 카드 짝수 회 클릭 시 선택 해제
                     selectedGoal = if (selectedGoal == dietText) {
@@ -79,6 +78,8 @@ fun SetGoalScreen(
                     } else {
                         dietText
                     }
+                    // 다른 카드 선택 시 커스텀 입력값 초기화
+                    customGoalInput = ""
                     onGoalChange(selectedGoal)
                 },
             )
@@ -88,7 +89,6 @@ fun SetGoalScreen(
             OMTeamCard(
                 text = habitFormationText,
                 isSelected = (selectedGoal == habitFormationText),
-                textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     // 같은 카드 짝수 회 클릭 시 선택 해제
                     selectedGoal = if (selectedGoal == habitFormationText) {
@@ -96,6 +96,8 @@ fun SetGoalScreen(
                     } else {
                         habitFormationText
                     }
+                    // 다른 카드 선택 시 커스텀 입력값 초기화
+                    customGoalInput = ""
                     onGoalChange(selectedGoal)
                 }
             )
@@ -105,7 +107,6 @@ fun SetGoalScreen(
             OMTeamCard(
                 text = directInputDisplayText,
                 isSelected = customGoalInput.isNotEmpty() && selectedGoal == customGoalInput,
-                textStyle = PaperlogyType.onboardingCardText,
                 onClick = {
                     showBottomSheet = true
                 }

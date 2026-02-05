@@ -65,7 +65,6 @@ fun SetTimeScreen(
                     OMTeamCard(
                         text = time,
                         isSelected = (selectedTime == time),
-                        textStyle = PaperlogyType.onboardingCardText,
                         onClick = {
                             // 같은 카드 짝수 회 클릭 시 선택 해제
                             selectedTime = if (selectedTime == time) {

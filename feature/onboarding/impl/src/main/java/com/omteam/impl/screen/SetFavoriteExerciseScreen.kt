@@ -86,7 +86,6 @@ fun SetFavoriteExerciseScreen(
                 OMTeamCard(
                     text = walkingText,
                     isSelected = selectedExercises.contains(walkingText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = { toggleExerciseSelection(walkingText) },
                 )
 
@@ -95,7 +94,6 @@ fun SetFavoriteExerciseScreen(
                 OMTeamCard(
                     text = stretchingYogaText,
                     isSelected = selectedExercises.contains(stretchingYogaText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = { toggleExerciseSelection(stretchingYogaText) }
                 )
 
@@ -104,7 +102,6 @@ fun SetFavoriteExerciseScreen(
                 OMTeamCard(
                     text = homeTrainingText,
                     isSelected = selectedExercises.contains(homeTrainingText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = { toggleExerciseSelection(homeTrainingText) }
                 )
 
@@ -113,7 +110,6 @@ fun SetFavoriteExerciseScreen(
                 OMTeamCard(
                     text = healthText,
                     isSelected = selectedExercises.contains(healthText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = { toggleExerciseSelection(healthText) }
                 )
 
@@ -122,7 +118,6 @@ fun SetFavoriteExerciseScreen(
                 OMTeamCard(
                     text = practicalExerciseText,
                     isSelected = selectedExercises.contains(practicalExerciseText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = { toggleExerciseSelection(practicalExerciseText) }
                 )
 

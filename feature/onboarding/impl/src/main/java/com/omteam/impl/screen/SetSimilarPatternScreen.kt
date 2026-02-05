@@ -62,7 +62,6 @@ fun SetSimilarPatternScreen(
                     OMTeamCard(
                         text = time,
                         isSelected = (selectedPattern == time),
-                        textStyle = PaperlogyType.onboardingCardText,
                         onClick = {
                             // 같은 카드 짝수 회 클릭 시 선택 해제
                             selectedPattern = if (selectedPattern == time) {

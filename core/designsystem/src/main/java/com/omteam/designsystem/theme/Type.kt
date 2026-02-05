@@ -108,6 +108,22 @@ object PaperlogyType {
         letterSpacing = 0.sp
     )
 
+    val cardTextDisabled = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Medium, // 500
+        lineHeight = 20.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val cardTextEnabled = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 20.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
     // Body
     val body01 = TextStyle(
         fontFamily = PaperlogyFont,

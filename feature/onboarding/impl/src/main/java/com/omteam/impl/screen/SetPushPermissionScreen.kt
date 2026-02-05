@@ -94,7 +94,6 @@ fun SetPushPermissionScreen(
                 OMTeamCard(
                     text = grantText,
                     isSelected = (selectedFavoriteExercise == grantText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
                         val isGranted = if (selectedFavoriteExercise == grantText) {
@@ -114,7 +113,6 @@ fun SetPushPermissionScreen(
                 OMTeamCard(
                     text = notGrantText,
                     isSelected = (selectedFavoriteExercise == notGrantText),
-                    textStyle = PaperlogyType.onboardingCardText,
                     onClick = {
                         // 같은 카드 짝수 회 클릭 시 선택 해제
                         val isGranted = if (selectedFavoriteExercise == notGrantText) {
