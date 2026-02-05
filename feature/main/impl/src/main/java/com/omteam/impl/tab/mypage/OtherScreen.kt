@@ -27,6 +27,7 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.SubScreenHeader
 import com.omteam.omt.core.designsystem.R
+import com.omteam.main.impl.BuildConfig
 import timber.log.Timber
 
 @Composable
@@ -76,9 +77,7 @@ fun OtherScreen(
             text = stringResource(R.string.privacy_terms),
             onClick = {
                 Timber.d("## 개인정보 정책 클릭")
-                onNavigateToWebView(
-                    "https://slashpage.com/omt-policy-terms/5r398nmnx6zxzmvwje7y",
-                )
+                onNavigateToWebView(BuildConfig.PRIVACY_TERMS_WEBVIEW)
             }
         )
         OtherMenuDivider()
@@ -88,9 +87,7 @@ fun OtherScreen(
             text = stringResource(R.string.terms_conditions),
             onClick = {
                 Timber.d("## 이용약관 클릭")
-                onNavigateToWebView(
-                    "https://slashpage.com/omt-policy-terms",
-                )
+                onNavigateToWebView(BuildConfig.TERM_CONDITIONS_WEBVIEW)
             }
         )
         OtherMenuDivider()

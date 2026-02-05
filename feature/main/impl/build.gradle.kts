@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("omteam.android.library")
     id("omteam.android.compose")
@@ -5,9 +7,43 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
 android {
     namespace = "com.omteam.main.impl"
     compileSdk = 36
+
+    defaultConfig {
+        val privacyTermsWebviewUrl = localProperties.getProperty("PRIVACY_TERMS_WEBVIEW")
+            ?: throw GradleException(
+                """
+                개인정보 정책 웹뷰 URL이 local.properties에 정의되지 않았습니다
+                local.properties 파일에 다음을 추가하세요
+                PRIVACY_TERMS_WEBVIEW=url
+                """.trimIndent()
+            )
+
+        val termsConditionsWebviewUrl = localProperties.getProperty("TERM_CONDITIONS_WEBVIEW")
+            ?: throw GradleException(
+                """
+                이용약관 웹뷰 URL이 local.properties에 정의되지 않았습니다
+                local.properties 파일에 다음을 추가하세요
+                TERM_CONDITIONS_WEBVIEW=url
+                """.trimIndent()
+            )
+
+        buildConfigField("String", "PRIVACY_TERMS_WEBVIEW", "\"$privacyTermsWebviewUrl\"")
+        buildConfigField("String", "TERM_CONDITIONS_WEBVIEW", "\"$termsConditionsWebviewUrl\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
