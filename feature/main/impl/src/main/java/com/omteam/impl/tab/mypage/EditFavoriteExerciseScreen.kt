@@ -77,7 +77,7 @@ fun EditFavoriteExerciseScreen(
             // 상단 헤더
             SubScreenHeader(
                 title = stringResource(R.string.edit_my_info_title),
-                onBackClick = {}
+                onBackClick = onBackClick
             )
 
             Spacer(modifier = Modifier.height(dp28))
