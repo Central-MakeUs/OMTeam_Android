@@ -3,7 +3,6 @@ package com.omteam.impl.tab.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,14 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.res.stringResource
@@ -35,7 +32,8 @@ import timber.log.Timber
 @Composable
 fun OtherScreen(
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onNavigateToWebView: (url: String) -> Unit = { _ -> }
 ) {
     Column(
         modifier = modifier
@@ -76,14 +74,24 @@ fun OtherScreen(
         OtherMenuItem(
             iconRes = R.drawable.icon_check,
             text = stringResource(R.string.privacy_terms),
-            onClick = { Timber.d("## 개인정보 정책 클릭") }
+            onClick = {
+                Timber.d("## 개인정보 정책 클릭")
+                onNavigateToWebView(
+                    "https://slashpage.com/omt-policy-terms/5r398nmnx6zxzmvwje7y",
+                )
+            }
         )
         OtherMenuDivider()
 
         OtherMenuItem(
             iconRes = R.drawable.icon_info,
             text = stringResource(R.string.terms_conditions),
-            onClick = { Timber.d("## 이용약관 클릭") }
+            onClick = {
+                Timber.d("## 이용약관 클릭")
+                onNavigateToWebView(
+                    "https://slashpage.com/omt-policy-terms",
+                )
+            }
         )
         OtherMenuDivider()
     }

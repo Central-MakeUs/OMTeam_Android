@@ -2,17 +2,7 @@ package com.omteam.omt
 
 import androidx.compose.runtime.MutableState
 import androidx.navigation3.runtime.NavKey
-import com.omteam.api.AccountLinkCompleteNavKey
-import com.omteam.api.EditExerciseTimeNavKey
-import com.omteam.api.EditFavoriteExerciseNavKey
-import com.omteam.api.EditMissionTimeNavKey
-import com.omteam.api.EditMyGoalNavKey
-import com.omteam.api.EditMyInfoNavKey
-import com.omteam.api.EditPatternNavKey
-import com.omteam.api.LoginNavKey
-import com.omteam.api.MainNavKey
-import com.omteam.api.OnboardingNavKey
-import com.omteam.api.OtherNavKey
+import com.omteam.api.*
 
 class AppNavigator(
     private val backStackState: MutableState<List<NavKey>>
@@ -106,4 +96,11 @@ class AppNavigator(
      * 생활 패턴 수정 화면 이동
      */
     fun navigateToEditPattern() = navigate(destination = EditPatternNavKey)
+    
+    /**
+     * 웹뷰 화면 이동
+     * 
+     * @param url 표시할 웹페이지 URL
+     */
+    fun navigateToWebView(url: String) = navigate(destination = WebViewNavKey(url = url))
 }
