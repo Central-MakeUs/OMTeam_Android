@@ -92,7 +92,6 @@ fun EditFavoriteExerciseScreen(
 
             Spacer(modifier = Modifier.height(dp52))
 
-            // "선호 운동 선택 목록" 텍스트
             OMTeamText(
                 text = "선호 운동 선택 목록",
                 style = PretendardType.button03Abled,
