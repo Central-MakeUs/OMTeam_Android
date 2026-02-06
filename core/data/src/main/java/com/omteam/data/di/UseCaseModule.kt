@@ -12,6 +12,10 @@ import com.omteam.domain.usecase.GetUserInfoUseCase
 import com.omteam.domain.usecase.GetWeeklyReportUseCase
 import com.omteam.domain.usecase.LogoutUseCase
 import com.omteam.domain.usecase.LoginWithIdTokenUseCase
+import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
+import com.omteam.domain.usecase.UpdateLifestyleUseCase
+import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
+import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -69,4 +73,28 @@ object UseCaseModule {
     fun provideGetDailyRecommendedMissionsUseCase(
         missionRepository: MissionRepository
     ): GetDailyRecommendedMissionsUseCase = GetDailyRecommendedMissionsUseCase(missionRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateLifestyleUseCase(
+        authRepository: AuthRepository
+    ): UpdateLifestyleUseCase = UpdateLifestyleUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdatePreferredExerciseUseCase(
+        authRepository: AuthRepository
+    ): UpdatePreferredExerciseUseCase = UpdatePreferredExerciseUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateMinExerciseMinutesUseCase(
+        authRepository: AuthRepository
+    ): UpdateMinExerciseMinutesUseCase = UpdateMinExerciseMinutesUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateAvailableTimeUseCase(
+        authRepository: AuthRepository
+    ): UpdateAvailableTimeUseCase = UpdateAvailableTimeUseCase(authRepository)
 }

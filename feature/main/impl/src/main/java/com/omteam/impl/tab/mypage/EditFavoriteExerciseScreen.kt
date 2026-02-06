@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.AddCustomChip
 import com.omteam.designsystem.component.chip.SelectableInfoChip
@@ -28,6 +31,8 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.EditMyInfoItemWithInfo
 import com.omteam.impl.component.SubScreenHeader
+import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
 
 /**
@@ -38,7 +43,9 @@ import com.omteam.omt.core.designsystem.R
 fun EditFavoriteExerciseScreen(
     modifier: Modifier = Modifier,
     initialFavoriteExercises: List<String> = emptyList(), // 이전 화면에서 온보딩 정보로 가져온 선호 운동 값
-    onBackClick: () -> Unit = {}
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onUpdateSuccess: () -> Unit = {}
 ) {
     // 선택된 선호 운동 목록 (최대 3개)
     // remember(key)로 initialFavoriteExercises가 변경되면 자동으로 상태 업데이트
@@ -63,7 +70,16 @@ fun EditFavoriteExerciseScreen(
     // 기본 운동 리스트 + 커스텀 운동 3개
     val allExercises = availableExercises + customExercises
     
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+    
     val scrollState = rememberScrollState()
+
+    // 수정 성공 시 뒤로 가기
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.Success) {
+            onUpdateSuccess()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -163,9 +179,9 @@ fun EditFavoriteExerciseScreen(
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_favorite_exercise_button),
-            enabled = selectedExercises.isNotEmpty(),
+            enabled = selectedExercises.isNotEmpty() && onboardingInfoState !is MyPageOnboardingState.Loading,
             onClick = {
-                //
+                myPageViewModel.updatePreferredExercise(selectedExercises)
             }
         )
     }

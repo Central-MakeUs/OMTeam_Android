@@ -20,7 +20,8 @@ data class OnboardingData(
     val availableStartTime: String,
     val availableEndTime: String,
     val minExerciseMinutes: Int,
-    val preferredExerciseText: String,
+    val preferredExerciseText: String? = null, // 기존 필드 (호환성 유지)
+    val preferredExercises: List<String>? = null, // 새 필드 (리스트)
     val lifestyleType: String,
     val remindEnabled: Boolean,
     val checkinEnabled: Boolean,

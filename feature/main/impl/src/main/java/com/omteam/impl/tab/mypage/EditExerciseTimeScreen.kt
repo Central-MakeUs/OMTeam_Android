@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
@@ -27,6 +30,8 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.EditMyInfoItemWithInfo
 import com.omteam.impl.component.SubScreenHeader
+import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
 
 /**
@@ -37,21 +42,32 @@ import com.omteam.omt.core.designsystem.R
 fun EditExerciseTimeScreen(
     modifier: Modifier = Modifier,
     initialExerciseTime: String = "", // 이전 화면에서 온보딩 정보로 가져온 시간대 값
-    onBackClick: () -> Unit = {}
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onUpdateSuccess: () -> Unit = {}
 ) {
     // 선택된 운동 시간대
     // remember(key)로 initialExerciseTime이 변경되면 자동으로 상태 업데이트
     var selectedTime by remember(initialExerciseTime) { mutableStateOf(initialExerciseTime) }
 
     // 선택 가능한 시간대 목록
-    val availableTimes = listOf(
-        stringResource(R.string.before_18),
-        stringResource(R.string.after_18),
-        stringResource(R.string.after_19),
-        stringResource(R.string.after_20),
-    )
+    val before18 = stringResource(R.string.before_18)
+    val after18 = stringResource(R.string.after_18)
+    val after19 = stringResource(R.string.after_19)
+    val after20 = stringResource(R.string.after_20)
+    
+    val availableTimes = listOf(before18, after18, after19, after20)
+    
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
     
     val scrollState = rememberScrollState()
+
+    // 수정 성공 시 뒤로 가기
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.Success) {
+            onUpdateSuccess()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -124,9 +140,18 @@ fun EditExerciseTimeScreen(
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_exercise_time_button),
-            enabled = selectedTime.isNotEmpty(),
+            enabled = selectedTime.isNotEmpty() && onboardingInfoState !is MyPageOnboardingState.Loading,
             onClick = {
-                //
+                // 선택된 시간대를 API 요청 형식으로 변환
+                val (startTime, endTime) = when (selectedTime) {
+                    before18 -> "00:00" to "17:59"
+                    after18 -> "18:00" to "23:59"
+                    after19 -> "19:00" to "23:59"
+                    after20 -> "20:00" to "23:59"
+                    else -> "18:00" to "23:59"
+                }
+                
+                myPageViewModel.updateAvailableTime(startTime, endTime)
             }
         )
     }

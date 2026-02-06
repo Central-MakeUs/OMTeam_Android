@@ -15,6 +15,10 @@ import com.omteam.network.api.AuthApiService
 import com.omteam.network.dto.auth.LoginWithIdTokenRequest
 import com.omteam.network.dto.onboarding.OnboardingRequest
 import com.omteam.network.dto.onboarding.OnboardingResponse
+import com.omteam.network.dto.onboarding.UpdateAvailableTimeRequest
+import com.omteam.network.dto.onboarding.UpdateLifestyleRequest
+import com.omteam.network.dto.onboarding.UpdateMinExerciseMinutesRequest
+import com.omteam.network.dto.onboarding.UpdatePreferredExerciseRequest
 import com.omteam.network.dto.auth.RefreshTokenRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -203,6 +207,166 @@ class AuthRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.e(e, "## 토큰 갱신 예외 발생")
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun updateLifestyle(lifestyleType: String): Result<OnboardingInfo> {
+        return try {
+            Timber.d("## 평소 생활 패턴 수정 시작: $lifestyleType")
+
+            val request = UpdateLifestyleRequest(lifestyleType)
+            val response = authApiService.updateLifestyle(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 평소 생활 패턴 수정 성공")
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "평소 생활 패턴 수정 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 평소 생활 패턴 수정 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val errorResponse = json.decodeFromString<OnboardingResponse>(errorBody)
+                    val errorCode = errorResponse.error?.code
+                    val errorMessage = errorResponse.error?.message ?: "평소 생활 패턴 수정 실패"
+                    Timber.e("## 평소 생활 패턴 수정 실패 (HTTP ${e.code()}) - $errorCode : $errorMessage")
+                    Result.failure(Exception("$errorCode: $errorMessage"))
+                } else {
+                    Timber.e(e, "## 평소 생활 패턴 수정 에러 (HTTP ${e.code()}) - 응답 본문 없음")
+                    Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+                }
+            } catch (parseException: Exception) {
+                Timber.e(parseException, "## 에러 응답 파싱 실패 (HTTP ${e.code()})")
+                Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 평소 생활 패턴 수정 예외 발생")
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun updatePreferredExercise(preferredExercises: List<String>): Result<OnboardingInfo> {
+        return try {
+            Timber.d("## 선호 운동 수정 시작: $preferredExercises")
+
+            val request = UpdatePreferredExerciseRequest(preferredExercises)
+            val response = authApiService.updatePreferredExercise(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 선호 운동 수정 성공")
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "선호 운동 수정 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 선호 운동 수정 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val errorResponse = json.decodeFromString<OnboardingResponse>(errorBody)
+                    val errorCode = errorResponse.error?.code
+                    val errorMessage = errorResponse.error?.message ?: "선호 운동 수정 실패"
+                    Timber.e("## 선호 운동 수정 실패 (HTTP ${e.code()}) - $errorCode : $errorMessage")
+                    Result.failure(Exception("$errorCode: $errorMessage"))
+                } else {
+                    Timber.e(e, "## 선호 운동 수정 에러 (HTTP ${e.code()}) - 응답 본문 없음")
+                    Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+                }
+            } catch (parseException: Exception) {
+                Timber.e(parseException, "## 에러 응답 파싱 실패 (HTTP ${e.code()})")
+                Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 선호 운동 수정 예외 발생")
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun updateMinExerciseMinutes(minExerciseMinutes: Int): Result<OnboardingInfo> {
+        return try {
+            Timber.d("## 미션에 투자할 수 있는 시간 수정 시작: $minExerciseMinutes")
+
+            val request = UpdateMinExerciseMinutesRequest(minExerciseMinutes)
+            val response = authApiService.updateMinExerciseMinutes(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 미션에 투자할 수 있는 시간 수정 성공")
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "미션에 투자할 수 있는 시간 수정 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 미션에 투자할 수 있는 시간 수정 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val errorResponse = json.decodeFromString<OnboardingResponse>(errorBody)
+                    val errorCode = errorResponse.error?.code
+                    val errorMessage = errorResponse.error?.message ?: "미션에 투자할 수 있는 시간 수정 실패"
+                    Timber.e("## 미션에 투자할 수 있는 시간 수정 실패 (HTTP ${e.code()}) - $errorCode : $errorMessage")
+                    Result.failure(Exception("$errorCode: $errorMessage"))
+                } else {
+                    Timber.e(e, "## 미션에 투자할 수 있는 시간 수정 에러 (HTTP ${e.code()}) - 응답 본문 없음")
+                    Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+                }
+            } catch (parseException: Exception) {
+                Timber.e(parseException, "## 에러 응답 파싱 실패 (HTTP ${e.code()})")
+                Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 미션에 투자할 수 있는 시간 수정 예외 발생")
+            Result.failure(e)
+        }
+    }
+    
+    override suspend fun updateAvailableTime(availableStartTime: String, availableEndTime: String): Result<OnboardingInfo> {
+        return try {
+            Timber.d("## 운동 가능 시간 수정 시작: $availableStartTime ~ $availableEndTime")
+
+            val request = UpdateAvailableTimeRequest(availableStartTime, availableEndTime)
+            val response = authApiService.updateAvailableTime(request)
+
+            val data = response.data
+            if (response.success && data != null) {
+                Timber.d("## 운동 가능 시간 수정 성공")
+                Result.success(data.toDomain())
+            } else {
+                val errorMessage = response.error?.message ?: "운동 가능 시간 수정 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 운동 가능 시간 수정 실패 - $errorCode: $errorMessage")
+                Result.failure(Exception("$errorCode: $errorMessage"))
+            }
+        } catch (e: HttpException) {
+            try {
+                val errorBody = e.response()?.errorBody()?.string()
+                if (!errorBody.isNullOrBlank()) {
+                    val errorResponse = json.decodeFromString<OnboardingResponse>(errorBody)
+                    val errorCode = errorResponse.error?.code
+                    val errorMessage = errorResponse.error?.message ?: "운동 가능 시간 수정 실패"
+                    Timber.e("## 운동 가능 시간 수정 실패 (HTTP ${e.code()}) - $errorCode : $errorMessage")
+                    Result.failure(Exception("$errorCode: $errorMessage"))
+                } else {
+                    Timber.e(e, "## 운동 가능 시간 수정 에러 (HTTP ${e.code()}) - 응답 본문 없음")
+                    Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+                }
+            } catch (parseException: Exception) {
+                Timber.e(parseException, "## 에러 응답 파싱 실패 (HTTP ${e.code()})")
+                Result.failure(Exception("HTTP ${e.code()}: ${e.message()}"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 운동 가능 시간 수정 예외 발생")
             Result.failure(e)
         }
     }

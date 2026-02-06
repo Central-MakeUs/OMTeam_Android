@@ -58,4 +58,37 @@ interface AuthRepository {
      * @return 새로운 액세스 토큰, 리프레시 토큰
      */
     suspend fun refreshToken(): Result<LoginResult>
+    
+    /**
+     * 평소 생활 패턴 수정
+     * 
+     * @param lifestyleType 생활 패턴
+     * @return 수정된 온보딩 정보
+     */
+    suspend fun updateLifestyle(lifestyleType: String): Result<OnboardingInfo>
+    
+    /**
+     * 선호 운동 수정
+     * 
+     * @param preferredExercises 선호 운동 리스트
+     * @return 수정된 온보딩 정보
+     */
+    suspend fun updatePreferredExercise(preferredExercises: List<String>): Result<OnboardingInfo>
+    
+    /**
+     * 미션에 투자할 수 있는 시간 수정
+     * 
+     * @param minExerciseMinutes 미션에 투자할 수 있는 시간 (분)
+     * @return 수정된 온보딩 정보
+     */
+    suspend fun updateMinExerciseMinutes(minExerciseMinutes: Int): Result<OnboardingInfo>
+    
+    /**
+     * 운동 가능 시간 수정
+     * 
+     * @param availableStartTime 시작 시간
+     * @param availableEndTime 종료 시간
+     * @return 수정된 온보딩 정보
+     */
+    suspend fun updateAvailableTime(availableStartTime: String, availableEndTime: String): Result<OnboardingInfo>
 }

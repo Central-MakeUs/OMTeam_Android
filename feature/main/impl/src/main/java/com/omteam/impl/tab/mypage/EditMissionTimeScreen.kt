@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,11 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.component.EditMyInfoItemWithInfo
 import com.omteam.impl.component.SubScreenHeader
+import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
 
 /**
@@ -32,7 +37,9 @@ import com.omteam.omt.core.designsystem.R
 fun EditMissionTimeScreen(
     modifier: Modifier = Modifier,
     initialAvailableTime: String = "", // 이전 화면에서 온보딩 정보로 가져온 시간 값
-    onBackClick: () -> Unit = {}
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onUpdateSuccess: () -> Unit = {}
 ) {
     // 숫자만 저장 (1~30)
     // remember(key)로 initialAvailableTime이 변경되면 자동으로 상태 업데이트
@@ -40,6 +47,15 @@ fun EditMissionTimeScreen(
 
     // 버튼 활성화 조건 : 1~30 범위의 숫자 입력
     val isValidTime = time.isNotEmpty() && time.toIntOrNull()?.let { it in 1..30 } == true
+    
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+
+    // 수정 성공 시 뒤로 가기
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.Success) {
+            onUpdateSuccess()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -90,9 +106,12 @@ fun EditMissionTimeScreen(
         OMTeamButton(
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.edit_available_mission_button),
-            enabled = isValidTime,
+            enabled = isValidTime && onboardingInfoState !is MyPageOnboardingState.Loading,
             onClick = {
-                //
+                val minutes = time.toIntOrNull()
+                if (minutes != null) {
+                    myPageViewModel.updateMinExerciseMinutes(minutes)
+                }
             }
         )
     }
