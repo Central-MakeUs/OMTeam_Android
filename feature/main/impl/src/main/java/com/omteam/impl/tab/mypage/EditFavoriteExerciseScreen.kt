@@ -47,6 +47,7 @@ fun EditFavoriteExerciseScreen(
     onUpdateSuccess: () -> Unit = {}
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+    val customExercises by myPageViewModel.customExercises.collectAsStateWithLifecycle()
 
     // 수정 성공 시 뒤로 가기
     LaunchedEffect(onboardingInfoState) {
@@ -58,10 +59,14 @@ fun EditFavoriteExerciseScreen(
     EditFavoriteExerciseContent(
         modifier = modifier,
         initialFavoriteExercises = initialFavoriteExercises,
+        customExercises = customExercises,
         isLoading = onboardingInfoState is MyPageOnboardingState.Loading,
         onBackClick = onBackClick,
         onUpdateClick = { exercises ->
             myPageViewModel.updatePreferredExercise(exercises)
+        },
+        onAddCustomExercise = { name ->
+            myPageViewModel.addCustomExercise(name)
         }
     )
 }
@@ -71,14 +76,15 @@ fun EditFavoriteExerciseScreen(
 fun EditFavoriteExerciseContent(
     modifier: Modifier = Modifier,
     initialFavoriteExercises: List<String> = emptyList(),
+    customExercises: List<String> = emptyList(),
     isLoading: Boolean = false,
     onBackClick: () -> Unit = {},
-    onUpdateClick: (List<String>) -> Unit = {}
+    onUpdateClick: (List<String>) -> Unit = {},
+    onAddCustomExercise: (String) -> Unit = {}
 ) {
     var selectedExercises by remember(initialFavoriteExercises) { mutableStateOf(initialFavoriteExercises) }
     var isAddingCustom by remember { mutableStateOf(false) }
     var customExerciseName by remember { mutableStateOf("") }
-    var customExercises by remember { mutableStateOf(listOf<String>()) }
 
     val availableExercises = listOf(
         stringResource(R.string.walking),
@@ -160,7 +166,7 @@ fun EditFavoriteExerciseContent(
                         if (customExerciseName.isNotBlank()) {
                             val trimmedName = customExerciseName.trim()
                             if (!customExercises.contains(trimmedName) && !availableExercises.contains(trimmedName)) {
-                                customExercises = customExercises + trimmedName
+                                onAddCustomExercise(trimmedName)
                             }
                         }
                         customExerciseName = ""
@@ -200,7 +206,8 @@ private fun EditFavoriteExerciseScreenPreview() {
 private fun EditFavoriteExerciseScreenWithChipsPreview() {
     OMTeamTheme {
         EditFavoriteExerciseContent(
-            initialFavoriteExercises = listOf("생활 속 운동", "스트레칭/요가", "축구")
+            initialFavoriteExercises = listOf("생활 속 운동", "스트레칭/요가", "축구"),
+            customExercises = listOf("축구", "농구")
         )
     }
 }

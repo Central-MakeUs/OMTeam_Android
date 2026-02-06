@@ -2,6 +2,7 @@ package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.omteam.domain.repository.CustomExerciseRepository
 import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
 import com.omteam.domain.usecase.UpdateLifestyleUseCase
@@ -10,8 +11,10 @@ import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
 import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,11 +25,19 @@ class MyPageViewModel @Inject constructor(
     private val updateLifestyleUseCase: UpdateLifestyleUseCase,
     private val updatePreferredExerciseUseCase: UpdatePreferredExerciseUseCase,
     private val updateMinExerciseMinutesUseCase: UpdateMinExerciseMinutesUseCase,
-    private val updateAvailableTimeUseCase: UpdateAvailableTimeUseCase
+    private val updateAvailableTimeUseCase: UpdateAvailableTimeUseCase,
+    private val customExerciseRepository: CustomExerciseRepository
 ): ViewModel() {
 
     private val _onboardingInfoState = MutableStateFlow<MyPageOnboardingState>(MyPageOnboardingState.Idle)
     val onboardingInfoState: StateFlow<MyPageOnboardingState> = _onboardingInfoState.asStateFlow()
+    
+    val customExercises: StateFlow<List<String>> = customExerciseRepository.getAllCustomExercises()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     // 온보딩 정보 조회
     fun getOnboardingInfo() = viewModelScope.launch {
@@ -100,6 +111,26 @@ class MyPageViewModel @Inject constructor(
                 Timber.e("## 운동 가능 시간 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
             }
+        }
+    }
+    
+    // 커스텀 운동 추가
+    fun addCustomExercise(name: String) = viewModelScope.launch {
+        try {
+            customExerciseRepository.addCustomExercise(name)
+            Timber.d("## 커스텀 운동 추가 성공 : $name")
+        } catch (e: Exception) {
+            Timber.e("## 커스텀 운동 추가 실패 : ${e.message}")
+        }
+    }
+    
+    // 커스텀 운동 삭제
+    fun deleteCustomExercise(name: String) = viewModelScope.launch {
+        try {
+            customExerciseRepository.deleteCustomExercise(name)
+            Timber.d("## 커스텀 운동 삭제 성공 : $name")
+        } catch (e: Exception) {
+            Timber.e("## 커스텀 운동 삭제 실패 : ${e.message}")
         }
     }
 
