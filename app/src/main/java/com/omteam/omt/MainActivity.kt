@@ -7,10 +7,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -18,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,6 +37,7 @@ import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
 import com.omteam.impl.entry.otherEntry
 import com.omteam.impl.entry.webViewEntry
+import com.omteam.impl.screen.SplashScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -63,21 +61,15 @@ class MainActivity : ComponentActivity() {
 
                 // 자동 로그인 상태 따라 초기 화면 결정
                 val initialNavKey = when (autoLoginState) {
-                    AutoLoginViewModel.AutoLoginState.Checking -> null // TODO : 로딩 화면은 뭘로 보여주나?
+                    AutoLoginViewModel.AutoLoginState.Checking -> null
                     AutoLoginViewModel.AutoLoginState.NeedLogin -> LoginNavKey
                     AutoLoginViewModel.AutoLoginState.NeedOnboarding -> OnboardingNavKey(step = 1)
                     AutoLoginViewModel.AutoLoginState.NavigateToMain -> MainNavKey
                 }
 
-                // 로딩 중이면 로딩 화면 표시
+                // 자동 로그인 체크 중이면 스플래시 화면 표시
                 if (initialNavKey == null) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-
+                    SplashScreen()
                     return@OMTeamTheme
                 }
 
