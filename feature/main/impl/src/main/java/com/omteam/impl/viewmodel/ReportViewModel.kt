@@ -10,10 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 import javax.inject.Inject
@@ -83,24 +80,28 @@ class ReportViewModel @Inject constructor(
     /**
      * 주간 리포트 조회
      * 
-     * @param useSelectedDate true인 경우 selectedDate가 속한 주의 월요일을 기준으로 조회,
-     *                        false인 경우 서버에서 현재 주 기준으로 조회 (기본값: true)
+     * @param useSelectedDate true - selectedDate를 기준으로 year, month, weekOfMonth 계산해서 조회
+     *
+     * false - 서버에서 현재 주 기준으로 조회 (기본값: true)
      */
     fun fetchWeeklyReport(useSelectedDate: Boolean = true) = viewModelScope.launch {
         _weeklyReportUiState.value = WeeklyReportUiState.Loading
         
-        // selectedDate가 속한 주의 월요일 계산 (useSelectedDate가 true인 경우에만)
-        val weekStartDate = if (useSelectedDate) {
-            _selectedDate.value
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .format(DateTimeFormatter.ISO_LOCAL_DATE)
+        // selectedDate를 기준으로 year, month, weekOfMonth 계산 (useSelectedDate가 true인 경우에만)
+        val (year, month, weekOfMonth) = if (useSelectedDate) {
+            val date = _selectedDate.value
+            Triple(
+                date.year,
+                date.monthValue,
+                date.get(WeekFields.of(Locale.KOREA).weekOfMonth())
+            )
         } else {
-            null
+            Triple(null, null, null)
         }
         
-        Timber.d("## 주간 리포트 조회 시작 - weekStartDate: $weekStartDate")
+        Timber.d("## 주간 리포트 조회 시작 - year: $year, month: $month, weekOfMonth: $weekOfMonth")
         
-        getWeeklyReportUseCase(weekStartDate)
+        getWeeklyReportUseCase(year, month, weekOfMonth)
             .collect { result ->
                 _weeklyReportUiState.value = result.fold(
                     onSuccess = { weeklyReport ->

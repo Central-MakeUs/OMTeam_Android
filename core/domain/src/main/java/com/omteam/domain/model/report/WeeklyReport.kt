@@ -9,6 +9,7 @@ import java.time.LocalDate
  * @property weekEndDate 주차 종료 날짜
  * @property thisWeekSuccessRate 이번 주 성공률
  * @property lastWeekSuccessRate 지난 주 성공률
+ * @property thisWeekSuccessCount 이번 주 성공 횟수
  * @property dailyResults 일일 결과 목록
  * @property typeSuccessCounts 미션 타입별 성공 횟수 목록
  * @property topFailureReasons 상위 실패 사유 목록
@@ -19,6 +20,7 @@ data class WeeklyReport(
     val weekEndDate: LocalDate,
     val thisWeekSuccessRate: Double,
     val lastWeekSuccessRate: Double,
+    val thisWeekSuccessCount: Int,
     val dailyResults: List<DailyResult>,
     val typeSuccessCounts: List<TypeSuccessCount>,
     val topFailureReasons: List<TopFailureReason>,
@@ -71,12 +73,25 @@ data class TopFailureReason(
 /**
  * AI 피드백
  * 
- * @property mainFailureReason 주요 실패 사유 (분석 결과가 없는 경우 null)
- * @property overallFeedback 전체 피드백
+ * @property failureReasonRanking 실패 사유 순위 목록
+ * @property weeklyFeedback 주간 피드백
  */
 data class AiFeedback(
-    val mainFailureReason: String? = null,
-    val overallFeedback: String
+    val failureReasonRanking: List<FailureReasonRanking>,
+    val weeklyFeedback: String
+)
+
+/**
+ * 실패 사유 순위
+ * 
+ * @property rank 순위
+ * @property category 실패 사유 카테고리
+ * @property count 횟수
+ */
+data class FailureReasonRanking(
+    val rank: Int,
+    val category: String,
+    val count: Int
 )
 
 /**

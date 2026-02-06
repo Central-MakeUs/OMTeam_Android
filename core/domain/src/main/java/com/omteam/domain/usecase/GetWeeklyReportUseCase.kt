@@ -13,8 +13,14 @@ class GetWeeklyReportUseCase(
     /**
      * 주간 리포트 조회
      * 
-     * @param weekStartDate 주차 시작 날짜 (형식: "2024-01-23"), null인 경우 현재 주 기준
+     * @param year 연도 (예: 2024), null인 경우 현재 주 기준
+     * @param month 월 (1-12), null인 경우 현재 주 기준
+     * @param weekOfMonth 해당 월의 주차 (1부터 시작), null인 경우 현재 주 기준
      */
-    operator fun invoke(weekStartDate: String? = null): Flow<Result<WeeklyReport>> =
-        reportRepository.getWeeklyReport(weekStartDate)
+    operator fun invoke(
+        year: Int? = null,
+        month: Int? = null,
+        weekOfMonth: Int? = null
+    ): Flow<Result<WeeklyReport>> =
+        reportRepository.getWeeklyReport(year, month, weekOfMonth)
 }

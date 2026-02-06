@@ -21,6 +21,7 @@ data class WeeklyReportData(
     val weekEndDate: String,
     val thisWeekSuccessRate: Double,
     val lastWeekSuccessRate: Double,
+    val thisWeekSuccessCount: Int,
     val dailyResults: List<DailyResultDto>,
     val typeSuccessCounts: List<TypeSuccessCountDto>,
     val topFailureReasons: List<TopFailureReasonDto>,
@@ -64,8 +65,18 @@ data class TopFailureReasonDto(
  */
 @Serializable
 data class AiFeedbackDto(
-    val mainFailureReason: String? = null,
-    val overallFeedback: String
+    val failureReasonRanking: List<FailureReasonRankingDto>,
+    val weeklyFeedback: String
+)
+
+/**
+ * 실패 사유 순위 DTO
+ */
+@Serializable
+data class FailureReasonRankingDto(
+    val rank: Int,
+    val category: String,
+    val count: Int
 )
 
 /**

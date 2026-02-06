@@ -4,11 +4,13 @@ import com.omteam.domain.model.report.AiFeedback
 import com.omteam.domain.model.report.DailyMissionStatus
 import com.omteam.domain.model.report.DailyResult
 import com.omteam.domain.model.report.DayOfWeek
+import com.omteam.domain.model.report.FailureReasonRanking
 import com.omteam.domain.model.report.TopFailureReason
 import com.omteam.domain.model.report.TypeSuccessCount
 import com.omteam.domain.model.report.WeeklyReport
 import com.omteam.network.dto.report.AiFeedbackDto
 import com.omteam.network.dto.report.DailyResultDto
+import com.omteam.network.dto.report.FailureReasonRankingDto
 import com.omteam.network.dto.report.TopFailureReasonDto
 import com.omteam.network.dto.report.TypeSuccessCountDto
 import com.omteam.network.dto.report.WeeklyReportData
@@ -23,6 +25,7 @@ fun WeeklyReportData.toDomain(): WeeklyReport = WeeklyReport(
     weekEndDate = weekEndDate.toLocalDate(),
     thisWeekSuccessRate = thisWeekSuccessRate,
     lastWeekSuccessRate = lastWeekSuccessRate,
+    thisWeekSuccessCount = thisWeekSuccessCount,
     dailyResults = dailyResults.map { it.toDomain() },
     typeSuccessCounts = typeSuccessCounts.map { it.toDomain() },
     topFailureReasons = topFailureReasons.map { it.toDomain() },
@@ -62,8 +65,17 @@ fun TopFailureReasonDto.toDomain(): TopFailureReason = TopFailureReason(
  * AiFeedbackDto -> AiFeedback 도메인 모델
  */
 fun AiFeedbackDto.toDomain(): AiFeedback = AiFeedback(
-    mainFailureReason = mainFailureReason,
-    overallFeedback = overallFeedback
+    failureReasonRanking = failureReasonRanking.map { it.toDomain() },
+    weeklyFeedback = weeklyFeedback
+)
+
+/**
+ * FailureReasonRankingDto -> FailureReasonRanking 도메인 모델
+ */
+fun FailureReasonRankingDto.toDomain(): FailureReasonRanking = FailureReasonRanking(
+    rank = rank,
+    category = category,
+    count = count
 )
 
 /**
