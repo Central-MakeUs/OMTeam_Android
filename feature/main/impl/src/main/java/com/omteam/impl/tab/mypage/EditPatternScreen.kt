@@ -38,17 +38,44 @@ import com.omteam.omt.core.designsystem.R
 /**
  * 평소 생활 패턴
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditPatternScreen(
     modifier: Modifier = Modifier,
-    initialPattern: String = "", // 이전 화면에서 온보딩 정보로 가져온 패턴 값
+    initialPattern: String = "",
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onUpdateSuccess: () -> Unit = {}
 ) {
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+
+    // 수정 성공 시 뒤로 가기
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.Success) {
+            onUpdateSuccess()
+        }
+    }
+
+    EditPatternContent(
+        modifier = modifier,
+        initialPattern = initialPattern,
+        isLoading = onboardingInfoState is MyPageOnboardingState.Loading,
+        onBackClick = onBackClick,
+        onUpdateClick = { lifestyleType ->
+            myPageViewModel.updateLifestyle(lifestyleType.name)
+        }
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditPatternContent(
+    modifier: Modifier = Modifier,
+    initialPattern: String = "",
+    isLoading: Boolean = false,
+    onBackClick: () -> Unit = {},
+    onUpdateClick: (LifestyleType) -> Unit = {}
+) {
     // 선택된 생활 패턴 (단일 선택)
-    // remember(key)로 initialPattern이 바뀌면 자동으로 상태 업데이트
     var selectedPattern by remember(initialPattern) { mutableStateOf(initialPattern) }
 
     // 선택 가능한 패턴 목록
@@ -58,17 +85,7 @@ fun EditPatternScreen(
     val patternFourth = stringResource(R.string.pattern_fourth)
     
     val availablePatterns = listOf(patternFirst, patternSecond, patternThird, patternFourth)
-    
-    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
-    
     val scrollState = rememberScrollState()
-
-    // 수정 성공 시 뒤로 가기
-    LaunchedEffect(onboardingInfoState) {
-        if (onboardingInfoState is MyPageOnboardingState.Success) {
-            onUpdateSuccess()
-        }
-    }
 
     Column(
         modifier = modifier
@@ -119,10 +136,8 @@ fun EditPatternScreen(
                         isSelected = selectedPattern == pattern,
                         onClick = {
                             selectedPattern = if (selectedPattern == pattern) {
-                                // 이미 선택된 경우 선택 해제
                                 ""
                             } else {
-                                // 새로운 패턴 선택
                                 pattern
                             }
                         }
@@ -139,9 +154,8 @@ fun EditPatternScreen(
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_pattern_button),
-            enabled = selectedPattern.isNotEmpty() && onboardingInfoState !is MyPageOnboardingState.Loading,
+            enabled = selectedPattern.isNotEmpty() && !isLoading,
             onClick = {
-                // 선택된 패턴을 LifestyleType enum으로 변환
                 val lifestyleType = when (selectedPattern) {
                     patternFirst -> LifestyleType.REGULAR_DAYTIME
                     patternSecond -> LifestyleType.IRREGULAR_OVERTIME
@@ -149,8 +163,7 @@ fun EditPatternScreen(
                     patternFourth -> LifestyleType.VARIABLE_DAILY
                     else -> LifestyleType.REGULAR_DAYTIME
                 }
-                
-                myPageViewModel.updateLifestyle(lifestyleType.name)
+                onUpdateClick(lifestyleType)
             }
         )
     }
@@ -160,7 +173,7 @@ fun EditPatternScreen(
 @Composable
 private fun EditPatternScreenPreview() {
     OMTeamTheme {
-        EditPatternScreen()
+        EditPatternContent()
     }
 }
 
@@ -168,6 +181,8 @@ private fun EditPatternScreenPreview() {
 @Composable
 private fun EditPatternScreenWithSelectionPreview() {
     OMTeamTheme {
-        EditPatternScreen(initialPattern = "비교적 규칙적인 평일 주간 근무에요.")
+        EditPatternContent(
+            initialPattern = "비교적 규칙적인 평일 주간 근무에요."
+        )
     }
 }

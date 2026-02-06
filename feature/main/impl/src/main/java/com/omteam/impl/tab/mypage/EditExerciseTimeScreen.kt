@@ -37,30 +37,15 @@ import com.omteam.omt.core.designsystem.R
 /**
  * 운동 가능 시간
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditExerciseTimeScreen(
     modifier: Modifier = Modifier,
-    initialExerciseTime: String = "", // 이전 화면에서 온보딩 정보로 가져온 시간대 값
+    initialExerciseTime: String = "",
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onUpdateSuccess: () -> Unit = {}
 ) {
-    // 선택된 운동 시간대
-    // remember(key)로 initialExerciseTime이 변경되면 자동으로 상태 업데이트
-    var selectedTime by remember(initialExerciseTime) { mutableStateOf(initialExerciseTime) }
-
-    // 선택 가능한 시간대 목록
-    val before18 = stringResource(R.string.before_18)
-    val after18 = stringResource(R.string.after_18)
-    val after19 = stringResource(R.string.after_19)
-    val after20 = stringResource(R.string.after_20)
-    
-    val availableTimes = listOf(before18, after18, after19, after20)
-    
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
-    
-    val scrollState = rememberScrollState()
 
     // 수정 성공 시 뒤로 가기
     LaunchedEffect(onboardingInfoState) {
@@ -69,12 +54,41 @@ fun EditExerciseTimeScreen(
         }
     }
 
+    EditExerciseTimeContent(
+        modifier = modifier,
+        initialExerciseTime = initialExerciseTime,
+        isLoading = onboardingInfoState is MyPageOnboardingState.Loading,
+        onBackClick = onBackClick,
+        onUpdateClick = { startTime, endTime ->
+            myPageViewModel.updateAvailableTime(startTime, endTime)
+        }
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditExerciseTimeContent(
+    modifier: Modifier = Modifier,
+    initialExerciseTime: String = "",
+    isLoading: Boolean = false,
+    onBackClick: () -> Unit = {},
+    onUpdateClick: (String, String) -> Unit = { _, _ -> }
+) {
+    var selectedTime by remember(initialExerciseTime) { mutableStateOf(initialExerciseTime) }
+
+    val before18 = stringResource(R.string.before_18)
+    val after18 = stringResource(R.string.after_18)
+    val after19 = stringResource(R.string.after_19)
+    val after20 = stringResource(R.string.after_20)
+    
+    val availableTimes = listOf(before18, after18, after19, after20)
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(White)
     ) {
-        // 스크롤 가능한 영역
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -83,7 +97,6 @@ fun EditExerciseTimeScreen(
         ) {
             Spacer(modifier = Modifier.height(dp20))
 
-            // 상단 헤더
             SubScreenHeader(
                 title = stringResource(R.string.edit_my_info_title),
                 onBackClick = onBackClick
@@ -91,7 +104,6 @@ fun EditExerciseTimeScreen(
 
             Spacer(modifier = Modifier.height(dp28))
 
-            // 선택된 시간대 표시
             EditMyInfoItemWithInfo(
                 label = stringResource(R.string.choose_available_hours),
                 infoMessage = stringResource(R.string.choose_available_hours_info),
@@ -120,10 +132,8 @@ fun EditExerciseTimeScreen(
                         isSelected = selectedTime == time,
                         onClick = {
                             selectedTime = if (selectedTime == time) {
-                                // 이미 선택됐으면 선택 해제
                                 ""
                             } else {
-                                // 새 시간대 선택
                                 time
                             }
                         }
@@ -140,9 +150,8 @@ fun EditExerciseTimeScreen(
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_exercise_time_button),
-            enabled = selectedTime.isNotEmpty() && onboardingInfoState !is MyPageOnboardingState.Loading,
+            enabled = selectedTime.isNotEmpty() && !isLoading,
             onClick = {
-                // 선택된 시간대를 API 요청 형식으로 변환
                 val (startTime, endTime) = when (selectedTime) {
                     before18 -> "00:00" to "17:59"
                     after18 -> "18:00" to "23:59"
@@ -150,8 +159,7 @@ fun EditExerciseTimeScreen(
                     after20 -> "20:00" to "23:59"
                     else -> "18:00" to "23:59"
                 }
-                
-                myPageViewModel.updateAvailableTime(startTime, endTime)
+                onUpdateClick(startTime, endTime)
             }
         )
     }
@@ -161,7 +169,7 @@ fun EditExerciseTimeScreen(
 @Composable
 private fun EditExerciseTimeScreenPreview() {
     OMTeamTheme {
-        EditExerciseTimeScreen()
+        EditExerciseTimeContent()
     }
 }
 
@@ -169,6 +177,6 @@ private fun EditExerciseTimeScreenPreview() {
 @Composable
 private fun EditExerciseTimeScreenWithSelectionPreview() {
     OMTeamTheme {
-        EditExerciseTimeScreen(initialExerciseTime = "19:00 이후부터")
+        EditExerciseTimeContent(initialExerciseTime = "19:00 이후부터")
     }
 }

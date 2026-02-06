@@ -38,41 +38,15 @@ import com.omteam.omt.core.designsystem.R
 /**
  * 선호 운동
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditFavoriteExerciseScreen(
     modifier: Modifier = Modifier,
-    initialFavoriteExercises: List<String> = emptyList(), // 이전 화면에서 온보딩 정보로 가져온 선호 운동 값
+    initialFavoriteExercises: List<String> = emptyList(),
     myPageViewModel: MyPageViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onUpdateSuccess: () -> Unit = {}
 ) {
-    // 선택된 선호 운동 목록 (최대 3개)
-    // remember(key)로 initialFavoriteExercises가 변경되면 자동으로 상태 업데이트
-    var selectedExercises by remember(initialFavoriteExercises) { mutableStateOf(initialFavoriteExercises) }
-
-    // "직접 추가하기" chip 수정 가능 상태
-    var isAddingCustom by remember { mutableStateOf(false) }
-    var customExerciseName by remember { mutableStateOf("") }
-
-    // 유저가 직접 추가한 운동 리스트
-    var customExercises by remember { mutableStateOf(listOf<String>()) }
-
-    // 선택 가능한 기본 운동 리스트
-    val availableExercises = listOf(
-        stringResource(R.string.walking),
-        stringResource(R.string.stretching_yoga),
-        stringResource(R.string.home_training),
-        stringResource(R.string.health),
-        stringResource(R.string.usual_exercise),
-    )
-
-    // 기본 운동 리스트 + 커스텀 운동 3개
-    val allExercises = availableExercises + customExercises
-    
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
-    
-    val scrollState = rememberScrollState()
 
     // 수정 성공 시 뒤로 가기
     LaunchedEffect(onboardingInfoState) {
@@ -81,12 +55,47 @@ fun EditFavoriteExerciseScreen(
         }
     }
 
+    EditFavoriteExerciseContent(
+        modifier = modifier,
+        initialFavoriteExercises = initialFavoriteExercises,
+        isLoading = onboardingInfoState is MyPageOnboardingState.Loading,
+        onBackClick = onBackClick,
+        onUpdateClick = { exercises ->
+            myPageViewModel.updatePreferredExercise(exercises)
+        }
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditFavoriteExerciseContent(
+    modifier: Modifier = Modifier,
+    initialFavoriteExercises: List<String> = emptyList(),
+    isLoading: Boolean = false,
+    onBackClick: () -> Unit = {},
+    onUpdateClick: (List<String>) -> Unit = {}
+) {
+    var selectedExercises by remember(initialFavoriteExercises) { mutableStateOf(initialFavoriteExercises) }
+    var isAddingCustom by remember { mutableStateOf(false) }
+    var customExerciseName by remember { mutableStateOf("") }
+    var customExercises by remember { mutableStateOf(listOf<String>()) }
+
+    val availableExercises = listOf(
+        stringResource(R.string.walking),
+        stringResource(R.string.stretching_yoga),
+        stringResource(R.string.home_training),
+        stringResource(R.string.health),
+        stringResource(R.string.usual_exercise),
+    )
+
+    val allExercises = availableExercises + customExercises
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(White)
     ) {
-        // 스크롤 가능한 영역
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -95,7 +104,6 @@ fun EditFavoriteExerciseScreen(
         ) {
             Spacer(modifier = Modifier.height(dp20))
 
-            // 상단 헤더
             SubScreenHeader(
                 title = stringResource(R.string.edit_my_info_title),
                 onBackClick = onBackClick
@@ -103,7 +111,6 @@ fun EditFavoriteExerciseScreen(
 
             Spacer(modifier = Modifier.height(dp28))
 
-            // 선택된 선호 운동 표시
             EditMyInfoItemWithInfo(
                 label = stringResource(R.string.choose_favorite_exercises),
                 infoMessage = stringResource(R.string.choose_favorite_exercises_info),
@@ -121,7 +128,6 @@ fun EditFavoriteExerciseScreen(
 
             Spacer(modifier = Modifier.height(dp20))
 
-            // 선택 가능한 운동 chip 목록
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dp8),
@@ -133,10 +139,8 @@ fun EditFavoriteExerciseScreen(
                         isSelected = selectedExercises.contains(exercise),
                         onClick = {
                             selectedExercises = if (selectedExercises.contains(exercise)) {
-                                // 이미 선택된 경우 제거
                                 selectedExercises - exercise
                             } else {
-                                // 최대 3개까지만 선택 가능
                                 if (selectedExercises.size < 3) {
                                     selectedExercises + exercise
                                 } else {
@@ -147,18 +151,14 @@ fun EditFavoriteExerciseScreen(
                     )
                 }
 
-                // 직접 추가하기 chip
                 AddCustomChip(
-                    onClick = {
-                        isAddingCustom = true
-                    },
+                    onClick = { isAddingCustom = true },
                     isEditing = isAddingCustom,
                     value = customExerciseName,
                     onValueChange = { customExerciseName = it },
                     onDone = {
                         if (customExerciseName.isNotBlank()) {
                             val trimmedName = customExerciseName.trim()
-                            // 커스텀 운동 목록에만 추가하고 선택된 목록에는 자동 추가하지 않음
                             if (!customExercises.contains(trimmedName) && !availableExercises.contains(trimmedName)) {
                                 customExercises = customExercises + trimmedName
                             }
@@ -172,16 +172,15 @@ fun EditFavoriteExerciseScreen(
             Spacer(modifier = Modifier.height(dp20))
         }
 
-        // 하단 고정 버튼
         OMTeamButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_favorite_exercise_button),
-            enabled = selectedExercises.isNotEmpty() && onboardingInfoState !is MyPageOnboardingState.Loading,
+            enabled = selectedExercises.isNotEmpty() && !isLoading,
             onClick = {
-                myPageViewModel.updatePreferredExercise(selectedExercises)
+                onUpdateClick(selectedExercises)
             }
         )
     }
@@ -191,7 +190,7 @@ fun EditFavoriteExerciseScreen(
 @Composable
 private fun EditFavoriteExerciseScreenPreview() {
     OMTeamTheme {
-        EditFavoriteExerciseScreen()
+        EditFavoriteExerciseContent()
     }
 }
 
@@ -200,81 +199,8 @@ private fun EditFavoriteExerciseScreenPreview() {
 @Composable
 private fun EditFavoriteExerciseScreenWithChipsPreview() {
     OMTeamTheme {
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(White)
-        ) {
-            // 스크롤 가능한 영역
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = dp20)
-            ) {
-                Spacer(modifier = Modifier.height(dp20))
-                
-                SubScreenHeader(
-                    title = stringResource(R.string.edit_my_info_title),
-                    onBackClick = {}
-                )
-
-                Spacer(modifier = Modifier.height(dp28))
-
-                EditMyInfoItemWithInfo(
-                    label = "선호하는 운동을 선택해 주세요.",
-                    infoMessage = "최대 3개까지 선택할 수 있어요.",
-                    chips = listOf("생활 속 운동", "스트레칭/요가", "축구")
-                )
-
-                Spacer(modifier = Modifier.height(dp52))
-
-                // "선호 운동 선택 목록" 텍스트
-                OMTeamText(
-                    text = "선호 운동 선택 목록",
-                    style = PretendardType.button03Abled,
-                    color = Gray10
-                )
-
-                Spacer(modifier = Modifier.height(dp20))
-
-                // 선택 가능한 운동 chip 목록 (커스텀 추가 포함)
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(dp8),
-                    verticalArrangement = Arrangement.spacedBy(dp8)
-                ) {
-                    val exercises = listOf(
-                        "걷기", "스트레칭/요가", "홈 트레이닝(맨몸 운동)", "헬스", "생활 속 운동",
-                        "축구" // 커스텀 추가된 운동
-                    )
-                    val selected = listOf("생활 속 운동", "스트레칭/요가", "축구")
-                    
-                    exercises.forEach { exercise ->
-                        SelectableInfoChip(
-                            text = exercise,
-                            isSelected = selected.contains(exercise),
-                            onClick = {}
-                        )
-                    }
-
-                    AddCustomChip(onClick = {})
-                }
-                
-                Spacer(modifier = Modifier.height(dp20))
-            }
-
-            // 하단 고정 버튼
-            OMTeamButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = dp20)
-                    .padding(bottom = dp20),
-                text = "선호 운동 수정하기",
-                enabled = true,
-                onClick = {}
-            )
-        }
+        EditFavoriteExerciseContent(
+            initialFavoriteExercises = listOf("생활 속 운동", "스트레칭/요가", "축구")
+        )
     }
 }
