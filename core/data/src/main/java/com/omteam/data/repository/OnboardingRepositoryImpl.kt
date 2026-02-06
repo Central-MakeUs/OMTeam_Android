@@ -30,6 +30,12 @@ class OnboardingRepositoryImpl @Inject constructor(
         safeApiCall(
             logTag = "온보딩 정보 제출",
             apiCall = {
+                // preferredExerciseText 문자열 -> 리스트 변환 (쉼표로 구분)
+                val preferredExercises = onboardingInfo.preferredExerciseText
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                
                 val request = OnboardingRequest(
                     nickname = onboardingInfo.nickname,
                     appGoalText = onboardingInfo.appGoalText,
@@ -37,7 +43,7 @@ class OnboardingRepositoryImpl @Inject constructor(
                     availableStartTime = onboardingInfo.availableStartTime,
                     availableEndTime = onboardingInfo.availableEndTime,
                     minExerciseMinutes = onboardingInfo.minExerciseMinutes,
-                    preferredExerciseText = onboardingInfo.preferredExerciseText,
+                    preferredExercises = preferredExercises,
                     lifestyleType = onboardingInfo.lifestyleType.name,
                     remindEnabled = onboardingInfo.remindEnabled,
                     checkinEnabled = onboardingInfo.checkinEnabled,
