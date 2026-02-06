@@ -1,5 +1,8 @@
 package com.omteam.impl.entry
 
+import android.widget.Toast
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.EditPatternNavKey
@@ -16,10 +19,19 @@ fun EntryProviderScope<NavKey>.editPatternEntry(
 ) {
     entry<EditPatternNavKey> { navKey ->
         Timber.d("## 생활 패턴 수정 화면 이동 - initialPattern : ${navKey.initialPattern}")
+        
+        val context = LocalContext.current
+        val onUpdateSuccess = remember {
+            {
+                Toast.makeText(context, "수정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+                onBackClick()
+            }
+        }
+        
         EditPatternScreen(
             initialPattern = navKey.initialPattern,
             onBackClick = onBackClick,
-            onUpdateSuccess = onBackClick
+            onUpdateSuccess = onUpdateSuccess
         )
     }
 }
