@@ -2,9 +2,12 @@ package com.omteam.domain.usecase
 
 import com.omteam.domain.model.onboarding.OnboardingInfo
 import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.OnboardingRepository
+import kotlinx.coroutines.flow.first
 
 class CheckAutoLoginUseCase(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val onboardingRepository: OnboardingRepository
 ) {
     /**
      * 자동 로그인 체크
@@ -21,7 +24,8 @@ class CheckAutoLoginUseCase(
         // 401, 403은 TokenAuthenticator가 자동 처리
         // - 갱신 성공 시 재시도 -> 200 OK 받음
         // - 갱신 실패 시 TokenAuthenticator가 토큰 삭제 후 에러 발생
-        return authRepository.getOnboardingInfo()
+        return onboardingRepository.getOnboardingInfo()
+            .first()
             .fold(
                 onSuccess = { onboardingInfo ->
                     // 온보딩 완료 → 메인 화면

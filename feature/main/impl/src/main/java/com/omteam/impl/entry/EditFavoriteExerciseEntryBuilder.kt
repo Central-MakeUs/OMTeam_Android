@@ -1,5 +1,8 @@
 package com.omteam.impl.entry
 
+import android.widget.Toast
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.EditFavoriteExerciseNavKey
@@ -16,9 +19,19 @@ fun EntryProviderScope<NavKey>.editFavoriteExerciseEntry(
 ) {
     entry<EditFavoriteExerciseNavKey> { navKey ->
         Timber.d("## 선호 운동 수정 화면 이동 - initialFavoriteExercises : ${navKey.initialFavoriteExercises}")
+        
+        val context = LocalContext.current
+        val onUpdateSuccess = remember {
+            {
+                Toast.makeText(context, "수정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+                onBackClick()
+            }
+        }
+        
         EditFavoriteExerciseScreen(
             initialFavoriteExercises = navKey.initialFavoriteExercises,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onUpdateSuccess = onUpdateSuccess
         )
     }
 }

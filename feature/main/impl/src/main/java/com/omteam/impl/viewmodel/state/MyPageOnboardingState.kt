@@ -14,9 +14,14 @@ sealed class MyPageOnboardingState {
     data object Loading : MyPageOnboardingState()
 
     /**
-     * 로딩 성공
+     * 조회 성공
      */
     data class Success(val data: OnboardingInfo) : MyPageOnboardingState()
+
+    /**
+     * 업데이트 성공
+     */
+    data class UpdateSuccess(val data: OnboardingInfo) : MyPageOnboardingState()
 
     /**
      * 로딩 실패

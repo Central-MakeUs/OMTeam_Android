@@ -1,6 +1,8 @@
 package com.omteam.data.util
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
@@ -23,22 +25,26 @@ fun <Response, Domain> safeApiCall(
     transform: (Response) -> Domain?,
     getErrorInfo: (Response) -> ErrorInfo
 ): Flow<Result<Domain>> = flow {
-    try {
-        Timber.d("## $logTag 시작")
+    Timber.d("## $logTag 시작")
 
-        val response = apiCall()
-        val domain = transform(response)
+    val response = apiCall()
+    val domain = transform(response)
 
-        if (domain != null) {
-            emit(Result.success(domain))
-        } else {
-            val errorInfo = getErrorInfo(response)
-            val errorMessage = errorInfo.message ?: defaultErrorMessage
-            emit(Result.failure(Exception(errorMessage)))
-        }
-    } catch (e: Exception) {
-        emit(Result.failure(e))
+    if (domain != null) {
+        emit(Result.success(domain))
+    } else {
+        val errorInfo = getErrorInfo(response)
+        val errorMessage = errorInfo.message ?: defaultErrorMessage
+        emit(Result.failure(Exception(errorMessage)))
     }
+}.catch { e ->
+    // CancellationException은 재throw해서 정상 취소 처리
+    if (e is CancellationException) {
+        throw e
+    }
+
+    // 그 외 예외는 Result.failure emit
+    emit(Result.failure(e))
 }
 
 data class ErrorInfo(

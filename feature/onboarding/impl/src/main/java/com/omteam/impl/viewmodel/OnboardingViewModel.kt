@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.omteam.domain.model.onboarding.LifestyleType
 import com.omteam.domain.model.onboarding.OnboardingInfo
 import com.omteam.domain.model.onboarding.WorkTimeType
-import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.OnboardingRepository
 import com.omteam.impl.model.OnboardingData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +27,7 @@ enum class NicknameErrorType {
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val onboardingRepository: OnboardingRepository
 ) : ViewModel() {
 
     private val _onboardingData = MutableStateFlow(OnboardingData())
@@ -135,14 +135,14 @@ class OnboardingViewModel @Inject constructor(
                 )
                 Timber.d("## 온보딩 정보 제출 전 : $onboardingInfo")
 
-                val result = authRepository.submitOnboarding(onboardingInfo)
-
-                result.onSuccess {
-                    Timber.d("## 온보딩 정보 제출 성공")
-                    _submitState.value = SubmitState.Success
-                }.onFailure { exception ->
-                    Timber.e("## 온보딩 정보 제출 실패: ${exception.message}")
-                    _submitState.value = SubmitState.Error(exception.message ?: "온보딩 정보 제출 실패")
+                onboardingRepository.submitOnboarding(onboardingInfo).collect { result ->
+                    result.onSuccess {
+                        Timber.d("## 온보딩 정보 제출 성공")
+                        _submitState.value = SubmitState.Success
+                    }.onFailure { exception ->
+                        Timber.e("## 온보딩 정보 제출 실패: ${exception.message}")
+                        _submitState.value = SubmitState.Error(exception.message ?: "온보딩 정보 제출 실패")
+                    }
                 }
             } catch (e: Exception) {
                 Timber.e(e, "## 온보딩 정보 제출 예외 발생")

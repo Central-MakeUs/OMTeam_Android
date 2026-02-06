@@ -13,7 +13,7 @@ data class OnboardingRequest(
     val availableStartTime: String,
     val availableEndTime: String,
     val minExerciseMinutes: Int,
-    val preferredExerciseText: String,
+    val preferredExercises: List<String>,
     val lifestyleType: String,
     val remindEnabled: Boolean,
     val checkinEnabled: Boolean,

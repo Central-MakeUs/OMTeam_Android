@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,37 +21,70 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.domain.model.onboarding.LifestyleType
 import com.omteam.impl.component.EditMyInfoItemWithInfo
 import com.omteam.impl.component.SubScreenHeader
+import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
 
 /**
  * 평소 생활 패턴
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditPatternScreen(
     modifier: Modifier = Modifier,
-    initialPattern: String = "", // 이전 화면에서 온보딩 정보로 가져온 패턴 값
-    onBackClick: () -> Unit = {}
+    initialPattern: String = "",
+    myPageViewModel: MyPageViewModel = hiltViewModel(),
+    onBackClick: () -> Unit = {},
+    onUpdateSuccess: () -> Unit = {}
+) {
+    val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
+    
+    // 수정 성공 시 뒤로 가기
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.UpdateSuccess) {
+            onUpdateSuccess()
+        }
+    }
+
+    EditPatternContent(
+        modifier = modifier,
+        initialPattern = initialPattern,
+        isLoading = onboardingInfoState is MyPageOnboardingState.Loading,
+        onBackClick = onBackClick,
+        onUpdateClick = { lifestyleType ->
+            myPageViewModel.updateLifestyle(lifestyleType.name)
+        }
+    )
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EditPatternContent(
+    modifier: Modifier = Modifier,
+    initialPattern: String = "",
+    isLoading: Boolean = false,
+    onBackClick: () -> Unit = {},
+    onUpdateClick: (LifestyleType) -> Unit = {}
 ) {
     // 선택된 생활 패턴 (단일 선택)
-    // remember(key)로 initialPattern이 바뀌면 자동으로 상태 업데이트
     var selectedPattern by remember(initialPattern) { mutableStateOf(initialPattern) }
 
     // 선택 가능한 패턴 목록
-    val availablePatterns = listOf(
-        stringResource(R.string.pattern_first),
-        stringResource(R.string.pattern_second),
-        stringResource(R.string.pattern_third),
-        stringResource(R.string.pattern_fourth),
-    )
+    val patternFirst = stringResource(R.string.pattern_first)
+    val patternSecond = stringResource(R.string.pattern_second)
+    val patternThird = stringResource(R.string.pattern_third)
+    val patternFourth = stringResource(R.string.pattern_fourth)
     
+    val availablePatterns = listOf(patternFirst, patternSecond, patternThird, patternFourth)
     val scrollState = rememberScrollState()
 
     Column(
@@ -102,10 +136,8 @@ fun EditPatternScreen(
                         isSelected = selectedPattern == pattern,
                         onClick = {
                             selectedPattern = if (selectedPattern == pattern) {
-                                // 이미 선택된 경우 선택 해제
                                 ""
                             } else {
-                                // 새로운 패턴 선택
                                 pattern
                             }
                         }
@@ -122,9 +154,16 @@ fun EditPatternScreen(
                 .padding(horizontal = dp20)
                 .padding(bottom = dp20),
             text = stringResource(R.string.edit_pattern_button),
-            enabled = selectedPattern.isNotEmpty(),
+            enabled = selectedPattern.isNotEmpty() && !isLoading,
             onClick = {
-                //
+                val lifestyleType = when (selectedPattern) {
+                    patternFirst -> LifestyleType.REGULAR_DAYTIME
+                    patternSecond -> LifestyleType.IRREGULAR_OVERTIME
+                    patternThird -> LifestyleType.SHIFT_NIGHT
+                    patternFourth -> LifestyleType.VARIABLE_DAILY
+                    else -> LifestyleType.REGULAR_DAYTIME
+                }
+                onUpdateClick(lifestyleType)
             }
         )
     }
@@ -134,7 +173,7 @@ fun EditPatternScreen(
 @Composable
 private fun EditPatternScreenPreview() {
     OMTeamTheme {
-        EditPatternScreen()
+        EditPatternContent()
     }
 }
 
@@ -142,6 +181,8 @@ private fun EditPatternScreenPreview() {
 @Composable
 private fun EditPatternScreenWithSelectionPreview() {
     OMTeamTheme {
-        EditPatternScreen(initialPattern = "비교적 규칙적인 평일 주간 근무에요.")
+        EditPatternContent(
+            initialPattern = "비교적 규칙적인 평일 주간 근무에요."
+        )
     }
 }

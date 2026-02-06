@@ -12,26 +12,11 @@ interface AuthRepository {
     /**
      * idToken으로 서버 로그인 (구글, 카카오)
      *
-     * @param provider 로그인 제공자 ("google", "kakao")
-     * @param idToken 소셜 로그인 제공자로부터 받은 ID 토큰
+     * @param provider google, kakao
+     * @param idToken 소셜 로그인 후 받은 idToken
      * @return 서버 로그인 결과 (accessToken, refreshToken 등) Flow
      */
     fun loginWithIdToken(provider: String, idToken: String): Flow<Result<LoginResult>>
-
-    /**
-     * 온보딩 정보 조회
-     * 
-     * @return 온보딩 정보 (완료하지 않은 경우 실패)
-     */
-    suspend fun getOnboardingInfo(): Result<OnboardingInfo>
-
-    /**
-     * 온보딩 정보 제출
-     * 
-     * @param onboardingInfo 온보딩 정보
-     * @return 온보딩 정보 제출 결과
-     */
-    suspend fun submitOnboarding(onboardingInfo: OnboardingInfo): Result<OnboardingInfo>
 
     /**
      * 저장된 액세스 토큰 존재 여부 확인

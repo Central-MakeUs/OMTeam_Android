@@ -2,11 +2,8 @@ package com.omteam.network.api
 
 import com.omteam.network.dto.auth.LoginWithIdTokenRequest
 import com.omteam.network.dto.auth.LoginWithIdTokenResponse
-import com.omteam.network.dto.onboarding.OnboardingRequest
-import com.omteam.network.dto.onboarding.OnboardingResponse
 import com.omteam.network.dto.auth.RefreshTokenRequest
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -24,25 +21,6 @@ interface AuthApiService {
         @Path("provider") provider: String,
         @Body request: LoginWithIdTokenRequest
     ): LoginWithIdTokenResponse
-    
-    /**
-     * 온보딩 정보 조회
-     * 
-     * @return 온보딩 정보 (완료하지 않은 경우 에러 리턴)
-     */
-    @GET("api/onboarding")
-    suspend fun getOnboardingInfo(): OnboardingResponse
-    
-    /**
-     * 온보딩 정보 제출
-     * 
-     * @param request 온보딩 정보
-     * @return 온보딩 정보 제출 결과
-     */
-    @POST("api/onboarding")
-    suspend fun submitOnboarding(
-        @Body request: OnboardingRequest
-    ): OnboardingResponse
     
     /**
      * 토큰 갱신
