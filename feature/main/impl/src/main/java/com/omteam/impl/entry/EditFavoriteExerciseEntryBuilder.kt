@@ -18,7 +18,8 @@ fun EntryProviderScope<NavKey>.editFavoriteExerciseEntry(
         Timber.d("## 선호 운동 수정 화면 이동 - initialFavoriteExercises : ${navKey.initialFavoriteExercises}")
         EditFavoriteExerciseScreen(
             initialFavoriteExercises = navKey.initialFavoriteExercises,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onUpdateSuccess = onBackClick
         )
     }
 }

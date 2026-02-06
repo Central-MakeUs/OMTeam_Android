@@ -47,10 +47,10 @@ fun EditPatternScreen(
     onUpdateSuccess: () -> Unit = {}
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
-
+    
     // 수정 성공 시 뒤로 가기
     LaunchedEffect(onboardingInfoState) {
-        if (onboardingInfoState is MyPageOnboardingState.Success) {
+        if (onboardingInfoState is MyPageOnboardingState.UpdateSuccess) {
             onUpdateSuccess()
         }
     }

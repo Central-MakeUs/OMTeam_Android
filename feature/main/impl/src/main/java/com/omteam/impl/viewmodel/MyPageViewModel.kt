@@ -50,7 +50,7 @@ class MyPageViewModel @Inject constructor(
         updateLifestyleUseCase.invoke(lifestyleType).collect { result ->
             result.onSuccess { onboardingInfo ->
                 Timber.d("## 평소 생활 패턴 수정 성공 : $onboardingInfo")
-                _onboardingInfoState.value = MyPageOnboardingState.Success(onboardingInfo)
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
             }.onFailure { e ->
                 Timber.e("## 평소 생활 패턴 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
@@ -65,7 +65,7 @@ class MyPageViewModel @Inject constructor(
         updatePreferredExerciseUseCase.invoke(preferredExercises).collect { result ->
             result.onSuccess { onboardingInfo ->
                 Timber.d("## 선호 운동 수정 성공 : $onboardingInfo")
-                _onboardingInfoState.value = MyPageOnboardingState.Success(onboardingInfo)
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
             }.onFailure { e ->
                 Timber.e("## 선호 운동 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
@@ -80,7 +80,7 @@ class MyPageViewModel @Inject constructor(
         updateMinExerciseMinutesUseCase.invoke(minExerciseMinutes).collect { result ->
             result.onSuccess { onboardingInfo ->
                 Timber.d("## 미션에 투자할 수 있는 시간 수정 성공 : $onboardingInfo")
-                _onboardingInfoState.value = MyPageOnboardingState.Success(onboardingInfo)
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
             }.onFailure { e ->
                 Timber.e("## 미션에 투자할 수 있는 시간 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
@@ -95,7 +95,7 @@ class MyPageViewModel @Inject constructor(
         updateAvailableTimeUseCase.invoke(availableStartTime, availableEndTime).collect { result ->
             result.onSuccess { onboardingInfo ->
                 Timber.d("## 운동 가능 시간 수정 성공 : $onboardingInfo")
-                _onboardingInfoState.value = MyPageOnboardingState.Success(onboardingInfo)
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
             }.onFailure { e ->
                 Timber.e("## 운동 가능 시간 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")

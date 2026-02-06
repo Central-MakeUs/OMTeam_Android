@@ -18,7 +18,8 @@ fun EntryProviderScope<NavKey>.editExerciseTimeEntry(
         Timber.d("## 운동 가능 시간 수정 화면 이동 - initialExerciseTime : ${navKey.initialExerciseTime}")
         EditExerciseTimeScreen(
             initialExerciseTime = navKey.initialExerciseTime,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onUpdateSuccess = onBackClick
         )
     }
 }

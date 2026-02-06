@@ -49,6 +49,7 @@ fun EditMyInfoScreen(
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
 
+    // 화면 진입 시 온보딩 정보 조회
     LaunchedEffect(Unit) {
         myPageViewModel.getOnboardingInfo()
     }
@@ -88,8 +89,13 @@ fun EditMyInfoContent(
         Spacer(modifier = Modifier.height(dp36))
 
         when (onboardingInfoState) {
-            is MyPageOnboardingState.Success -> {
-                val data = onboardingInfoState.data
+            is MyPageOnboardingState.Success,
+            is MyPageOnboardingState.UpdateSuccess -> {
+                val data = when (onboardingInfoState) {
+                    is MyPageOnboardingState.Success -> onboardingInfoState.data
+                    is MyPageOnboardingState.UpdateSuccess -> onboardingInfoState.data
+                    else -> return@Column
+                }
                 
                 // 운동 가능 시간
                 val exerciseTimeString = getExerciseTimeString(data.availableStartTime)
