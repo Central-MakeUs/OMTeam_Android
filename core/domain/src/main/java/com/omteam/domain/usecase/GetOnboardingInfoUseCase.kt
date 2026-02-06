@@ -1,11 +1,12 @@
 package com.omteam.domain.usecase
 
 import com.omteam.domain.model.onboarding.OnboardingInfo
-import com.omteam.domain.repository.AuthRepository
+import com.omteam.domain.repository.OnboardingRepository
+import kotlinx.coroutines.flow.Flow
 
 class GetOnboardingInfoUseCase(
-    private val authRepository: AuthRepository
+    private val onboardingRepository: OnboardingRepository
 ) {
-    suspend operator fun invoke(): Result<OnboardingInfo> = 
-        authRepository.getOnboardingInfo()
+    operator fun invoke(): Flow<Result<OnboardingInfo>> = 
+        onboardingRepository.getOnboardingInfo()
 }

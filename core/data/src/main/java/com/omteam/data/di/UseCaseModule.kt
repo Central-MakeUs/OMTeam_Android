@@ -1,21 +1,7 @@
 package com.omteam.data.di
 
-import com.omteam.domain.repository.AuthRepository
-import com.omteam.domain.repository.CharacterRepository
-import com.omteam.domain.repository.MissionRepository
-import com.omteam.domain.repository.ReportRepository
-import com.omteam.domain.usecase.CheckAutoLoginUseCase
-import com.omteam.domain.usecase.GetCharacterInfoUseCase
-import com.omteam.domain.usecase.GetDailyRecommendedMissionsUseCase
-import com.omteam.domain.usecase.GetOnboardingInfoUseCase
-import com.omteam.domain.usecase.GetUserInfoUseCase
-import com.omteam.domain.usecase.GetWeeklyReportUseCase
-import com.omteam.domain.usecase.LogoutUseCase
-import com.omteam.domain.usecase.LoginWithIdTokenUseCase
-import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
-import com.omteam.domain.usecase.UpdateLifestyleUseCase
-import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
-import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
+import com.omteam.domain.repository.*
+import com.omteam.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,14 +33,15 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideGetOnboardingInfoUseCase(
-        authRepository: AuthRepository
-    ): GetOnboardingInfoUseCase = GetOnboardingInfoUseCase(authRepository)
+        onboardingRepository: OnboardingRepository
+    ): GetOnboardingInfoUseCase = GetOnboardingInfoUseCase(onboardingRepository)
     
     @Provides
     @Singleton
     fun provideCheckAutoLoginUseCase(
-        authRepository: AuthRepository
-    ): CheckAutoLoginUseCase = CheckAutoLoginUseCase(authRepository)
+        authRepository: AuthRepository,
+        onboardingRepository: OnboardingRepository
+    ): CheckAutoLoginUseCase = CheckAutoLoginUseCase(authRepository, onboardingRepository)
     
     @Provides
     @Singleton
@@ -77,24 +64,24 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideUpdateLifestyleUseCase(
-        authRepository: AuthRepository
-    ): UpdateLifestyleUseCase = UpdateLifestyleUseCase(authRepository)
-
+        onboardingRepository: OnboardingRepository
+    ): UpdateLifestyleUseCase = UpdateLifestyleUseCase(onboardingRepository)
+    
     @Provides
     @Singleton
     fun provideUpdatePreferredExerciseUseCase(
-        authRepository: AuthRepository
-    ): UpdatePreferredExerciseUseCase = UpdatePreferredExerciseUseCase(authRepository)
-
+        onboardingRepository: OnboardingRepository
+    ): UpdatePreferredExerciseUseCase = UpdatePreferredExerciseUseCase(onboardingRepository)
+    
     @Provides
     @Singleton
     fun provideUpdateMinExerciseMinutesUseCase(
-        authRepository: AuthRepository
-    ): UpdateMinExerciseMinutesUseCase = UpdateMinExerciseMinutesUseCase(authRepository)
-
+        onboardingRepository: OnboardingRepository
+    ): UpdateMinExerciseMinutesUseCase = UpdateMinExerciseMinutesUseCase(onboardingRepository)
+    
     @Provides
     @Singleton
     fun provideUpdateAvailableTimeUseCase(
-        authRepository: AuthRepository
-    ): UpdateAvailableTimeUseCase = UpdateAvailableTimeUseCase(authRepository)
+        onboardingRepository: OnboardingRepository
+    ): UpdateAvailableTimeUseCase = UpdateAvailableTimeUseCase(onboardingRepository)
 }

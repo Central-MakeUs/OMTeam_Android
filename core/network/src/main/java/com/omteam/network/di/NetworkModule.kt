@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.omteam.network.api.AuthApiService
 import com.omteam.network.api.CharacterApiService
 import com.omteam.network.api.MissionApiService
+import com.omteam.network.api.OnboardingApiService
 import com.omteam.network.api.ReportApiService
 import com.omteam.network.interceptor.TokenAuthenticator
 import com.omteam.network.interceptor.TokenInterceptor
@@ -91,4 +92,9 @@ object NetworkModule {
     @Singleton
     fun provideReportApiService(retrofit: Retrofit): ReportApiService =
         retrofit.create(ReportApiService::class.java)
+    
+    @Provides
+    @Singleton
+    fun provideOnboardingApiService(retrofit: Retrofit): OnboardingApiService =
+        retrofit.create(OnboardingApiService::class.java)
 }
