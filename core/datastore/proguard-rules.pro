@@ -2,18 +2,9 @@
 # DataStore Preferences
 # ====================================
 
-# DataStore 기본 규칙
--keep class androidx.datastore.*.** { *; }
--keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
-    <fields>;
-}
-
-# DataStore Preferences
--keep class androidx.datastore.preferences.** { *; }
+# DataStore는 자체 ProGuard 규칙을 포함하고 있음
+# 추가 경고만 무시
 -dontwarn androidx.datastore.preferences.**
-
-# Protobuf (DataStore 의존성)
--keep class com.google.protobuf.** { *; }
 -dontwarn com.google.protobuf.**
 
 # ====================================

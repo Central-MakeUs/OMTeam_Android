@@ -2,15 +2,8 @@
 # Onboarding Implementation 모듈
 # ====================================
 
-# ViewModel 유지
--keep class com.omteam.omt.feature.onboarding.impl.** extends androidx.lifecycle.ViewModel { *; }
-
-# Composable 화면 유지
--keep @androidx.compose.runtime.Composable class com.omteam.omt.feature.onboarding.impl.** { *; }
--keepclassmembers class com.omteam.omt.feature.onboarding.impl.** {
-    @androidx.compose.runtime.Composable <methods>;
-}
-
-# UiState, UiEvent 모델 유지
+# ViewModel은 Hilt에서 처리, Composable은 R8이 자동 처리
+# UiState, UiEvent 모델 유지 (sealed class/data class)
 -keep class com.omteam.omt.feature.onboarding.impl.model.** { *; }
 -keep class com.omteam.omt.feature.onboarding.impl.state.** { *; }
+-keep class com.omteam.omt.feature.onboarding.impl.event.** { *; }

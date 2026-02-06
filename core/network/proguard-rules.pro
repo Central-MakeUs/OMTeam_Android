@@ -26,14 +26,9 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
 
-# OkHttp 기본 규칙
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
+# OkHttp는 자체 ProGuard 규칙 포함, 추가 경고 무시만 처리
 -dontwarn okhttp3.**
-
-# Okio
 -dontwarn okio.**
--keep class okio.** { *; }
 
 # ====================================
 # Kotlinx Serialization

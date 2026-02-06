@@ -2,45 +2,45 @@
 # Kakao SDK
 # ====================================
 
-# Kakao SDK 기본 규칙
--keep class com.kakao.sdk.**.model.* { <fields>; }
--keep class * extends com.google.gson.TypeAdapter
+# Kakao SDK 전체 보호 (리플렉션 사용)
+-keep class com.kakao.sdk.** { *; }
+-keep interface com.kakao.sdk.** { *; }
+-keep enum com.kakao.sdk.** { *; }
 
-# Kakao SDK의 내부 클래스 유지
--keep class com.kakao.sdk.auth.** { *; }
--keep class com.kakao.sdk.user.** { *; }
--keep class com.kakao.sdk.common.** { *; }
+# Gson TypeAdapter (Kakao SDK에서 사용)
+-keep class * extends com.google.gson.TypeAdapter { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory { *; }
+-keep class * implements com.google.gson.JsonSerializer { *; }
+-keep class * implements com.google.gson.JsonDeserializer { *; }
 
-# Kakao SDK Gson 관련
--keepattributes Signature
--keepattributes *Annotation*
 -dontwarn com.kakao.sdk.**
-
-# Kakao SDK 모델 클래스
--keep class com.kakao.sdk.**.model.** { *; }
 
 # ====================================
 # Google Credentials Manager
 # ====================================
 
-# Credentials Manager 기본 규칙
+# Credentials Manager 전체 보호
 -keep class androidx.credentials.** { *; }
 -keep interface androidx.credentials.** { *; }
 
-# Google ID 관련
+# Google ID 라이브러리 전체 보호
 -keep class com.google.android.libraries.identity.googleid.** { *; }
--keepclassmembers class com.google.android.libraries.identity.googleid.** {
-    *;
+
+# Play Services Auth 전체 보호
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-keep class com.google.android.gms.tasks.** { *; }
+-keep class com.google.android.gms.internal.** { *; }
+
+# Parcelable 유지
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final ** CREATOR;
 }
 
-# Credentials API 어노테이션
 -keepclassmembers class * {
     @androidx.credentials.* <methods>;
 }
 
-# Google Play Services Auth
--keep class com.google.android.gms.auth.** { *; }
--keep class com.google.android.gms.common.** { *; }
 -dontwarn com.google.android.gms.**
 
 # ====================================
@@ -61,12 +61,23 @@
 # Gson (Kakao SDK 의존성)
 # ====================================
 
--keepattributes Signature
--keepattributes *Annotation*
-
--keep class sun.misc.Unsafe { *; }
+# Gson 기본 규칙
 -keep class com.google.gson.** { *; }
+-keep class sun.misc.Unsafe { *; }
 
+# Gson 타입 정보 유지
+-keepattributes Signature
+
+# Gson TypeToken
+-keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
+-keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+
+# Gson 어노테이션이 있는 필드 유지
+-keepclassmembers,allowobfuscation class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Enum 유지
 -keepclassmembers enum * {
     **[] $VALUES;
     public *;

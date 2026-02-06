@@ -9,9 +9,6 @@
 
 # Room DAO 인터페이스 유지
 -keep interface * extends androidx.room.Dao { *; }
--keepclassmembers interface * extends androidx.room.Dao {
-    *;
-}
 
 # Room Entity 클래스의 모든 필드 유지
 -keepclassmembers @androidx.room.Entity class * {
@@ -24,11 +21,8 @@
 }
 
 # Room TypeConverter 유지
--keep class * {
-    @androidx.room.TypeConverter <methods>;
-}
 -keepclassmembers class * {
-    @androidx.room.TypeConverter *;
+    @androidx.room.TypeConverter <methods>;
 }
 
 # ====================================
