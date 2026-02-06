@@ -30,6 +30,8 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.onboarding.LifestyleType
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.onboarding.WorkTimeType
 import com.omteam.impl.component.SubScreenHeader
 import com.omteam.impl.viewmodel.MyPageViewModel
 import com.omteam.impl.viewmodel.state.MyPageOnboardingState
@@ -51,13 +53,33 @@ fun EditMyInfoScreen(
         myPageViewModel.getOnboardingInfo()
     }
 
+    EditMyInfoContent(
+        modifier = modifier,
+        onboardingInfoState = onboardingInfoState,
+        onBackClick = onBackClick,
+        onNavigateToEditExerciseTime = onNavigateToEditExerciseTime,
+        onNavigateToEditMissionTime = onNavigateToEditMissionTime,
+        onNavigateToEditFavoriteExercise = onNavigateToEditFavoriteExercise,
+        onNavigateToEditPattern = onNavigateToEditPattern
+    )
+}
+
+@Composable
+fun EditMyInfoContent(
+    modifier: Modifier = Modifier,
+    onboardingInfoState: MyPageOnboardingState = MyPageOnboardingState.Idle,
+    onBackClick: () -> Unit = {},
+    onNavigateToEditExerciseTime: (String) -> Unit = {},
+    onNavigateToEditMissionTime: (String) -> Unit = {},
+    onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
+    onNavigateToEditPattern: (String) -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(White)
             .padding(dp20)
     ) {
-        // 상단 헤더
         SubScreenHeader(
             title = stringResource(R.string.edit_my_info_title),
             onBackClick = onBackClick
@@ -67,7 +89,7 @@ fun EditMyInfoScreen(
 
         when (onboardingInfoState) {
             is MyPageOnboardingState.Success -> {
-                val data = (onboardingInfoState as MyPageOnboardingState.Success).data
+                val data = onboardingInfoState.data
                 
                 // 운동 가능 시간
                 val exerciseTimeString = getExerciseTimeString(data.availableStartTime)
@@ -88,11 +110,16 @@ fun EditMyInfoScreen(
 
                 Spacer(modifier = Modifier.height(dp36))
 
-                // 선호 운동
+                // 선호 운동을 ","로 나눠서 개별 chip으로 표시
+                val preferredExercises = data.preferredExerciseText
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotEmpty() }
+                
                 EditMyInfoItem(
                     label = stringResource(R.string.favorite_exercises),
-                    chips = listOf(data.preferredExerciseText),
-                    onClick = { onNavigateToEditFavoriteExercise(listOf(data.preferredExerciseText)) }
+                    chips = preferredExercises,
+                    onClick = { onNavigateToEditFavoriteExercise(preferredExercises) }
                 )
 
                 Spacer(modifier = Modifier.height(dp36))
@@ -245,7 +272,6 @@ private fun EditMyInfoItem(
             )
         } else if (chips.isNotEmpty()) {
             // Chip 표시
-            // 최대 3개만 선택할 수 있어서 여기서 take(3)으로 제한 걸 필요 없음
             FlowRow(
                 modifier = Modifier.padding(start = dp4),
                 horizontalArrangement = Arrangement.spacedBy(dp8),
@@ -273,7 +299,23 @@ private fun EditMyInfoItem(
 @Composable
 private fun EditMyInfoScreenPreview() {
     OMTeamTheme {
-        EditMyInfoScreen()
+        EditMyInfoContent(
+            onboardingInfoState = MyPageOnboardingState.Success(
+                OnboardingInfo(
+                    nickname = "테스트",
+                    appGoalText = "건강 관리",
+                    workTimeType = WorkTimeType.FIXED,
+                    availableStartTime = "19:00",
+                    availableEndTime = "23:59",
+                    minExerciseMinutes = 30,
+                    preferredExerciseText = "헬스, 요가, 필라테스",
+                    lifestyleType = LifestyleType.REGULAR_DAYTIME,
+                    remindEnabled = true,
+                    checkinEnabled = true,
+                    reviewEnabled = true
+                )
+            )
+        )
     }
 }
 
