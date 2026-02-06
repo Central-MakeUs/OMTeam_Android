@@ -48,7 +48,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.character_normal),
+                painter = painterResource(id = R.drawable.character_login),
                 contentDescription = "로그인 화면 캐릭터",
                 modifier = Modifier.size(dp200)
             )
