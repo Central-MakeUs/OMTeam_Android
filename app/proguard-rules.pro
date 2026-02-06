@@ -15,6 +15,11 @@
 # Exception 정보 유지
 -keepattributes Exceptions
 
+# 모든 예외 클래스 보호 (디버깅을 위해)
+-keep public class * extends java.lang.Exception { *; }
+-keep public class * extends java.lang.Throwable { *; }
+-keep public class * extends java.lang.Error { *; }
+
 # Parcelable, Serializable 관련 (Intent 데이터 전달에 필수)
 -keepclassmembers class * implements android.os.Parcelable {
     public static final ** CREATOR;
@@ -42,6 +47,30 @@
 # JavaScript Interface 보호 (WebView 사용 시)
 -keepclassmembers class * {
     @android.webkit.JavascriptInterface <methods>;
+}
+
+# Activity, Service, BroadcastReceiver 보호
+-keep public class * extends android.app.Activity { *; }
+-keep public class * extends android.app.Service { *; }
+-keep public class * extends android.content.BroadcastReceiver { *; }
+-keep public class * extends android.content.ContentProvider { *; }
+
+# Activity의 Intent extras를 위한 필드 보호
+-keepclassmembers class * extends android.app.Activity {
+    public void *(android.view.View);
+    public void *(android.content.Intent);
+}
+
+# Bundle/Intent에 넣는 데이터 클래스 보호
+-keepclassmembers class * {
+    public <init>(android.os.Bundle);
+}
+
+# View 생성자 보호 (Custom View)
+-keepclassmembers class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
 # ====================================
@@ -121,12 +150,22 @@
 -keep class * implements com.google.gson.InstanceCreator { *; }
 
 # Gson 어노테이션이 있는 필드 유지
--keepclassmembers,allowobfuscation class * {
+-keepclassmembers class * {
     @com.google.gson.annotations.SerializedName <fields>;
+    @com.google.gson.annotations.Expose <fields>;
 }
 
--keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
--keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+# Gson TypeToken 보호
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken { *; }
+
+# Gson이 리플렉션으로 접근하는 모든 필드 보호
+-keepclassmembers class * {
+    !transient <fields>;
+}
+
+# Gson의 FieldNamingStrategy 보호
+-keep class * implements com.google.gson.FieldNamingStrategy { *; }
 
 # ====================================
 # Firebase
@@ -154,16 +193,29 @@
 -keep interface com.kakao.sdk.** { *; }
 -keep enum com.kakao.sdk.** { *; }
 
+# Kakao SDK Activity 보호 (매우 중요!)
+-keep public class com.kakao.sdk.auth.** { *; }
+-keep public class com.kakao.sdk.**.TalkAuthCodeActivity { *; }
+-keep public class com.kakao.sdk.**.AuthCodeHandlerActivity { *; }
+
 # Gson TypeAdapter (Kakao SDK에서 사용)
 -keep class * extends com.google.gson.TypeAdapter { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory { *; }
 -keep class * implements com.google.gson.JsonSerializer { *; }
 -keep class * implements com.google.gson.JsonDeserializer { *; }
 
-# Kakao SDK 모델 클래스 (Gson 직렬화)
--keepclassmembers class com.kakao.sdk.**.model.** { *; }
--keepclassmembers class com.kakao.sdk.**.*Model { *; }
--keepclassmembers class com.kakao.sdk.**.*Response { *; }
+# Kakao SDK 모델 클래스 (Gson 직렬화) - 모든 필드와 메서드 보호
+-keep class com.kakao.sdk.**.model.** { *; }
+-keep class com.kakao.sdk.**.*Model { *; }
+-keep class com.kakao.sdk.**.*Response { *; }
+-keep class com.kakao.sdk.**.*Request { *; }
+
+# Kakao SDK 내부 클래스들 (Intent extras에 사용)
+-keepclassmembers class com.kakao.sdk.** {
+    <init>(...);
+    public <methods>;
+    public <fields>;
+}
 
 -dontwarn com.kakao.sdk.**
 
@@ -175,11 +227,24 @@
 -keep class androidx.credentials.** { *; }
 -keep interface androidx.credentials.** { *; }
 
+# Credentials Manager의 Response/Request 클래스 보호 (매우 중요!)
+-keep class androidx.credentials.GetCredentialRequest { *; }
+-keep class androidx.credentials.GetCredentialRequest$* { *; }
+-keep class androidx.credentials.GetCredentialResponse { *; }
+-keep class androidx.credentials.GetCredentialResponse$* { *; }
+-keep class androidx.credentials.Credential { *; }
+-keep class androidx.credentials.CustomCredential { *; }
+-keep class androidx.credentials.exceptions.** { *; }
+
 # Google ID 라이브러리 전체 보호
 -keep class com.google.android.libraries.identity.googleid.** { *; }
+-keep class com.google.android.libraries.identity.googleid.GoogleIdTokenCredential { *; }
+-keep class com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException { *; }
 
 # Play Services Auth 전체 보호 (구글 로그인에 필수)
 -keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.auth.api.** { *; }
+-keep class com.google.android.gms.auth.api.identity.** { *; }
 -keep class com.google.android.gms.common.** { *; }
 -keep class com.google.android.gms.tasks.** { *; }
 -keep class com.google.android.gms.internal.** { *; }
@@ -187,10 +252,19 @@
 # Parcelable 유지 (Intent로 데이터 전달 시 필요)
 -keepclassmembers class * implements android.os.Parcelable {
     public static final ** CREATOR;
+    public <fields>;
+    public <methods>;
 }
 
 -keepclassmembers class * {
     @androidx.credentials.* <methods>;
+}
+
+# Play Services의 SafeParcelable 보호 (중요!)
+-keep class com.google.android.gms.common.internal.safeparcel.SafeParcelable { *; }
+-keepclassmembers class * implements com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final ** CREATOR;
+    public <fields>;
 }
 
 # ====================================
@@ -236,10 +310,14 @@
 # ====================================
 
 # 과도한 최적화 방지
--optimizationpasses 5
+-optimizationpasses 3
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
+-dontpreverify
 -verbose
+
+# SDK 호환성을 위해 특정 최적화 비활성화
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
 
 # 경고 무시
 -dontwarn org.conscrypt.**
