@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.omteam.domain.usecase.AutoLoginResult
 import com.omteam.domain.usecase.CheckAutoLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,9 @@ class AutoLoginViewModel @Inject constructor(
     private fun checkAutoLogin() = viewModelScope.launch {
         Timber.d("## 자동 로그인 체크 시작")
         val result = checkAutoLoginUseCase()
+
+        // 스플래시 화면 1.5초 동안 표시
+        delay(1500)
 
         _autoLoginState.value = when (result) {
             is AutoLoginResult.NeedLogin -> {
