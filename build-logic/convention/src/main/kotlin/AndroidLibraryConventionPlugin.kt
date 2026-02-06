@@ -20,7 +20,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     minSdk = 28
                     
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                    consumerProguardFiles("consumer-rules.pro")
+                    // 라이브러리 모듈의 프로가드를 앱 빌드에 자동 포함
+                    consumerProguardFiles("proguard-rules.pro")
                 }
 
                 buildTypes {

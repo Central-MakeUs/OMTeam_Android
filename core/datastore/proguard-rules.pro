@@ -1,21 +1,29 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ====================================
+# DataStore Preferences
+# ====================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# DataStore 기본 규칙
+-keep class androidx.datastore.*.** { *; }
+-keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
+    <fields>;
+}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# DataStore Preferences
+-keep class androidx.datastore.preferences.** { *; }
+-dontwarn androidx.datastore.preferences.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Protobuf (DataStore 의존성)
+-keep class com.google.protobuf.** { *; }
+-dontwarn com.google.protobuf.**
+
+# ====================================
+# DataStore 모듈 클래스
+# ====================================
+
+# DataStore 관련 클래스 유지
+-keep class com.omteam.omt.core.datastore.** { *; }
+
+# Preferences Keys 유지
+-keepclassmembers class com.omteam.omt.core.datastore.** {
+    public static final *** INSTANCE;
+}

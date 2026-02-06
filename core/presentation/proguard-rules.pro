@@ -1,21 +1,27 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ====================================
+# Presentation 모듈
+# ====================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ViewModel 클래스 유지
+-keep class com.omteam.omt.core.presentation.** extends androidx.lifecycle.ViewModel { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# UiState, UiEvent 등의 모델 클래스 유지
+-keep class com.omteam.omt.core.presentation.model.** { *; }
+-keep class com.omteam.omt.core.presentation.state.** { *; }
+-keep class com.omteam.omt.core.presentation.event.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Base 클래스 유지
+-keep class com.omteam.omt.core.presentation.base.** { *; }
+
+# Extension 함수 유지
+-keep class com.omteam.omt.core.presentation.extension.** { *; }
+
+# ====================================
+# Lifecycle
+# ====================================
+
+# ViewModel 관련
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
+    <init>(...);
+}
+-keep class androidx.lifecycle.** { *; }
