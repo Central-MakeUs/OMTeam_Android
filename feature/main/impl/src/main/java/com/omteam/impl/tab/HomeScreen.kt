@@ -130,9 +130,10 @@ fun HomeScreen(
                             Timber.d("## 다시 제안받기 버튼 클릭")
                             homeViewModel.requestDailyMissionRecommendations()
                         },
-                        onStartMissionClick = {
-                            // TODO: 미션 시작하기 API 호출 (추후 구현)
-                            Timber.d("## 미션 시작하기 버튼 클릭")
+                        onStartMissionClick = { recommendedMissionId ->
+                            // 미션 시작하기 API 호출
+                            Timber.d("## 미션 시작하기 버튼 클릭 - recommendedMissionId : $recommendedMissionId")
+                            homeViewModel.startMission(recommendedMissionId)
                             // 성공 시 바텀 시트 닫기
                             scope.launch {
                                 sheetState.hide()

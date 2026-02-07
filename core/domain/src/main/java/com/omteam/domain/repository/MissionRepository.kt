@@ -1,5 +1,6 @@
 package com.omteam.domain.repository
 
+import com.omteam.domain.model.mission.CurrentMission
 import com.omteam.domain.model.mission.DailyMissionRecommendation
 import com.omteam.domain.model.mission.DailyMissionStatus
 import com.omteam.domain.model.mission.RecommendedMission
@@ -26,4 +27,12 @@ interface MissionRepository {
      * @return 추천된 미션 목록과 진행 중인 미션 정보 Flow
      */
     fun requestDailyMissionRecommendations(): Flow<Result<DailyMissionRecommendation>>
+    
+    /**
+     * 미션 시작하기
+     * 
+     * @param recommendedMissionId 추천 미션 ID
+     * @return 시작된 미션 정보 Flow
+     */
+    fun startMission(recommendedMissionId: Int): Flow<Result<CurrentMission>>
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
@@ -43,12 +44,12 @@ import java.time.LocalDate
 
 /**
  * 미션 추천 바텀 시트
- *
+ * 
  * @param recommendations 추천 미션 목록
  * @param onDismiss 바텀 시트 닫기 콜백
  * @param onMissionSelect 미션 선택 콜백
  * @param onRetryClick 다시 제안받기 버튼 클릭 콜백
- * @param onStartMissionClick 미션 시작하기 버튼 클릭 콜백
+ * @param onStartMissionClick 미션 시작하기 버튼 클릭 콜백 (선택된 미션의 recommendedMissionId 전달)
  */
 @Composable
 fun MissionRecommendationBottomSheetContent(
@@ -56,7 +57,7 @@ fun MissionRecommendationBottomSheetContent(
     onDismiss: () -> Unit,
     onMissionSelect: (RecommendedMission) -> Unit,
     onRetryClick: () -> Unit = {},
-    onStartMissionClick: () -> Unit = {}
+    onStartMissionClick: (Int) -> Unit = {}
 ) {
     var selectedMissionId by remember { mutableIntStateOf(-1) }
 
@@ -157,9 +158,14 @@ fun MissionRecommendationBottomSheetContent(
 
                 OMTeamButton(
                     text = "미션 시작하기",
-                    onClick = onStartMissionClick,
+                    onClick = { 
+                        if (selectedMissionId != -1) {
+                            onStartMissionClick(selectedMissionId)
+                        }
+                    },
                     height = dp60,
                     cornerRadius = dp8,
+                    enabled = selectedMissionId != -1,
                     modifier = Modifier.width(dp200)
                 )
             }
@@ -366,7 +372,7 @@ private fun MissionRecommendationBottomSheetPreview() {
                 onDismiss = {},
                 onMissionSelect = {},
                 onRetryClick = {},
-                onStartMissionClick = {}
+                onStartMissionClick = { _ -> }
             )
         }
     }

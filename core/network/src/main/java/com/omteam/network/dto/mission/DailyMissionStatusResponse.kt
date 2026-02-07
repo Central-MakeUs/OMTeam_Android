@@ -85,3 +85,21 @@ data class DailyMissionRecommendData(
     val hasInProgressMission: Boolean,
     val inProgressMission: CurrentMissionDto? = null
 )
+
+/**
+ * 미션 시작 요청
+ */
+@Serializable
+data class StartMissionRequest(
+    val recommendedMissionId: Int
+)
+
+/**
+ * 미션 시작 응답
+ */
+@Serializable
+data class StartMissionResponse(
+    val success: Boolean,
+    val data: CurrentMissionDto? = null,
+    val error: ApiError? = null
+)
