@@ -24,17 +24,19 @@ import com.omteam.domain.model.mission.CurrentMission
 import com.omteam.domain.model.mission.Mission
 import com.omteam.domain.model.mission.MissionStatus
 import com.omteam.domain.model.mission.MissionType
-import timber.log.Timber
 import java.time.LocalDate
 
 /**
  * 오늘의 미션 상태를 표시하는 뷰
+ *
  * currentMission이 null이면 미션 제안 대기 상태, null이 아니면 진행 중인 미션 상태를 표시
  */
 @Composable
 fun RecommendedMissionView(
     currentMission: CurrentMission?,
     modifier: Modifier = Modifier,
+    onRequestMissionClick: () -> Unit = {},
+    onVerifyMissionClick: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -78,12 +80,15 @@ fun RecommendedMissionView(
             )
         }
 
-        // 현재 진행 중인 미션이 null이면 "미션 제안받기", 있으면 "미션 인증하기"
+        // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 버튼 표시
         OMTeamButton(
             text = if (currentMission == null) "미션 제안받기" else "미션 인증하기",
             onClick = {
-                val action = if (currentMission == null) "미션 제안받기" else "미션 인증하기"
-                Timber.d("## $action 버튼 클릭")
+                if (currentMission == null) {
+                    onRequestMissionClick()
+                } else {
+                    onVerifyMissionClick()
+                }
             },
             modifier = Modifier.fillMaxWidth(),
         )

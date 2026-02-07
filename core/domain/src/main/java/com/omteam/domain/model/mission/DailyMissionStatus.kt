@@ -92,10 +92,9 @@ enum class MissionStatus {
  */
 enum class MissionType {
     EXERCISE,
-    NUTRITION,
-    LIFESTYLE,
+    DIET,
     UNKNOWN;
-    
+
     companion object {
         fun fromString(value: String): MissionType =
             MissionType.entries.find { it.name == value.uppercase() } ?: UNKNOWN
