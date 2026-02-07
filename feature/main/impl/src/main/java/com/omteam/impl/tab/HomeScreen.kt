@@ -54,11 +54,13 @@ fun HomeScreen(
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
+    val recommendedMissionsUiState by homeViewModel.recommendedMissionsUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         homeViewModel.run {
             fetchDailyMissionStatus()
             fetchCharacterInfo()
+            requestDailyMissionRecommendations()
         }
     }
 

@@ -67,3 +67,21 @@ data class RecommendedMissionDto(
     val status: String,
     val mission: MissionDto
 )
+
+/**
+ * 데일리 미션 추천 받기 응답
+ */
+@Serializable
+data class DailyMissionRecommendResponse(
+    val success: Boolean,
+    val data: DailyMissionRecommendData? = null,
+    val error: ApiError? = null
+)
+
+@Serializable
+data class DailyMissionRecommendData(
+    val missionDate: String,
+    val recommendations: List<RecommendedMissionDto>,
+    val hasInProgressMission: Boolean,
+    val inProgressMission: CurrentMissionDto? = null
+)
