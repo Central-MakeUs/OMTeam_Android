@@ -37,10 +37,6 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.character.CharacterInfo
-import com.omteam.domain.model.mission.CurrentMission
-import com.omteam.domain.model.mission.Mission
-import com.omteam.domain.model.mission.MissionStatus
-import com.omteam.domain.model.mission.MissionType
 import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
@@ -304,47 +300,27 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            // TODO : API 데이터 받게 되면 목 데이터 제거
-            val mockCurrentMission = CurrentMission(
-                recommendedMissionId = 1,
-                missionDate = LocalDate.now(),
-                status = MissionStatus.RECOMMENDED,
-                mission = Mission(
-                    id = 1,
-                    name = "30분 걷기",
-                    type = MissionType.EXERCISE,
-                    difficulty = 2,
-                    estimatedMinutes = 30,
-                    estimatedCalories = 150
-                )
-            )
-            
-            RecommendedMissionView(
-                currentMission = mockCurrentMission,
-                modifier = Modifier.padding(horizontal = dp20)
-            )
-            
-            /*
             when (dailyMissionUiState) {
-                is DailyMissionUiState.Idle -> MissionEmptyView()
+                is DailyMissionUiState.Idle -> {
+                    // 초기 상태 - 미션 없는 상태로 표시
+                    RecommendedMissionView(
+                        currentMission = null,
+                        modifier = Modifier.padding(horizontal = dp20)
+                    )
+                }
 
                 is DailyMissionUiState.Loading -> MissionLoadingView()
                 
                 is DailyMissionUiState.Success -> {
-                    val currentMission = dailyMissionUiState.data.currentMission
-                    if (currentMission != null) {
-                        RecommendedMissionView(
-                            currentMission = currentMission,
-                            modifier = Modifier.padding(horizontal = dp20)
-                        )
-                    } else {
-                        MissionEmptyView()
-                    }
+                    // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 표시
+                    RecommendedMissionView(
+                        currentMission = dailyMissionUiState.data.currentMission,
+                        modifier = Modifier.padding(horizontal = dp20)
+                    )
                 }
                 
                 is DailyMissionUiState.Error -> MissionErrorView(errorMessage = dailyMissionUiState.message)
             }
-            */
 
             Spacer(modifier = Modifier.height(dp64))
 
