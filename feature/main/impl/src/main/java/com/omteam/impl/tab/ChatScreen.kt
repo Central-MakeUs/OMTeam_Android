@@ -14,20 +14,30 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.impl.viewmodel.ChatViewModel
 import com.omteam.omt.core.designsystem.R
 
 @Composable
-fun ChatScreen(modifier: Modifier = Modifier) {
+fun ChatScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ChatViewModel = hiltViewModel()
+) {
+    val sendMessageUiState by viewModel.sendMessageUiState.collectAsState()
+    val chatHistoryUiState by viewModel.chatHistoryUiState.collectAsState()
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -67,10 +77,12 @@ fun ChatScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(dp20))
         }
 
-        // 고정된 버튼 영역
         OMTeamButton(
             text = stringResource(com.omteam.main.impl.R.string.chat_screen_button),
-            onClick = {},
+            onClick = {
+                // 빈 요청으로 채팅 시작
+                viewModel.startChat()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dp20)

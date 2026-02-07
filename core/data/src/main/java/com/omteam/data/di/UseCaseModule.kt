@@ -96,4 +96,16 @@ object UseCaseModule {
     fun provideUpdateAvailableTimeUseCase(
         onboardingRepository: OnboardingRepository
     ): UpdateAvailableTimeUseCase = UpdateAvailableTimeUseCase(onboardingRepository)
+    
+    @Provides
+    @Singleton
+    fun provideSendMessageUseCase(
+        chatRepository: ChatRepository
+    ): SendMessageUseCase = SendMessageUseCase(chatRepository)
+    
+    @Provides
+    @Singleton
+    fun provideGetChatHistoryUseCase(
+        chatRepository: ChatRepository
+    ): GetChatHistoryUseCase = GetChatHistoryUseCase(chatRepository)
 }

@@ -3,6 +3,7 @@ package com.omteam.network.di
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.omteam.network.api.AuthApiService
 import com.omteam.network.api.CharacterApiService
+import com.omteam.network.api.ChatApiService
 import com.omteam.network.api.MissionApiService
 import com.omteam.network.api.OnboardingApiService
 import com.omteam.network.api.ReportApiService
@@ -97,4 +98,9 @@ object NetworkModule {
     @Singleton
     fun provideOnboardingApiService(retrofit: Retrofit): OnboardingApiService =
         retrofit.create(OnboardingApiService::class.java)
+    
+    @Provides
+    @Singleton
+    fun provideChatApiService(retrofit: Retrofit): ChatApiService =
+        retrofit.create(ChatApiService::class.java)
 }
