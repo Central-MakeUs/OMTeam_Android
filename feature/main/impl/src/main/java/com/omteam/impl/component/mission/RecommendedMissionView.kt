@@ -36,7 +36,7 @@ fun RecommendedMissionView(
     currentMission: CurrentMission?,
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
-    onVerifyMissionClick: () -> Unit = {}
+    onVerifyMissionClick: (actionType: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -87,7 +87,8 @@ fun RecommendedMissionView(
                 if (currentMission == null) {
                     onRequestMissionClick()
                 } else {
-                    onVerifyMissionClick()
+                    // 미션 인증 시 COMPLETE_MISSION 액션 타입만 전달
+                    onVerifyMissionClick("COMPLETE_MISSION")
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -120,7 +121,10 @@ private fun RecommendedMissionViewWithMissionPreview() {
                 .background(White)
                 .padding(dp20)
         ) {
-            RecommendedMissionView(currentMission = mockMission)
+            RecommendedMissionView(
+                currentMission = mockMission,
+                onVerifyMissionClick = { actionType -> }
+            )
         }
     }
 }
