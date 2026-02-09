@@ -32,11 +32,14 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +52,9 @@ import androidx.compose.ui.unit.dp
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.impl.component.ChangeNicknameBottomSheetContent
+import com.omteam.impl.viewmodel.MyPageViewModel
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
@@ -57,6 +62,7 @@ import timber.log.Timber
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: () -> Unit = {},
@@ -65,6 +71,19 @@ fun MyPageScreen(
     var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    val onboardingState by viewModel.onboardingInfoState.collectAsState()
+
+    // 화면 진입 시 온보딩 정보 조회
+    LaunchedEffect(Unit) {
+        viewModel.getOnboardingInfo()
+    }
+
+    // 닉네임 변경 성공 시 바텀 시트 닫고 정보 갱신
+    LaunchedEffect(onboardingState) {
+        if (onboardingState is MyPageOnboardingState.UpdateSuccess) {
+            showChangeNicknameBottomSheet = false
+        }
+    }
 
     Column(
         modifier = modifier
@@ -116,8 +135,15 @@ fun MyPageScreen(
 
         Spacer(modifier = Modifier.height(dp16))
 
+        // 온보딩 정보에서 조회한 닉네임 표시
+        val nickname = when (onboardingState) {
+            is MyPageOnboardingState.Success -> (onboardingState as MyPageOnboardingState.Success).data.nickname
+            is MyPageOnboardingState.UpdateSuccess -> (onboardingState as MyPageOnboardingState.UpdateSuccess).data.nickname
+            else -> "닉네임"
+        }
+
         OMTeamText(
-            text = "닉네임",
+            text = nickname,
             style = PaperlogyType.headline03,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -288,7 +314,7 @@ fun MyPageScreen(
                     },
                     onNicknameChange = { newNickname ->
                         Timber.d("## 닉네임 변경 : $newNickname")
-                        // TODO: 닉네임 변경 API 호출
+                        viewModel.updateNickname(newNickname)
                     },
                     onFocusChanged = { focused ->
                         isTextFieldFocused = focused
