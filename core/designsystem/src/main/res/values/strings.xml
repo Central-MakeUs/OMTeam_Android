@@ -36,6 +36,17 @@
     <string name="withdraw_message">회원정보를 삭제하시겠어요?</string>
     <string name="withdraw">회원탈퇴</string>
 
+    <!-- 탈퇴 확인 다이얼로그 -->
+    <string name="withdraw_dialog_title">정말 계정을 탈퇴하시겠어요?</string>
+    <string name="withdraw_dialog_message">탈퇴하면 모든 기록이 삭제되고,\n계정 정보도 함께 파기돼요.</string>
+    <string name="withdraw_confirm_button">탈퇴하기</string>
+    <string name="withdraw_cancel_button">취소하기</string>
+
+    <!-- 탈퇴 완료 다이얼로그 -->
+    <string name="withdraw_success_dialog_title">회원탈퇴가 완료되었어요.</string>
+    <string name="withdraw_success_dialog_message">OMT와 다시 시작하고 싶을 때\n또 만나요!</string>
+    <string name="withdraw_success_button">우리 다음에 또 봐요!</string>
+
     <string name="input_available_mission_hours">미션에 투자할 수 있는 시간을 입력해주세요.</string>
     <string name="input_available_mission_hours_info">최대 30분까지 입력 가능하며, 숫자로 입력해 주세요</string>
     <string name="edit_available_mission_button">미션 투자 시간 수정하기</string>

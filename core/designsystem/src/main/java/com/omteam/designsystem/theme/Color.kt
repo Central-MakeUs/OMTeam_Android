@@ -41,6 +41,7 @@ val GreenTab = Color(0xFFEDF3F2)
 val GreenSub04 = Color(0xFFCADFD6)
 val GreenSub05 = Color(0xFFB8D4C8)
 val GreenGray05 = Color(0xFFB7D0C9) // 선택되지 않은 카드 border
+val GreenGray09 = Color(0xFF748C86) // 탈퇴 다이얼로그 버튼 텍스트
 val GreenSub06 = Color(0xFFA6C9BA)
 val GreenSub07 = Color(0xFF8AAA9C)
 val GreenSub07Button = Color(0xFF95B4AC)
