@@ -43,6 +43,7 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.character.CharacterInfo
 import com.omteam.impl.component.mission.*
+import com.omteam.impl.viewmodel.ChatViewModel
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
 import com.omteam.impl.viewmodel.state.DailyAppleData
@@ -58,7 +59,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel()
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
@@ -81,6 +83,10 @@ fun HomeScreen(
             // 미션 제안받기 API 호출
             homeViewModel.requestDailyMissionRecommendations()
             showMissionRecommendationBottomSheet = true
+        },
+        onVerifyMissionClick = { actionType ->
+            // 미션 인증하기 API 호출해서 actionType 전송
+            chatViewModel.sendMessage(actionType = actionType)
         },
         modifier = modifier
     )
@@ -189,7 +195,8 @@ fun HomeScreenContent(
     characterUiState: CharacterUiState,
     weekDays: List<DailyAppleData>,
     modifier: Modifier = Modifier,
-    onRequestMissionClick: () -> Unit = {}
+    onRequestMissionClick: () -> Unit = {},
+    onVerifyMissionClick: (actionType: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -420,18 +427,20 @@ fun HomeScreenContent(
                     RecommendedMissionView(
                         currentMission = null,
                         modifier = Modifier.padding(horizontal = dp20),
-                        onRequestMissionClick = onRequestMissionClick
+                        onRequestMissionClick = onRequestMissionClick,
+                        onVerifyMissionClick = onVerifyMissionClick
                     )
                 }
 
                 is DailyMissionUiState.Loading -> MissionLoadingView()
-                
+
                 is DailyMissionUiState.Success -> {
                     // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 표시
                     RecommendedMissionView(
                         currentMission = dailyMissionUiState.data.currentMission,
                         modifier = Modifier.padding(horizontal = dp20),
-                        onRequestMissionClick = onRequestMissionClick
+                        onRequestMissionClick = onRequestMissionClick,
+                        onVerifyMissionClick = onVerifyMissionClick
                     )
                 }
                 

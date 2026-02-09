@@ -18,14 +18,15 @@ class ChatRepositoryImpl @Inject constructor(
     override fun sendMessage(
         type: String?,
         text: String?,
-        value: String?
+        value: String?,
+        actionType: String?
     ): Flow<Result<ChatMessage>> =
         safeApiCall(
             logTag = "챗봇 메시지 전송",
             defaultErrorMessage = "메시지를 전송할 수 없습니다",
             apiCall = {
                 chatApiService.sendMessage(
-                    ChatMessageRequest(type = type, text = text, value = value)
+                    ChatMessageRequest(type = type, text = text, value = value, actionType = actionType)
                 )
             },
             transform = { response -> response.data?.toDomain() },

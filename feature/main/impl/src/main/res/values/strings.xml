@@ -13,6 +13,9 @@
     <string name="empty_report_data">아직 분석할 데이터가 없어요!</string>
     <string name="empty_report_data_first">OMT</string>
     <string name="empty_report_data_second">와 함께 건강한 습관을 만들어봐요.</string>
+    <string name="this_week_success_rate">이번주 미션 성공률</string>
+    <string name="failure_reasons">미션이 힘들었던 이유를 살펴봤어요!</string>
+    <string name="suggestion">OMT의 제안</string>
 
     <!-- 마이페이지 -->
     <string name="edit_button">수정하기</string>

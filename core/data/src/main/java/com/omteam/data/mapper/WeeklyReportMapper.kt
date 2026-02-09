@@ -67,7 +67,7 @@ fun TopFailureReasonDto.toDomain(): TopFailureReason = TopFailureReason(
  * AiFeedbackDto -> AiFeedback 도메인 모델
  */
 fun AiFeedbackDto.toDomain(): AiFeedback = AiFeedback(
-    failureReasonRanking = failureReasonRanking.map { it.toDomain() },
+    failureReasonRanking = failureReasonRanking?.map { it.toDomain() },
     weeklyFeedback = weeklyFeedback
 )
 

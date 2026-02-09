@@ -36,7 +36,7 @@ fun RecommendedMissionView(
     currentMission: CurrentMission?,
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
-    onVerifyMissionClick: () -> Unit = {}
+    onVerifyMissionClick: (actionType: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -75,8 +75,8 @@ fun RecommendedMissionView(
             // 현재 진행 중인 미션이 null이면 채팅을 통해 미션을 받아보세요, 아니면 미션 이름 표시
             OMTeamText(
                 text = currentMission?.mission?.name ?: "채팅을 통해 미션을 받아보세요!",
-                style = PretendardType.button01Disabled,
-                color = Gray08
+                style = if (currentMission != null) PretendardType.button01Enabled else PretendardType.button01Disabled,
+                color = if (currentMission != null) Gray12 else Gray08
             )
         }
 
@@ -87,7 +87,8 @@ fun RecommendedMissionView(
                 if (currentMission == null) {
                     onRequestMissionClick()
                 } else {
-                    onVerifyMissionClick()
+                    // 미션 인증 시 COMPLETE_MISSION 액션 타입만 전달
+                    onVerifyMissionClick("COMPLETE_MISSION")
                 }
             },
             modifier = Modifier.fillMaxWidth(),
@@ -120,7 +121,10 @@ private fun RecommendedMissionViewWithMissionPreview() {
                 .background(White)
                 .padding(dp20)
         ) {
-            RecommendedMissionView(currentMission = mockMission)
+            RecommendedMissionView(
+                currentMission = mockMission,
+                onVerifyMissionClick = { actionType -> }
+            )
         }
     }
 }

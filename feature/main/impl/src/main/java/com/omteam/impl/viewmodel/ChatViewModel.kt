@@ -62,27 +62,29 @@ class ChatViewModel @Inject constructor(
 
     /**
      * 메시지 전송
-     * 
-     * @param type 메시지 타입 (예: TEXT)
+     *
+     * @param type 메시지 타입 (예: TEXT, OPTION)
      * @param text 사용자가 입력한 텍스트
-     * @param value 선택된 옵션의 값 (예: TIME_SHORTAGE, EXERCISE_HARD)
+     * @param value 선택된 옵션의 값 (예: TIME_SHORTAGE, EXERCISE_HARD, SUCCESS, FAILURE)
+     * @param actionType 액션 타입 (예: COMPLETE_MISSION, MISSION_FAILURE_REASON)
      */
     fun sendMessage(
         type: String? = null,
         text: String? = null,
-        value: String? = null
+        value: String? = null,
+        actionType: String? = null
     ) = viewModelScope.launch {
         _sendMessageUiState.value = SendMessageUiState.Loading
-        
-        sendMessageUseCase(type = type, text = text, value = value)
+
+        sendMessageUseCase(type = type, text = text, value = value, actionType = actionType)
             .collect { result ->
                 _sendMessageUiState.value = result.fold(
                     onSuccess = { message ->
                         Timber.d("## 메시지 전송 성공 : $message")
-                        
+
                         // 메시지 전송 후 대화 내역 재조회
                         fetchChatHistory()
-                        
+
                         SendMessageUiState.Success(message)
                     },
                     onFailure = { error ->
