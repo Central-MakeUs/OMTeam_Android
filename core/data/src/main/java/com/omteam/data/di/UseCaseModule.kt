@@ -23,50 +23,51 @@ object UseCaseModule {
     fun provideLogoutUseCase(
         authRepository: AuthRepository
     ): LogoutUseCase = LogoutUseCase(authRepository)
-    
+
     @Provides
     @Singleton
     fun provideLoginWithIdTokenUseCase(
         authRepository: AuthRepository
     ): LoginWithIdTokenUseCase = LoginWithIdTokenUseCase(authRepository)
-    
+
     @Provides
     @Singleton
     fun provideGetOnboardingInfoUseCase(
         onboardingRepository: OnboardingRepository
     ): GetOnboardingInfoUseCase = GetOnboardingInfoUseCase(onboardingRepository)
-    
+
     @Provides
     @Singleton
     fun provideCheckAutoLoginUseCase(
         authRepository: AuthRepository,
         onboardingRepository: OnboardingRepository
     ): CheckAutoLoginUseCase = CheckAutoLoginUseCase(authRepository, onboardingRepository)
-    
+
     @Provides
     @Singleton
     fun provideGetCharacterInfoUseCase(
         characterRepository: CharacterRepository
     ): GetCharacterInfoUseCase = GetCharacterInfoUseCase(characterRepository)
-    
+
     @Provides
     @Singleton
     fun provideGetWeeklyReportUseCase(
         reportRepository: ReportRepository
     ): GetWeeklyReportUseCase = GetWeeklyReportUseCase(reportRepository)
-    
+
     @Provides
     @Singleton
     fun provideGetDailyRecommendedMissionsUseCase(
         missionRepository: MissionRepository
     ): GetDailyRecommendedMissionsUseCase = GetDailyRecommendedMissionsUseCase(missionRepository)
-    
+
     @Provides
     @Singleton
     fun provideRequestDailyMissionRecommendationsUseCase(
         missionRepository: MissionRepository
-    ): RequestDailyMissionRecommendationsUseCase = RequestDailyMissionRecommendationsUseCase(missionRepository)
-    
+    ): RequestDailyMissionRecommendationsUseCase =
+        RequestDailyMissionRecommendationsUseCase(missionRepository)
+
     @Provides
     @Singleton
     fun provideStartMissionUseCase(
@@ -78,31 +79,37 @@ object UseCaseModule {
     fun provideUpdateLifestyleUseCase(
         onboardingRepository: OnboardingRepository
     ): UpdateLifestyleUseCase = UpdateLifestyleUseCase(onboardingRepository)
-    
+
     @Provides
     @Singleton
     fun provideUpdatePreferredExerciseUseCase(
         onboardingRepository: OnboardingRepository
     ): UpdatePreferredExerciseUseCase = UpdatePreferredExerciseUseCase(onboardingRepository)
-    
+
     @Provides
     @Singleton
     fun provideUpdateMinExerciseMinutesUseCase(
         onboardingRepository: OnboardingRepository
     ): UpdateMinExerciseMinutesUseCase = UpdateMinExerciseMinutesUseCase(onboardingRepository)
-    
+
     @Provides
     @Singleton
     fun provideUpdateAvailableTimeUseCase(
         onboardingRepository: OnboardingRepository
     ): UpdateAvailableTimeUseCase = UpdateAvailableTimeUseCase(onboardingRepository)
-    
+
+    @Provides
+    @Singleton
+    fun provideUpdateNicknameUseCase(
+        onboardingRepository: OnboardingRepository
+    ): UpdateNicknameUseCase = UpdateNicknameUseCase(onboardingRepository)
+
     @Provides
     @Singleton
     fun provideSendMessageUseCase(
         chatRepository: ChatRepository
     ): SendMessageUseCase = SendMessageUseCase(chatRepository)
-    
+
     @Provides
     @Singleton
     fun provideGetChatHistoryUseCase(

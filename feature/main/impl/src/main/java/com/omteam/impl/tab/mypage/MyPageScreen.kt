@@ -49,7 +49,9 @@ import androidx.compose.ui.unit.dp
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.impl.component.ChangeNicknameBottomSheetContent
+import com.omteam.impl.viewmodel.MyPageViewModel
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 
@@ -57,6 +59,7 @@ import timber.log.Timber
 @Composable
 fun MyPageScreen(
     modifier: Modifier = Modifier,
+    viewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: () -> Unit = {},
@@ -288,7 +291,7 @@ fun MyPageScreen(
                     },
                     onNicknameChange = { newNickname ->
                         Timber.d("## 닉네임 변경 : $newNickname")
-                        // TODO: 닉네임 변경 API 호출
+                        viewModel.updateNickname(newNickname)
                     },
                     onFocusChanged = { focused ->
                         isTextFieldFocused = focused
