@@ -63,20 +63,20 @@ class ChatViewModel @Inject constructor(
     /**
      * 메시지 전송
      *
-     * @param type 메시지 타입 (예: TEXT, OPTION)
-     * @param text 사용자가 입력한 텍스트
-     * @param value 선택된 옵션의 값 (예: TIME_SHORTAGE, EXERCISE_HARD, SUCCESS, FAILURE)
+     * @param type 메시지 타입 (TEXT, OPTION)
+     * @param value 사용자가 입력한 텍스트 또는 선택된 옵션의 값
+     * @param optionValue 옵션 선택 시의 추가 값 (예: SUCCESS, FAILURE)
      * @param actionType 액션 타입 (예: COMPLETE_MISSION, MISSION_FAILURE_REASON)
      */
     fun sendMessage(
         type: String? = null,
-        text: String? = null,
         value: String? = null,
+        optionValue: String? = null,
         actionType: String? = null
     ) = viewModelScope.launch {
         _sendMessageUiState.value = SendMessageUiState.Loading
 
-        sendMessageUseCase(type = type, text = text, value = value, actionType = actionType)
+        sendMessageUseCase(type = type, value = value, optionValue = optionValue, actionType = actionType)
             .collect { result ->
                 _sendMessageUiState.value = result.fold(
                     onSuccess = { message ->

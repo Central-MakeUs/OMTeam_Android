@@ -85,8 +85,12 @@ fun HomeScreen(
             showMissionRecommendationBottomSheet = true
         },
         onVerifyMissionClick = { actionType ->
-            // 미션 인증하기 API 호출해서 actionType 전송
-            chatViewModel.sendMessage(actionType = actionType)
+            // 미션 인증하기 API 호출 - type, value, actionType 전송
+            chatViewModel.sendMessage(
+                type = "TEXT",
+                value = "미션 인증",
+                actionType = actionType
+            )
         },
         modifier = modifier
     )

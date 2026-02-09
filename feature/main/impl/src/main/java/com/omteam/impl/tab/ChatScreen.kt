@@ -189,9 +189,10 @@ fun ChatScreen(
                                             selectedMessageIds =
                                                 selectedMessageIds + message.messageId
                                             viewModel.sendMessage(
-                                                type = "TEXT",
-                                                text = option.label,
-                                                value = option.value
+                                                type = "OPTION",
+                                                value = option.label,
+                                                optionValue = option.value,
+                                                actionType = option.actionType
                                             )
                                         }
                                     }

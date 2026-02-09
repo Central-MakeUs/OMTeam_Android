@@ -17,6 +17,7 @@ fun ChatMessageData.toDomain(): ChatMessage = ChatMessage(
     role = ChatRole.fromString(role),
     content = content,
     options = options?.map { it.toDomain() },
+    actionType = actionType,
     createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
     terminal = terminal
 )
@@ -26,7 +27,8 @@ fun ChatMessageData.toDomain(): ChatMessage = ChatMessage(
  */
 fun com.omteam.network.dto.chat.ChatOption.toDomain(): ChatOption = ChatOption(
     label = label,
-    value = value
+    value = value,
+    actionType = actionType
 )
 
 /**

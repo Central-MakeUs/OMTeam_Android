@@ -8,16 +8,16 @@ interface ChatRepository {
     /**
      * 챗봇에게 메시지 전송
      *
-     * @param type 메시지 타입
-     * @param text 사용자가 입력한 텍스트
-     * @param value 선택된 옵션의 값
+     * @param type 메시지 타입 (TEXT, OPTION)
+     * @param value 사용자가 입력한 텍스트 또는 선택된 옵션의 값
+     * @param optionValue 옵션 선택 시의 추가 값 (예: SUCCESS, FAILURE)
      * @param actionType 액션 타입 (예: COMPLETE_MISSION, MISSION_FAILURE_REASON)
      * @return 챗봇 응답 메시지 Flow
      */
     fun sendMessage(
         type: String? = null,
-        text: String? = null,
         value: String? = null,
+        optionValue: String? = null,
         actionType: String? = null
     ): Flow<Result<ChatMessage>>
     
