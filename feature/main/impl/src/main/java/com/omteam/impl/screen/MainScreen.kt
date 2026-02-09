@@ -31,7 +31,8 @@ fun MainScreen(
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: (String) -> Unit = {},
-    onNavigateToEditMyInfo: () -> Unit = {}
+    onNavigateToEditMyInfo: () -> Unit = {},
+    onNavigateToDetailedAnalysis: () -> Unit = {},
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
@@ -48,7 +49,9 @@ fun MainScreen(
             when (selectedTabIndex) {
                 0 -> HomeScreen()
                 1 -> ChatScreen()
-                2 -> ReportScreen()
+                2 -> ReportScreen(
+                    onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
+                )
                 3 -> MyPageScreen(
                     onSignOut = onSignOut,
                     onNavigateToOther = onNavigateToOther,
