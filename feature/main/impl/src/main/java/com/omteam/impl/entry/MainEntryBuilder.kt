@@ -10,16 +10,16 @@ import timber.log.Timber
 
 /**
  * 메인 화면 entry builder
- * 
+ *
  * @param onSignOut 로그아웃 콜백
  * @param onNavigateToOther 기타 화면 이동 콜백
- * @param onNavigateToEditMyGoal 나의 목표 수정하기 화면 이동 콜백
+ * @param onNavigateToEditMyGoal 나의 목표 수정하기 화면 이동 콜백 (현재 목표 텍스트 전달)
  * @param onNavigateToEditMyInfo 내 정보 수정하기 화면 이동 콜백
  */
 fun EntryProviderScope<NavKey>.mainEntry(
     onSignOut: () -> Unit,
     onNavigateToOther: () -> Unit,
-    onNavigateToEditMyGoal: () -> Unit,
+    onNavigateToEditMyGoal: (String) -> Unit,
     onNavigateToEditMyInfo: () -> Unit
 ) {
     entry<MainNavKey> {

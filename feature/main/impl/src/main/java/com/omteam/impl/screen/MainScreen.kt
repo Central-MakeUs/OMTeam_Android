@@ -30,7 +30,7 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
-    onNavigateToEditMyGoal: () -> Unit = {},
+    onNavigateToEditMyGoal: (String) -> Unit = {},
     onNavigateToEditMyInfo: () -> Unit = {}
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()

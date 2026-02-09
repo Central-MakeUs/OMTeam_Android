@@ -7,6 +7,7 @@ import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
 import com.omteam.domain.usecase.UpdateLifestyleUseCase
 import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
+import com.omteam.domain.usecase.UpdateAppGoalUseCase
 import com.omteam.domain.usecase.UpdateNicknameUseCase
 import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
 import com.omteam.domain.usecase.WithdrawUseCase
@@ -31,6 +32,7 @@ class MyPageViewModel @Inject constructor(
     private val updateNicknameUseCase: UpdateNicknameUseCase,
     private val customExerciseRepository: CustomExerciseRepository,
     private val withdrawUseCase: WithdrawUseCase,
+    private val updateAppGoalUseCase: UpdateAppGoalUseCase,
 ) : ViewModel() {
 
     private val _onboardingInfoState =
@@ -133,6 +135,21 @@ class MyPageViewModel @Inject constructor(
                 _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
             }.onFailure { e ->
                 Timber.e("## 닉네임 변경 실패 : ${e.message}")
+                _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
+            }
+        }
+    }
+
+    // 앱 사용 목적 수정
+    fun updateAppGoal(appGoalText: String) = viewModelScope.launch {
+        _onboardingInfoState.value = MyPageOnboardingState.Loading
+
+        updateAppGoalUseCase.invoke(appGoalText).collect { result ->
+            result.onSuccess { onboardingInfo ->
+                Timber.d("## 앱 사용 목적 수정 성공 : $onboardingInfo")
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
+            }.onFailure { e ->
+                Timber.e("## 앱 사용 목적 수정 실패 : ${e.message}")
                 _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
             }
         }
