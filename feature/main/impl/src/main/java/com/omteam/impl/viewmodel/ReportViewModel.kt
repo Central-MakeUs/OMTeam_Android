@@ -3,8 +3,10 @@ package com.omteam.impl.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.omteam.domain.usecase.GetDailyFeedbackUseCase
+import com.omteam.domain.usecase.GetMonthlyPatternUseCase
 import com.omteam.domain.usecase.GetWeeklyReportUseCase
 import com.omteam.impl.viewmodel.state.DailyFeedbackUiState
+import com.omteam.impl.viewmodel.state.MonthlyPatternUiState
 import com.omteam.impl.viewmodel.state.WeeklyReportUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,12 +21,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 /**
- * 주간 리포트 조회, 데일리 피드백 조회, 날짜 관리
+ * 주간 리포트 조회, 데일리 피드백 조회, 월간 패턴 분석 조회, 날짜 관리
  */
 @HiltViewModel
 class ReportViewModel @Inject constructor(
     private val getWeeklyReportUseCase: GetWeeklyReportUseCase,
     private val getDailyFeedbackUseCase: GetDailyFeedbackUseCase,
+    private val getMonthlyPatternUseCase: GetMonthlyPatternUseCase,
 ) : ViewModel() {
 
     // 선택된 날짜 (기본값: 오늘)
@@ -38,6 +41,10 @@ class ReportViewModel @Inject constructor(
     // 데일리 피드백 UI State
     private val _dailyFeedbackUiState = MutableStateFlow<DailyFeedbackUiState>(DailyFeedbackUiState.Idle)
     val dailyFeedbackUiState: StateFlow<DailyFeedbackUiState> = _dailyFeedbackUiState.asStateFlow()
+
+    // 월간 패턴 분석 UI State
+    private val _monthlyPatternUiState = MutableStateFlow<MonthlyPatternUiState>(MonthlyPatternUiState.Idle)
+    val monthlyPatternUiState: StateFlow<MonthlyPatternUiState> = _monthlyPatternUiState.asStateFlow()
 
     // 선택된 날짜를 "yyyy년 M월 n주" 형식으로 변환
     private val _weekDisplayText = MutableStateFlow("")
@@ -155,5 +162,28 @@ class ReportViewModel @Inject constructor(
     fun fetchDailyFeedbackForSelectedDate() = viewModelScope.launch {
         val dateString = _selectedDate.value.format(DateTimeFormatter.ISO_LOCAL_DATE)
         fetchDailyFeedback(dateString)
+    }
+
+    /**
+     * 월간 요일별 패턴 분석 조회
+     */
+    fun fetchMonthlyPattern() = viewModelScope.launch {
+        _monthlyPatternUiState.value = MonthlyPatternUiState.Loading
+
+        Timber.d("## 월간 패턴 분석 조회 시작")
+
+        getMonthlyPatternUseCase()
+            .collect { result ->
+                _monthlyPatternUiState.value = result.fold(
+                    onSuccess = { monthlyPattern ->
+                        Timber.d("## 월간 패턴 분석 조회 성공 : $monthlyPattern")
+                        MonthlyPatternUiState.Success(monthlyPattern)
+                    },
+                    onFailure = { error ->
+                        Timber.e("## 월간 패턴 분석 조회 실패 : ${error.message}")
+                        MonthlyPatternUiState.Error(error.message ?: "알 수 없는 오류")
+                    }
+                )
+            }
     }
 }
