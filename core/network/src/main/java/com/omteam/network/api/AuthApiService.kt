@@ -3,6 +3,7 @@ package com.omteam.network.api
 import com.omteam.network.dto.auth.LoginWithIdTokenRequest
 import com.omteam.network.dto.auth.LoginWithIdTokenResponse
 import com.omteam.network.dto.auth.RefreshTokenRequest
+import com.omteam.network.dto.auth.WithdrawResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -24,7 +25,7 @@ interface AuthApiService {
     
     /**
      * 토큰 갱신
-     * 
+     *
      * @param request refreshToken
      * @return 새 accessToken, refreshToken
      */
@@ -32,4 +33,12 @@ interface AuthApiService {
     suspend fun refreshToken(
         @Body request: RefreshTokenRequest
     ): LoginWithIdTokenResponse
+
+    /**
+     * 회원탈퇴
+     *
+     * @return 탈퇴 결과
+     */
+    @POST("auth/withdraw")
+    suspend fun withdraw(): WithdrawResponse
 }

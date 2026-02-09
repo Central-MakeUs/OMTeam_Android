@@ -53,7 +53,8 @@ fun EditMyInfoScreen(
     onNavigateToEditExerciseTime: (String) -> Unit = {},
     onNavigateToEditMissionTime: (String) -> Unit = {},
     onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
-    onNavigateToEditPattern: (String) -> Unit = {}
+    onNavigateToEditPattern: (String) -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
 
@@ -69,7 +70,9 @@ fun EditMyInfoScreen(
         onNavigateToEditExerciseTime = onNavigateToEditExerciseTime,
         onNavigateToEditMissionTime = onNavigateToEditMissionTime,
         onNavigateToEditFavoriteExercise = onNavigateToEditFavoriteExercise,
-        onNavigateToEditPattern = onNavigateToEditPattern
+        onNavigateToEditPattern = onNavigateToEditPattern,
+        onWithdraw = { myPageViewModel.withdraw() },
+        onNavigateToLogin = onNavigateToLogin
     )
 }
 
@@ -81,19 +84,38 @@ fun EditMyInfoContent(
     onNavigateToEditExerciseTime: (String) -> Unit = {},
     onNavigateToEditMissionTime: (String) -> Unit = {},
     onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
-    onNavigateToEditPattern: (String) -> Unit = {}
+    onNavigateToEditPattern: (String) -> Unit = {},
+    onWithdraw: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
     // 탈퇴 확인 다이얼로그 표시 상태
     var showWithdrawDialog by remember { mutableStateOf(false) }
+
+    // 탈퇴 완료 다이얼로그 표시 상태
+    var showWithdrawSuccessDialog by remember { mutableStateOf(false) }
+
+    // 탈퇴 완료 상태 감지하면 다이얼로그 표시
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.WithdrawSuccess) {
+            showWithdrawSuccessDialog = true
+        }
+    }
 
     // 탈퇴 확인 다이얼로그
     if (showWithdrawDialog) {
         WithdrawDialog(
             onDismiss = { showWithdrawDialog = false },
             onConfirmWithdraw = {
-                // TODO: 탈퇴 처리 로직 구현
                 showWithdrawDialog = false
+                onWithdraw()
             }
+        )
+    }
+
+    // 탈퇴 완료 다이얼로그
+    if (showWithdrawSuccessDialog) {
+        WithdrawSuccessDialog(
+            onDismiss = onNavigateToLogin
         )
     }
 

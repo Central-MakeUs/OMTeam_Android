@@ -10,7 +10,11 @@ class AppNavigator(
     private val backStack: List<NavKey>
         get() = backStackState.value
 
-    fun navigate(destination: NavKey, popUpTo: NavKey? = null, inclusive: Boolean = false) {
+    fun navigate(
+        destination: NavKey,
+        popUpTo: NavKey? = null,
+        inclusive: Boolean = false
+    ) {
         backStackState.value = if (popUpTo != null) {
             val index = backStack.indexOfLast { it == popUpTo }
             val newStack = if (index >= 0) {

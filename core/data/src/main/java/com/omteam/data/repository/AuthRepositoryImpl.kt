@@ -103,4 +103,28 @@ class AuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun withdraw(): Result<String> {
+        return try {
+            Timber.d("## 회원탈퇴 시작")
+
+            val response = authApiService.withdraw()
+
+            if (response.success) {
+                Timber.d("## 회원탈퇴 API 성공")
+                tokenDataStore.clearTokens()
+                Timber.d("## 토큰 삭제 완료")
+
+                Result.success(response.data ?: "회원탈퇴가 완료되었습니다.")
+            } else {
+                val errorMessage = response.error?.message ?: "회원탈퇴 실패"
+                val errorCode = response.error?.code
+                Timber.e("## 회원탈퇴 실패 - $errorCode : $errorMessage")
+                Result.failure(Exception("$errorCode : $errorMessage"))
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "## 회원탈퇴 에러 발생")
+            Result.failure(e)
+        }
+    }
 }
