@@ -1,6 +1,7 @@
 package com.omteam.data.mapper
 
 import com.omteam.domain.model.report.AiFeedback
+import com.omteam.domain.model.report.DailyFeedback
 import com.omteam.domain.model.report.DailyMissionStatus
 import com.omteam.domain.model.report.DailyResult
 import com.omteam.domain.model.report.DayOfWeek
@@ -9,6 +10,7 @@ import com.omteam.domain.model.report.TopFailureReason
 import com.omteam.domain.model.report.TypeSuccessCount
 import com.omteam.domain.model.report.WeeklyReport
 import com.omteam.network.dto.report.AiFeedbackDto
+import com.omteam.network.dto.report.DailyFeedbackData
 import com.omteam.network.dto.report.DailyResultDto
 import com.omteam.network.dto.report.FailureReasonRankingDto
 import com.omteam.network.dto.report.TopFailureReasonDto
@@ -83,3 +85,11 @@ fun FailureReasonRankingDto.toDomain(): FailureReasonRanking = FailureReasonRank
  */
 private fun String.toLocalDate(): LocalDate =
     LocalDate.parse(this, DateTimeFormatter.ISO_LOCAL_DATE)
+
+/**
+ * DailyFeedbackData -> DailyFeedback 도메인 모델
+ */
+fun DailyFeedbackData.toDomain(): DailyFeedback = DailyFeedback(
+    targetDate = targetDate.toLocalDate(),
+    feedbackText = feedbackText
+)

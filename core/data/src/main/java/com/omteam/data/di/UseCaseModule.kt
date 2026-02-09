@@ -57,6 +57,12 @@ object UseCaseModule {
 
     @Provides
     @Singleton
+    fun provideGetDailyFeedbackUseCase(
+        reportRepository: ReportRepository
+    ): GetDailyFeedbackUseCase = GetDailyFeedbackUseCase(reportRepository)
+
+    @Provides
+    @Singleton
     fun provideGetDailyRecommendedMissionsUseCase(
         missionRepository: MissionRepository
     ): GetDailyRecommendedMissionsUseCase = GetDailyRecommendedMissionsUseCase(missionRepository)
