@@ -319,7 +319,7 @@ private fun SuccessRateCard(
 
                     // 성공 횟수 표시 (07은 1주일 기준)
                     OMTeamText(
-                        text = "$thisWeekSuccessCount/07",
+                        text = "0$thisWeekSuccessCount/07",
                         style = PretendardType.body04_4,
                         color = Gray07
                     )
