@@ -45,10 +45,18 @@ interface OnboardingRepository {
     
     /**
      * 운동 가능 시간 수정
-     * 
+     *
      * @param availableStartTime 시작 시간
      * @param availableEndTime 종료 시간
      * @return 수정된 온보딩 정보
      */
     fun updateAvailableTime(availableStartTime: String, availableEndTime: String): Flow<Result<OnboardingInfo>>
+
+    /**
+     * 닉네임 변경
+     *
+     * @param nickname 닉네임
+     * @return 수정된 온보딩 정보
+     */
+    fun updateNickname(nickname: String): Flow<Result<OnboardingInfo>>
 }

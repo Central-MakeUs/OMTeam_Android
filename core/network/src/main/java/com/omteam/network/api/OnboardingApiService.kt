@@ -5,6 +5,7 @@ import com.omteam.network.dto.onboarding.OnboardingResponse
 import com.omteam.network.dto.onboarding.UpdateAvailableTimeRequest
 import com.omteam.network.dto.onboarding.UpdateLifestyleRequest
 import com.omteam.network.dto.onboarding.UpdateMinExerciseMinutesRequest
+import com.omteam.network.dto.onboarding.UpdateNicknameRequest
 import com.omteam.network.dto.onboarding.UpdatePreferredExerciseRequest
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -67,12 +68,23 @@ interface OnboardingApiService {
     
     /**
      * 운동 가능 시간 수정
-     * 
+     *
      * @param request availableStartTime, availableEndTime
      * @return 수정된 온보딩 정보
      */
     @PATCH("api/onboarding/available-time")
     suspend fun updateAvailableTime(
         @Body request: UpdateAvailableTimeRequest
+    ): OnboardingResponse
+
+    /**
+     * 닉네임 변경
+     *
+     * @param request nickname
+     * @return 수정된 온보딩 정보
+     */
+    @PATCH("api/onboarding/nickname")
+    suspend fun updateNickname(
+        @Body request: UpdateNicknameRequest
     ): OnboardingResponse
 }

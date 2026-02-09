@@ -7,6 +7,7 @@ import com.omteam.domain.usecase.GetOnboardingInfoUseCase
 import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
 import com.omteam.domain.usecase.UpdateLifestyleUseCase
 import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
+import com.omteam.domain.usecase.UpdateNicknameUseCase
 import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
 import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +27,7 @@ class MyPageViewModel @Inject constructor(
     private val updatePreferredExerciseUseCase: UpdatePreferredExerciseUseCase,
     private val updateMinExerciseMinutesUseCase: UpdateMinExerciseMinutesUseCase,
     private val updateAvailableTimeUseCase: UpdateAvailableTimeUseCase,
+    private val updateNicknameUseCase: UpdateNicknameUseCase,
     private val customExerciseRepository: CustomExerciseRepository
 ): ViewModel() {
 
@@ -113,7 +115,22 @@ class MyPageViewModel @Inject constructor(
             }
         }
     }
-    
+
+    // 닉네임 변경
+    fun updateNickname(nickname: String) = viewModelScope.launch {
+        _onboardingInfoState.value = MyPageOnboardingState.Loading
+
+        updateNicknameUseCase.invoke(nickname).collect { result ->
+            result.onSuccess { onboardingInfo ->
+                Timber.d("## 닉네임 변경 성공 : $onboardingInfo")
+                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
+            }.onFailure { e ->
+                Timber.e("## 닉네임 변경 실패 : ${e.message}")
+                _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
+            }
+        }
+    }
+
     // 커스텀 운동 추가
     fun addCustomExercise(name: String) = viewModelScope.launch {
         try {

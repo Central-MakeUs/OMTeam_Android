@@ -92,10 +92,9 @@ enum class MissionStatus {
  */
 enum class MissionType {
     EXERCISE,
-    NUTRITION,
-    LIFESTYLE,
+    DIET,
     UNKNOWN;
-    
+
     companion object {
         fun fromString(value: String): MissionType =
             MissionType.entries.find { it.name == value.uppercase() } ?: UNKNOWN
@@ -129,4 +128,19 @@ data class RecommendedMission(
     val missionDate: LocalDate,
     val status: MissionStatus,
     val mission: Mission
+)
+
+/**
+ * 데일리 미션 추천 받기 응답 정보
+ * 
+ * @property missionDate 미션 날짜
+ * @property recommendations 추천된 미션 목록
+ * @property hasInProgressMission 진행 중인 미션 존재 여부
+ * @property inProgressMission 진행 중인 미션 정보
+ */
+data class DailyMissionRecommendation(
+    val missionDate: LocalDate,
+    val recommendations: List<RecommendedMission>,
+    val hasInProgressMission: Boolean,
+    val inProgressMission: CurrentMission? = null
 )

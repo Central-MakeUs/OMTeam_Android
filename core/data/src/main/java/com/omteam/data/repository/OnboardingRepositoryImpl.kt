@@ -10,6 +10,7 @@ import com.omteam.network.dto.onboarding.OnboardingRequest
 import com.omteam.network.dto.onboarding.UpdateAvailableTimeRequest
 import com.omteam.network.dto.onboarding.UpdateLifestyleRequest
 import com.omteam.network.dto.onboarding.UpdateMinExerciseMinutesRequest
+import com.omteam.network.dto.onboarding.UpdateNicknameRequest
 import com.omteam.network.dto.onboarding.UpdatePreferredExerciseRequest
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -94,6 +95,17 @@ class OnboardingRepositoryImpl @Inject constructor(
             apiCall = {
                 val request = UpdateAvailableTimeRequest(availableStartTime, availableEndTime)
                 onboardingApiService.updateAvailableTime(request)
+            },
+            transform = { response -> response.data?.toDomain() },
+            getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
+        )
+
+    override fun updateNickname(nickname: String): Flow<Result<OnboardingInfo>> =
+        safeApiCall(
+            logTag = "닉네임 변경",
+            apiCall = {
+                val request = UpdateNicknameRequest(nickname)
+                onboardingApiService.updateNickname(request)
             },
             transform = { response -> response.data?.toDomain() },
             getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }

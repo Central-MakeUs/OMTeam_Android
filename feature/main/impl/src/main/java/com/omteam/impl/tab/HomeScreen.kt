@@ -19,11 +19,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,27 +42,31 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.character.CharacterInfo
-import com.omteam.domain.model.mission.CurrentMission
-import com.omteam.domain.model.mission.Mission
-import com.omteam.domain.model.mission.MissionStatus
-import com.omteam.domain.model.mission.MissionType
 import com.omteam.impl.component.mission.*
+import com.omteam.impl.viewmodel.ChatViewModel
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
 import com.omteam.impl.viewmodel.state.DailyAppleData
+import com.omteam.impl.viewmodel.state.DailyMissionRecommendationUiState
 import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import com.omteam.impl.viewmodel.HomeViewModel
 import com.omteam.omt.core.designsystem.R
+import timber.log.Timber
 import java.time.LocalDate
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel()
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
+    val dailyMissionRecommendationUiState by homeViewModel.dailyMissionRecommendationUiState.collectAsStateWithLifecycle()
+
+    var showMissionRecommendationBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         homeViewModel.run {
@@ -70,8 +79,114 @@ fun HomeScreen(
         dailyMissionUiState = dailyMissionUiState,
         characterUiState = characterUiState,
         weekDays = homeViewModel.getCurrentWeekDays(),
+        onRequestMissionClick = {
+            // 미션 제안받기 API 호출
+            homeViewModel.requestDailyMissionRecommendations()
+            showMissionRecommendationBottomSheet = true
+        },
+        onVerifyMissionClick = { actionType ->
+            // 미션 인증하기 API 호출해서 actionType 전송
+            chatViewModel.sendMessage(actionType = actionType)
+        },
         modifier = modifier
     )
+    
+    // 미션 추천 바텀 시트
+    if (showMissionRecommendationBottomSheet) {
+        val sheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = true
+        )
+        val scope = rememberCoroutineScope()
+
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        showMissionRecommendationBottomSheet = false
+                    }
+                }
+            },
+            sheetState = sheetState,
+            containerColor = White,
+            shape = RoundedCornerShape(
+                topStart = dp32,
+                topEnd = dp32
+            )
+        ) {
+            when (val state = dailyMissionRecommendationUiState) {
+                is DailyMissionRecommendationUiState.Success -> {
+                    MissionRecommendationBottomSheetContent(
+                        recommendations = state.data.recommendations,
+                        onDismiss = {
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showMissionRecommendationBottomSheet = false
+                                }
+                            }
+                        },
+                        onMissionSelect = { selectedMission ->
+                            Timber.d("## 선택한 미션 : ${selectedMission.mission.name}")
+                        },
+                        onRetryClick = {
+                            // 다시 제안받기 - API 재호출
+                            Timber.d("## 다시 제안받기 버튼 클릭")
+                            homeViewModel.requestDailyMissionRecommendations()
+                        },
+                        onStartMissionClick = { recommendedMissionId ->
+                            // 미션 시작하기 API 호출
+                            Timber.d("## 미션 시작하기 버튼 클릭 - recommendedMissionId : $recommendedMissionId")
+                            homeViewModel.startMission(recommendedMissionId)
+                            // 성공 시 바텀 시트 닫기
+                            scope.launch {
+                                sheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!sheetState.isVisible) {
+                                    showMissionRecommendationBottomSheet = false
+                                }
+                            }
+                        }
+                    )
+                }
+                is DailyMissionRecommendationUiState.Loading -> {
+                    // 로딩 중 표시
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(dp40),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OMTeamText(
+                            text = "미션을 불러오는 중...",
+                            style = PretendardType.body02_2,
+                            color = Gray08
+                        )
+                    }
+                }
+                is DailyMissionRecommendationUiState.Error -> {
+                    // 에러 표시
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(dp40),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OMTeamText(
+                            text = state.message,
+                            style = PretendardType.body02_2,
+                            color = Error
+                        )
+                    }
+                }
+                else -> {
+                    // Idle 상태
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -79,7 +194,9 @@ fun HomeScreenContent(
     dailyMissionUiState: DailyMissionUiState,
     characterUiState: CharacterUiState,
     weekDays: List<DailyAppleData>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onRequestMissionClick: () -> Unit = {},
+    onVerifyMissionClick: (actionType: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -304,47 +421,31 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            // TODO : API 데이터 받게 되면 목 데이터 제거
-            val mockCurrentMission = CurrentMission(
-                recommendedMissionId = 1,
-                missionDate = LocalDate.now(),
-                status = MissionStatus.RECOMMENDED,
-                mission = Mission(
-                    id = 1,
-                    name = "30분 걷기",
-                    type = MissionType.EXERCISE,
-                    difficulty = 2,
-                    estimatedMinutes = 30,
-                    estimatedCalories = 150
-                )
-            )
-            
-            RecommendedMissionView(
-                currentMission = mockCurrentMission,
-                modifier = Modifier.padding(horizontal = dp20)
-            )
-            
-            /*
             when (dailyMissionUiState) {
-                is DailyMissionUiState.Idle -> MissionEmptyView()
+                is DailyMissionUiState.Idle -> {
+                    // 초기 상태 - 미션 없는 상태로 표시
+                    RecommendedMissionView(
+                        currentMission = null,
+                        modifier = Modifier.padding(horizontal = dp20),
+                        onRequestMissionClick = onRequestMissionClick,
+                        onVerifyMissionClick = onVerifyMissionClick
+                    )
+                }
 
                 is DailyMissionUiState.Loading -> MissionLoadingView()
-                
+
                 is DailyMissionUiState.Success -> {
-                    val currentMission = dailyMissionUiState.data.currentMission
-                    if (currentMission != null) {
-                        RecommendedMissionView(
-                            currentMission = currentMission,
-                            modifier = Modifier.padding(horizontal = dp20)
-                        )
-                    } else {
-                        MissionEmptyView()
-                    }
+                    // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 표시
+                    RecommendedMissionView(
+                        currentMission = dailyMissionUiState.data.currentMission,
+                        modifier = Modifier.padding(horizontal = dp20),
+                        onRequestMissionClick = onRequestMissionClick,
+                        onVerifyMissionClick = onVerifyMissionClick
+                    )
                 }
                 
                 is DailyMissionUiState.Error -> MissionErrorView(errorMessage = dailyMissionUiState.message)
             }
-            */
 
             Spacer(modifier = Modifier.height(dp64))
 

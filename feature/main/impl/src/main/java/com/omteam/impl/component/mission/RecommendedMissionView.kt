@@ -24,16 +24,19 @@ import com.omteam.domain.model.mission.CurrentMission
 import com.omteam.domain.model.mission.Mission
 import com.omteam.domain.model.mission.MissionStatus
 import com.omteam.domain.model.mission.MissionType
-import timber.log.Timber
 import java.time.LocalDate
 
 /**
- * 오늘의 미션 상태 조회 API에서 미션을 받은 경우 표시
+ * 오늘의 미션 상태를 표시하는 뷰
+ *
+ * currentMission이 null이면 미션 제안 대기 상태, null이 아니면 진행 중인 미션 상태를 표시
  */
 @Composable
 fun RecommendedMissionView(
-    currentMission: CurrentMission,
+    currentMission: CurrentMission?,
     modifier: Modifier = Modifier,
+    onRequestMissionClick: () -> Unit = {},
+    onVerifyMissionClick: (actionType: String) -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -69,26 +72,34 @@ fun RecommendedMissionView(
 
             Spacer(modifier = Modifier.height(dp10))
 
+            // 현재 진행 중인 미션이 null이면 채팅을 통해 미션을 받아보세요, 아니면 미션 이름 표시
             OMTeamText(
-                text = currentMission.mission.name,
-                style = PretendardType.button01Disabled,
-                color = Gray08
+                text = currentMission?.mission?.name ?: "채팅을 통해 미션을 받아보세요!",
+                style = if (currentMission != null) PretendardType.button01Enabled else PretendardType.button01Disabled,
+                color = if (currentMission != null) Gray12 else Gray08
             )
         }
 
+        // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 버튼 표시
         OMTeamButton(
-            text = "미션 제안받기",
+            text = if (currentMission == null) "미션 제안받기" else "미션 인증하기",
             onClick = {
-                Timber.d("## 미션 제안받기 버튼 클릭")
+                if (currentMission == null) {
+                    onRequestMissionClick()
+                } else {
+                    // 미션 인증 시 COMPLETE_MISSION 액션 타입만 전달
+                    onVerifyMissionClick("COMPLETE_MISSION")
+                }
             },
             modifier = Modifier.fillMaxWidth(),
         )
     }
 }
 
+// 미션이 있는 경우 Preview
 @Preview(showBackground = true)
 @Composable
-private fun RecommendedMissionViewPreview() {
+private fun RecommendedMissionViewWithMissionPreview() {
     val mockMission = CurrentMission(
         recommendedMissionId = 1,
         missionDate = LocalDate.now(),
@@ -110,7 +121,26 @@ private fun RecommendedMissionViewPreview() {
                 .background(White)
                 .padding(dp20)
         ) {
-            RecommendedMissionView(currentMission = mockMission)
+            RecommendedMissionView(
+                currentMission = mockMission,
+                onVerifyMissionClick = { actionType -> }
+            )
+        }
+    }
+}
+
+// 미션이 없는 경우 Preview
+@Preview(showBackground = true)
+@Composable
+private fun RecommendedMissionViewWithoutMissionPreview() {
+    OMTeamTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(White)
+                .padding(dp20)
+        ) {
+            RecommendedMissionView(currentMission = null)
         }
     }
 }
