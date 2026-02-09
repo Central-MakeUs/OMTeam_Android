@@ -1,6 +1,7 @@
 package com.omteam.domain.repository
 
 import com.omteam.domain.model.report.DailyFeedback
+import com.omteam.domain.model.report.MonthlyPattern
 import com.omteam.domain.model.report.WeeklyReport
 import kotlinx.coroutines.flow.Flow
 
@@ -27,4 +28,11 @@ interface ReportRepository {
      * @return 데일리 피드백 Flow
      */
     fun getDailyFeedback(date: String? = null): Flow<Result<DailyFeedback>>
+
+    /**
+     * 월간 요일별 패턴 분석 조회
+     *
+     * @return 월간 패턴 Flow
+     */
+    fun getMonthlyPattern(): Flow<Result<MonthlyPattern>>
 }

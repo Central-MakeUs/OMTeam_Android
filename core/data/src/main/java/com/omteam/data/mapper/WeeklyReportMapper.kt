@@ -5,14 +5,20 @@ import com.omteam.domain.model.report.DailyFeedback
 import com.omteam.domain.model.report.DailyMissionStatus
 import com.omteam.domain.model.report.DailyResult
 import com.omteam.domain.model.report.DayOfWeek
+import com.omteam.domain.model.report.DayOfWeekAiFeedback
+import com.omteam.domain.model.report.DayOfWeekStat
 import com.omteam.domain.model.report.FailureReasonRanking
+import com.omteam.domain.model.report.MonthlyPattern
 import com.omteam.domain.model.report.TopFailureReason
 import com.omteam.domain.model.report.TypeSuccessCount
 import com.omteam.domain.model.report.WeeklyReport
 import com.omteam.network.dto.report.AiFeedbackDto
 import com.omteam.network.dto.report.DailyFeedbackData
 import com.omteam.network.dto.report.DailyResultDto
+import com.omteam.network.dto.report.DayOfWeekAiFeedbackDto
+import com.omteam.network.dto.report.DayOfWeekStatDto
 import com.omteam.network.dto.report.FailureReasonRankingDto
+import com.omteam.network.dto.report.MonthlyPatternData
 import com.omteam.network.dto.report.TopFailureReasonDto
 import com.omteam.network.dto.report.TypeSuccessCountDto
 import com.omteam.network.dto.report.WeeklyReportData
@@ -92,4 +98,34 @@ private fun String.toLocalDate(): LocalDate =
 fun DailyFeedbackData.toDomain(): DailyFeedback = DailyFeedback(
     targetDate = targetDate.toLocalDate(),
     feedbackText = feedbackText
+)
+
+/**
+ * MonthlyPatternData -> MonthlyPattern 도메인 모델
+ */
+fun MonthlyPatternData.toDomain(): MonthlyPattern = MonthlyPattern(
+    startDate = startDate.toLocalDate(),
+    endDate = endDate.toLocalDate(),
+    dayOfWeekStats = dayOfWeekStats.map { it.toDomain() },
+    aiFeedback = aiFeedback.toDomain()
+)
+
+/**
+ * DayOfWeekStatDto -> DayOfWeekStat 도메인 모델
+ */
+fun DayOfWeekStatDto.toDomain(): DayOfWeekStat = DayOfWeekStat(
+    dayOfWeek = dayOfWeek,
+    dayName = dayName,
+    totalCount = totalCount,
+    successCount = successCount,
+    failureCount = failureCount,
+    successRate = successRate
+)
+
+/**
+ * DayOfWeekAiFeedbackDto -> DayOfWeekAiFeedback 도메인 모델
+ */
+fun DayOfWeekAiFeedbackDto.toDomain(): DayOfWeekAiFeedback = DayOfWeekAiFeedback(
+    dayOfWeekFeedbackTitle = dayOfWeekFeedbackTitle,
+    dayOfWeekFeedbackContent = dayOfWeekFeedbackContent
 )

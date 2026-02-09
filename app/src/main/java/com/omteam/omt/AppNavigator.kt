@@ -118,8 +118,13 @@ class AppNavigator(
     
     /**
      * 웹뷰 화면 이동
-     * 
+     *
      * @param url 표시할 웹페이지 URL
      */
     fun navigateToWebView(url: String) = navigate(destination = WebViewNavKey(url = url))
+
+    /**
+     * 상세 분석 보기 화면 이동
+     */
+    fun navigateToDetailedAnalysis() = navigate(destination = DetailedAnalysisNavKey)
 }

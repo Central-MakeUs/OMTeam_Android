@@ -54,7 +54,8 @@ import java.time.LocalDate
 @Composable
 fun ReportScreen(
     modifier: Modifier = Modifier,
-    reportViewModel: ReportViewModel = hiltViewModel()
+    reportViewModel: ReportViewModel = hiltViewModel(),
+    onNavigateToDetailedAnalysis: () -> Unit = {}
 ) {
     val weekDisplayText by reportViewModel.weekDisplayText.collectAsState()
     val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsState()
@@ -79,7 +80,7 @@ fun ReportScreen(
             reportViewModel.fetchWeeklyReport()
             reportViewModel.fetchDailyFeedbackForSelectedDate()
         },
-        onDetailedAnalysisClick = { Timber.d("## 더 자세한 분석 보기 클릭") }
+        onDetailedAnalysisClick = onNavigateToDetailedAnalysis
     )
 }
 
@@ -102,7 +103,6 @@ fun ReportContent(
             .padding(dp20)
             .verticalScroll(rememberScrollState()),
     ) {
-        // 상단 로고
         Image(
             painter = painterResource(id = R.drawable.screen_inner_logo),
             contentDescription = "왼쪽 상단 로고",
@@ -237,7 +237,7 @@ private fun ReportDataContent(
     dailyFeedbackUiState: DailyFeedbackUiState,
     onDetailedAnalysisClick: () -> Unit
 ) {
-    // 1번째 흰색 영역: 이번주 미션 성공률
+    // 이번주 미션 성공률
     SuccessRateCard(
         thisWeekSuccessRate = weeklyReport.thisWeekSuccessRate,
         thisWeekSuccessCount = weeklyReport.thisWeekSuccessCount,
@@ -246,17 +246,16 @@ private fun ReportDataContent(
 
     Spacer(modifier = Modifier.height(dp20))
 
-    // 2번째 흰색 영역: 미션이 힘들었던 이유
+    // 미션이 힘들었던 이유
     FailureReasonCard(topFailureReasons = weeklyReport.topFailureReasons)
 
     Spacer(modifier = Modifier.height(dp20))
 
-    // 3번째 흰색 영역: OMT의 제안 (데일리 피드백)
+    // OMT의 제안 (데일리 피드백)
     SuggestionCard(dailyFeedbackUiState = dailyFeedbackUiState)
 
     Spacer(modifier = Modifier.height(dp28))
 
-    // 더 자세한 분석 보기 버튼
     OMTeamButton(
         text = "더 자세한 분석 보기",
         onClick = onDetailedAnalysisClick,
@@ -320,7 +319,7 @@ private fun SuccessRateCard(
 
                     // 성공 횟수 표시 (07은 1주일 기준)
                     OMTeamText(
-                        text = "$thisWeekSuccessCount/07",
+                        text = "0$thisWeekSuccessCount/07",
                         style = PretendardType.body04_4,
                         color = Gray07
                     )

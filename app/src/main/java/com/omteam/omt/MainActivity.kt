@@ -32,6 +32,7 @@ import com.omteam.impl.entry.editMissionTimeEntry
 import com.omteam.impl.entry.editMyGoalEntry
 import com.omteam.impl.entry.editMyInfoEntry
 import com.omteam.impl.entry.editPatternEntry
+import com.omteam.impl.entry.detailedAnalysisEntry
 import com.omteam.impl.entry.loginEntry
 import com.omteam.impl.entry.mainEntry
 import com.omteam.impl.entry.onboardingEntry
@@ -129,6 +130,15 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToEditMyInfo = {
                                     navigator.navigateToEditMyInfo()
+                                },
+                                onNavigateToDetailedAnalysis = {
+                                    navigator.navigateToDetailedAnalysis()
+                                }
+                            )
+
+                            detailedAnalysisEntry(
+                                onBackClick = {
+                                    navigator.popBackStack()
                                 }
                             )
                             

@@ -19,10 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
-import com.omteam.designsystem.theme.*
+import com.omteam.designsystem.theme.Gray03
+import com.omteam.designsystem.theme.Gray11
+import com.omteam.designsystem.theme.OMTeamTheme
+import com.omteam.designsystem.theme.PaperlogyType
 import com.omteam.omt.core.designsystem.R
 
 @Composable
@@ -35,9 +37,7 @@ fun SubScreenHeader(
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(White),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

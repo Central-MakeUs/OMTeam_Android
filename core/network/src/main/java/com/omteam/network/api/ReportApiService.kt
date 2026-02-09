@@ -1,6 +1,7 @@
 package com.omteam.network.api
 
 import com.omteam.network.dto.report.DailyFeedbackResponse
+import com.omteam.network.dto.report.MonthlyPatternResponse
 import com.omteam.network.dto.report.WeeklyReportResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -30,4 +31,10 @@ interface ReportApiService {
     suspend fun getDailyFeedback(
         @Query("date") date: String? = null
     ): DailyFeedbackResponse
+
+    /**
+     * 월간 요일별 패턴 분석 조회
+     */
+    @GET("api/reports/monthly-pattern")
+    suspend fun getMonthlyPattern(): MonthlyPatternResponse
 }
