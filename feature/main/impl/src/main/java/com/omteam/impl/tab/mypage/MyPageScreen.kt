@@ -53,6 +53,9 @@ import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omteam.domain.model.onboarding.LifestyleType
+import com.omteam.domain.model.onboarding.OnboardingInfo
+import com.omteam.domain.model.onboarding.WorkTimeType
 import com.omteam.impl.component.ChangeNicknameBottomSheetContent
 import com.omteam.impl.viewmodel.MyPageViewModel
 import com.omteam.omt.core.designsystem.R
@@ -65,7 +68,7 @@ fun MyPageScreen(
     viewModel: MyPageViewModel = hiltViewModel(),
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
-    onNavigateToEditMyGoal: () -> Unit = {},
+    onNavigateToEditMyGoal: (String) -> Unit = {},
     onNavigateToEditMyInfo: () -> Unit = {}
 ) {
     var showChangeNicknameBottomSheet by remember { mutableStateOf(false) }
@@ -85,176 +88,15 @@ fun MyPageScreen(
         }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(White)
-            .padding(dp20)
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.screen_inner_logo),
-            contentDescription = "왼쪽 상단 로고",
-            modifier = Modifier.size(dp50)
-        )
-
-        Spacer(modifier = Modifier.height(dp32))
-
-        // 프로필 이미지 + 편집 아이콘
-        Box(
-            modifier = Modifier
-                .size(dp140)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(dp140)
-                    .background(
-                        color = ErrorBottomSheetBackground,
-                        shape = CircleShape
-                    )
-            )
-
-            // 편집 아이콘
-            Image(
-                painter = painterResource(id = R.drawable.mypage_edit_able),
-                contentDescription = "닉네임 수정",
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = dp8)
-                    .size(dp36)
-                    .clickable(
-                        // 물결 효과 제거
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        showChangeNicknameBottomSheet = true
-                    }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(dp16))
-
-        // 온보딩 정보에서 조회한 닉네임 표시
-        val nickname = when (onboardingState) {
-            is MyPageOnboardingState.Success -> (onboardingState as MyPageOnboardingState.Success).data.nickname
-            is MyPageOnboardingState.UpdateSuccess -> (onboardingState as MyPageOnboardingState.UpdateSuccess).data.nickname
-            else -> "닉네임"
-        }
-
-        OMTeamText(
-            text = nickname,
-            style = PaperlogyType.headline03,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-
-        Spacer(modifier = Modifier.height(dp53))
-
-        // 나의 목표, 수정하기
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            OMTeamText(
-                text = "나의 목표",
-                style = PaperlogyType.headline04
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // 수정하기
-            Box(
-                modifier = Modifier
-                    .height(dp32)
-                    .background(
-                        color = Green07,
-                        shape = RoundedCornerShape(dp4)
-                    )
-                    .padding(horizontal = dp10)
-                    .clickable(
-                        // 물결 효과 제거
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) {
-                        Timber.d("## 수정하기 클릭")
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                OMTeamText(
-                    text = stringResource(com.omteam.main.impl.R.string.edit_button),
-                    style = PretendardType.button03Abled,
-                    color = Black02,
-                    textAlign = TextAlign.Center,
-                    onClick = onNavigateToEditMyGoal
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(dp10))
-
-        // 운동 습관 형성 카드
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(dp91)
-                .background(
-                    color = Gray02,
-                    shape = RoundedCornerShape(dp10)
-                )
-                .padding(horizontal = dp12, vertical = dp27)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.icon_red_pin),
-                    contentDescription = "운동 습관 형성 아이콘",
-                    modifier = Modifier.size(dp37)
-                )
-
-                Spacer(modifier = Modifier.width(dp12))
-
-                OMTeamText(
-                    text = stringResource(com.omteam.main.impl.R.string.my_page_card),
-                    style = PaperlogyType.headline03,
-                    color = Gray11
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(dp50))
-
-        MyPageMenuItemWithSwitch(
-            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title)
-        )
-        MyPageMenuDivider()
-        
-        MyPageMenuItem(
-            text = stringResource(com.omteam.main.impl.R.string.edit_my_info),
-            onClick = onNavigateToEditMyInfo
-        )
-        MyPageMenuDivider()
-        
-        MyPageMenuItem(
-            text = stringResource(com.omteam.main.impl.R.string.inquiry),
-            onClick = { Timber.d("## 문의하기 클릭") }
-        )
-        MyPageMenuDivider()
-        
-        MyPageMenuItem(
-            text = stringResource(com.omteam.main.impl.R.string.other),
-            onClick = onNavigateToOther,
-        )
-        MyPageMenuDivider()
-
-        MyPageMenuItem(
-            text = stringResource(com.omteam.main.impl.R.string.logout),
-            onClick = onSignOut,
-            showDivider = false
-        )
-    }
+    MyPageScreenContent(
+        modifier = modifier,
+        onboardingState = onboardingState,
+        onSignOut = onSignOut,
+        onNavigateToOther = onNavigateToOther,
+        onNavigateToEditMyGoal = onNavigateToEditMyGoal,
+        onNavigateToEditMyInfo = onNavigateToEditMyInfo,
+        onShowChangeNicknameBottomSheet = { showChangeNicknameBottomSheet = true }
+    )
 
     // 닉네임 변경 바텀 시트
     if (showChangeNicknameBottomSheet) {
@@ -322,6 +164,196 @@ fun MyPageScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun MyPageScreenContent(
+    modifier: Modifier = Modifier,
+    onboardingState: MyPageOnboardingState = MyPageOnboardingState.Idle,
+    onSignOut: () -> Unit = {},
+    onNavigateToOther: () -> Unit = {},
+    onNavigateToEditMyGoal: (String) -> Unit = {},
+    onNavigateToEditMyInfo: () -> Unit = {},
+    onShowChangeNicknameBottomSheet: () -> Unit = {}
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(White)
+            .padding(dp20)
+            .verticalScroll(rememberScrollState()),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.screen_inner_logo),
+            contentDescription = "왼쪽 상단 로고",
+            modifier = Modifier.size(dp50)
+        )
+
+        Spacer(modifier = Modifier.height(dp32))
+
+        // 프로필 이미지 + 편집 아이콘
+        Box(
+            modifier = Modifier
+                .size(dp140)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(dp140)
+                    .background(
+                        color = ErrorBottomSheetBackground,
+                        shape = CircleShape
+                    )
+            )
+
+            // 편집 아이콘
+            Image(
+                painter = painterResource(id = R.drawable.mypage_edit_able),
+                contentDescription = "닉네임 수정",
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = dp8)
+                    .size(dp36)
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        onShowChangeNicknameBottomSheet()
+                    }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(dp16))
+
+        // 온보딩 정보에서 조회한 닉네임 표시
+        val nickname = when (onboardingState) {
+            is MyPageOnboardingState.Success -> onboardingState.data.nickname
+            is MyPageOnboardingState.UpdateSuccess -> onboardingState.data.nickname
+            else -> "닉네임"
+        }
+
+        OMTeamText(
+            text = nickname,
+            style = PaperlogyType.headline03,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+
+        Spacer(modifier = Modifier.height(dp53))
+
+        // 온보딩 정보 중 appGoalText 표시
+        val appGoalText = when (onboardingState) {
+            is MyPageOnboardingState.Success -> onboardingState.data.appGoalText
+            is MyPageOnboardingState.UpdateSuccess -> onboardingState.data.appGoalText
+            else -> stringResource(com.omteam.main.impl.R.string.my_page_card)
+        }
+
+        // 나의 목표, 수정하기
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OMTeamText(
+                text = "나의 목표",
+                style = PaperlogyType.headline04
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 수정하기
+            Box(
+                modifier = Modifier
+                    .height(dp32)
+                    .background(
+                        color = Green07,
+                        shape = RoundedCornerShape(dp4)
+                    )
+                    .padding(horizontal = dp10)
+                    .clickable(
+                        // 물결 효과 제거
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        Timber.d("## 수정하기 클릭")
+                        onNavigateToEditMyGoal(appGoalText)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                OMTeamText(
+                    text = stringResource(com.omteam.main.impl.R.string.edit_button),
+                    style = PretendardType.button03Abled,
+                    color = Black02,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(dp10))
+
+        // 운동 습관 형성 카드 - 온보딩 정보에서 appGoalText 표시
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(dp91)
+                .background(
+                    color = Gray02,
+                    shape = RoundedCornerShape(dp10)
+                )
+                .padding(horizontal = dp12, vertical = dp27)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_red_pin),
+                    contentDescription = "운동 습관 형성 아이콘",
+                    modifier = Modifier.size(dp37)
+                )
+
+                Spacer(modifier = Modifier.width(dp12))
+
+                OMTeamText(
+                    text = appGoalText,
+                    style = PaperlogyType.headline03,
+                    color = Gray11
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(dp50))
+
+        MyPageMenuItemWithSwitch(
+            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title)
+        )
+        MyPageMenuDivider()
+        
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.edit_my_info),
+            onClick = onNavigateToEditMyInfo
+        )
+        MyPageMenuDivider()
+        
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.inquiry),
+            onClick = { Timber.d("## 문의하기 클릭") }
+        )
+        MyPageMenuDivider()
+        
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.other),
+            onClick = onNavigateToOther,
+        )
+        MyPageMenuDivider()
+
+        MyPageMenuItem(
+            text = stringResource(com.omteam.main.impl.R.string.logout),
+            onClick = onSignOut,
+            showDivider = false
+        )
     }
 }
 
@@ -446,8 +478,34 @@ private fun MyPageMenuDivider() {
     Spacer(modifier = Modifier.height(dp18))
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "MyPageScreen - 기본 상태")
 @Composable
 private fun MyPageScreenPreview() {
-    MyPageScreen()
+    OMTeamTheme {
+        MyPageScreenContent()
+    }
+}
+
+@Preview(showBackground = true, name = "MyPageScreen - 데이터 표시")
+@Composable
+private fun MyPageScreenWithDataPreview() {
+    OMTeamTheme {
+        MyPageScreenContent(
+            onboardingState = MyPageOnboardingState.Success(
+                data = OnboardingInfo(
+                    nickname = "홍길동",
+                    appGoalText = "체중 감량",
+                    workTimeType = WorkTimeType.FIXED,
+                    availableStartTime = "19:00",
+                    availableEndTime = "23:59",
+                    minExerciseMinutes = 30,
+                    preferredExerciseText = "헬스, 요가",
+                    lifestyleType = LifestyleType.REGULAR_DAYTIME,
+                    remindEnabled = true,
+                    checkinEnabled = true,
+                    reviewEnabled = true
+                )
+            )
+        )
+    }
 }

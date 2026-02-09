@@ -124,8 +124,8 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToOther = {
                                     navigator.navigateToOther()
                                 },
-                                onNavigateToEditMyGoal = {
-                                    navigator.navigateToEditMyGoal()
+                                onNavigateToEditMyGoal = { currentGoal ->
+                                    navigator.navigateToEditMyGoal(currentGoal)
                                 },
                                 onNavigateToEditMyInfo = {
                                     navigator.navigateToEditMyInfo()

@@ -73,8 +73,11 @@ class AppNavigator(
     
     /**
      * 나의 목표 수정하기 화면 이동
+     *
+     * @param initialGoal 초기 목표 텍스트
      */
-    fun navigateToEditMyGoal() = navigate(destination = EditMyGoalNavKey)
+    fun navigateToEditMyGoal(initialGoal: String = "") =
+        navigate(destination = EditMyGoalNavKey(initialGoal = initialGoal))
     
     /**
      * 내 정보 수정하기 화면 이동

@@ -112,6 +112,12 @@ object UseCaseModule {
 
     @Provides
     @Singleton
+    fun provideUpdateAppGoalUseCase(
+        onboardingRepository: OnboardingRepository
+    ): UpdateAppGoalUseCase = UpdateAppGoalUseCase(onboardingRepository)
+
+    @Provides
+    @Singleton
     fun provideSendMessageUseCase(
         chatRepository: ChatRepository
     ): SendMessageUseCase = SendMessageUseCase(chatRepository)

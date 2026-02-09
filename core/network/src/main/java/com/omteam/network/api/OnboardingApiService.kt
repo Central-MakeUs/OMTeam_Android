@@ -5,6 +5,7 @@ import com.omteam.network.dto.onboarding.OnboardingResponse
 import com.omteam.network.dto.onboarding.UpdateAvailableTimeRequest
 import com.omteam.network.dto.onboarding.UpdateLifestyleRequest
 import com.omteam.network.dto.onboarding.UpdateMinExerciseMinutesRequest
+import com.omteam.network.dto.onboarding.UpdateAppGoalRequest
 import com.omteam.network.dto.onboarding.UpdateNicknameRequest
 import com.omteam.network.dto.onboarding.UpdatePreferredExerciseRequest
 import retrofit2.http.Body
@@ -86,5 +87,16 @@ interface OnboardingApiService {
     @PATCH("api/onboarding/nickname")
     suspend fun updateNickname(
         @Body request: UpdateNicknameRequest
+    ): OnboardingResponse
+
+    /**
+     * 앱 사용 목적 수정
+     *
+     * @param request appGoalText
+     * @return 수정된 온보딩 정보
+     */
+    @PATCH("api/onboarding/app-goal")
+    suspend fun updateAppGoal(
+        @Body request: UpdateAppGoalRequest
     ): OnboardingResponse
 }

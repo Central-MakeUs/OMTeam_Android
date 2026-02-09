@@ -59,4 +59,12 @@ interface OnboardingRepository {
      * @return 수정된 온보딩 정보
      */
     fun updateNickname(nickname: String): Flow<Result<OnboardingInfo>>
+
+    /**
+     * 앱 사용 목적 수정
+     *
+     * @param appGoalText 앱 사용 목적
+     * @return 수정된 온보딩 정보
+     */
+    fun updateAppGoal(appGoalText: String): Flow<Result<OnboardingInfo>>
 }
