@@ -440,8 +440,10 @@ fun HomeScreenContent(
 
                 is DailyMissionUiState.Success -> {
                     // currentMission이 null이면 "미션 제안받기", 있으면 "미션 인증하기" 표시
+                    // 미션 성공 완료 시 버튼 비활성화 및 "내일 다시 만나요!" 표시
                     RecommendedMissionView(
                         currentMission = dailyMissionUiState.data.currentMission,
+                        isMissionCompleted = dailyMissionUiState.data.hasCompletedMission,
                         modifier = Modifier.padding(horizontal = dp20),
                         onRequestMissionClick = onRequestMissionClick,
                         onVerifyMissionClick = onVerifyMissionClick
