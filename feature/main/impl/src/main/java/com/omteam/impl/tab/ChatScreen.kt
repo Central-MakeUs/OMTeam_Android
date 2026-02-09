@@ -65,9 +65,11 @@ fun ChatScreen(
 
     val scrollState = rememberScrollState()
 
-    // 마지막 성공적인 메시지 목록을 캐싱 (로딩 중에도 표시하기 위해)
+    // 마지막 메시지 목록을 캐싱해서 로딩 중에도 표시
     var cachedMessages by remember { mutableStateOf<List<ChatMessage>>(emptyList()) }
     var previousMessageCount by remember { mutableStateOf(0) }
+    // 화면 재진입 시 스크롤 필요 여부
+    var shouldScrollToBottom by remember { mutableStateOf(true) }
 
     // 메시지가 실제로 있는지 체크해서 hasActiveSession이 false, messages가 비었으면 초기 화면 표시
     val currentMessages = when (val state = chatHistoryUiState) {
@@ -85,16 +87,20 @@ fun ChatScreen(
     val isLoading = sendMessageUiState is SendMessageUiState.Loading ||
             chatHistoryUiState is ChatHistoryUiState.Loading
 
-    // 화면 진입 시 기존 대화 내역 조회
+    // 화면 진입 시 기존 대화 내역 조회 및 스크롤 플래그 설정
     LaunchedEffect(Unit) {
         viewModel.fetchChatHistory()
+        shouldScrollToBottom = true
     }
 
-    // 메시지 개수가 실제로 바뀐 때만 스크롤
-    LaunchedEffect(currentMessageCount, isLoading) {
-        if ((currentMessageCount > previousMessageCount) || isLoading) {
+    // 메시지 개수 변경, 로딩, 화면 재진입 시 스크롤
+    LaunchedEffect(currentMessageCount, isLoading, shouldScrollToBottom) {
+        if (shouldScrollToBottom || (currentMessageCount > previousMessageCount) || isLoading) {
+            if (scrollState.maxValue > 0) {
+                scrollState.animateScrollTo(scrollState.maxValue)
+            }
             previousMessageCount = currentMessageCount
-            scrollState.animateScrollTo(scrollState.maxValue)
+            shouldScrollToBottom = false
         }
     }
 
@@ -162,7 +168,7 @@ fun ChatScreen(
                 // 채팅 메시지 표시
                 Spacer(modifier = Modifier.height(dp20))
 
-                // 캐싱된 메시지 표시 (로딩 중에도 이전 메시지 유지)
+                // 로딩 중 이전 메시지 유지
                 if (currentMessages.isNotEmpty()) {
                     // 메시지를 시간순(오래된 순) 정렬해서 최신 메시지 맨 밑에 표시
                     val sortedMessages = currentMessages.sortedBy { it.messageId }
