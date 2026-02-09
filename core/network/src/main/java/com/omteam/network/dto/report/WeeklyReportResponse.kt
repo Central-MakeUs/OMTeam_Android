@@ -65,8 +65,8 @@ data class TopFailureReasonDto(
  */
 @Serializable
 data class AiFeedbackDto(
-    val failureReasonRanking: List<FailureReasonRankingDto>,
-    val weeklyFeedback: String
+    val failureReasonRanking: List<FailureReasonRankingDto>? = null,
+    val weeklyFeedback: String? = null
 )
 
 /**

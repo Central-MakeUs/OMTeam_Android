@@ -72,13 +72,13 @@ data class TopFailureReason(
 
 /**
  * AI 피드백
- * 
+ *
  * @property failureReasonRanking 실패 사유 순위 목록
  * @property weeklyFeedback 주간 피드백
  */
 data class AiFeedback(
-    val failureReasonRanking: List<FailureReasonRanking>,
-    val weeklyFeedback: String
+    val failureReasonRanking: List<FailureReasonRanking>? = null,
+    val weeklyFeedback: String? = null
 )
 
 /**
