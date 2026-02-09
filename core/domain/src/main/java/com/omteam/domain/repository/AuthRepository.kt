@@ -39,8 +39,15 @@ interface AuthRepository {
     
     /**
      * 토큰 갱신
-     * 
+     *
      * @return 새로운 액세스 토큰, 리프레시 토큰
      */
     suspend fun refreshToken(): Result<LoginResult>
+
+    /**
+     * 회원탈퇴
+     *
+     * @return 탈퇴 결과 메시지
+     */
+    suspend fun withdraw(): Result<String>
 }

@@ -100,6 +100,14 @@ object PaperlogyType {
         letterSpacing = 0.sp
     )
 
+    val button04 = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 14.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
     val onboardingCardText = TextStyle(
         fontFamily = PaperlogyFont,
         fontSize = 20.sp,
@@ -222,6 +230,14 @@ object PretendardType {
     )
 
     val body05 = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal, // 400
+        lineHeight = 19.6.sp,  // 140% (14px × 1.4 = 19.6px)
+        letterSpacing = (-0.056).sp
+    )
+
+    val body07 = TextStyle(
         fontFamily = PretendardFont,
         fontSize = 15.sp,
         fontWeight = FontWeight.Medium, // 500

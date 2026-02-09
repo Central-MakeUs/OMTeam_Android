@@ -121,4 +121,10 @@ object UseCaseModule {
     fun provideGetChatHistoryUseCase(
         chatRepository: ChatRepository
     ): GetChatHistoryUseCase = GetChatHistoryUseCase(chatRepository)
+
+    @Provides
+    @Singleton
+    fun provideWithdrawUseCase(
+        authRepository: AuthRepository
+    ): WithdrawUseCase = WithdrawUseCase(authRepository)
 }

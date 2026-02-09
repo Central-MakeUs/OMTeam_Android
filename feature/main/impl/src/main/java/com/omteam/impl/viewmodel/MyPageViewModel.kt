@@ -9,6 +9,7 @@ import com.omteam.domain.usecase.UpdateLifestyleUseCase
 import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
 import com.omteam.domain.usecase.UpdateNicknameUseCase
 import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
+import com.omteam.domain.usecase.WithdrawUseCase
 import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,12 +29,14 @@ class MyPageViewModel @Inject constructor(
     private val updateMinExerciseMinutesUseCase: UpdateMinExerciseMinutesUseCase,
     private val updateAvailableTimeUseCase: UpdateAvailableTimeUseCase,
     private val updateNicknameUseCase: UpdateNicknameUseCase,
-    private val customExerciseRepository: CustomExerciseRepository
-): ViewModel() {
+    private val customExerciseRepository: CustomExerciseRepository,
+    private val withdrawUseCase: WithdrawUseCase,
+) : ViewModel() {
 
-    private val _onboardingInfoState = MutableStateFlow<MyPageOnboardingState>(MyPageOnboardingState.Idle)
+    private val _onboardingInfoState =
+        MutableStateFlow<MyPageOnboardingState>(MyPageOnboardingState.Idle)
     val onboardingInfoState: StateFlow<MyPageOnboardingState> = _onboardingInfoState.asStateFlow()
-    
+
     val customExercises: StateFlow<List<String>> = customExerciseRepository.getAllCustomExercises()
         .stateIn(
             scope = viewModelScope,
@@ -102,19 +105,23 @@ class MyPageViewModel @Inject constructor(
     }
 
     // 운동 가능 시간 수정
-    fun updateAvailableTime(availableStartTime: String, availableEndTime: String) = viewModelScope.launch {
-        _onboardingInfoState.value = MyPageOnboardingState.Loading
+    fun updateAvailableTime(availableStartTime: String, availableEndTime: String) =
+        viewModelScope.launch {
+            _onboardingInfoState.value = MyPageOnboardingState.Loading
 
-        updateAvailableTimeUseCase.invoke(availableStartTime, availableEndTime).collect { result ->
-            result.onSuccess { onboardingInfo ->
-                Timber.d("## 운동 가능 시간 수정 성공 : $onboardingInfo")
-                _onboardingInfoState.value = MyPageOnboardingState.UpdateSuccess(onboardingInfo)
-            }.onFailure { e ->
-                Timber.e("## 운동 가능 시간 수정 실패 : ${e.message}")
-                _onboardingInfoState.value = MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
-            }
+            updateAvailableTimeUseCase.invoke(availableStartTime, availableEndTime)
+                .collect { result ->
+                    result.onSuccess { onboardingInfo ->
+                        Timber.d("## 운동 가능 시간 수정 성공 : $onboardingInfo")
+                        _onboardingInfoState.value =
+                            MyPageOnboardingState.UpdateSuccess(onboardingInfo)
+                    }.onFailure { e ->
+                        Timber.e("## 운동 가능 시간 수정 실패 : ${e.message}")
+                        _onboardingInfoState.value =
+                            MyPageOnboardingState.Error(e.message ?: "알 수 없는 오류")
+                    }
+                }
         }
-    }
 
     // 닉네임 변경
     fun updateNickname(nickname: String) = viewModelScope.launch {
@@ -140,7 +147,7 @@ class MyPageViewModel @Inject constructor(
             Timber.e("## 커스텀 운동 추가 실패 : ${e.message}")
         }
     }
-    
+
     // 커스텀 운동 삭제
     fun deleteCustomExercise(name: String) = viewModelScope.launch {
         try {
@@ -149,6 +156,21 @@ class MyPageViewModel @Inject constructor(
         } catch (e: Exception) {
             Timber.e("## 커스텀 운동 삭제 실패 : ${e.message}")
         }
+    }
+
+    // 회원탈퇴
+    fun withdraw() = viewModelScope.launch {
+        _onboardingInfoState.value = MyPageOnboardingState.Loading
+
+        withdrawUseCase.invoke()
+            .onSuccess { message ->
+                Timber.d("## 회원탈퇴 성공 : $message")
+                _onboardingInfoState.value = MyPageOnboardingState.WithdrawSuccess
+            }.onFailure { e ->
+                Timber.e("## 회원탈퇴 실패 : ${e.message}")
+                _onboardingInfoState.value =
+                    MyPageOnboardingState.Error(e.message ?: "회원탈퇴 중 오류가 발생했습니다.")
+            }
     }
 
 }

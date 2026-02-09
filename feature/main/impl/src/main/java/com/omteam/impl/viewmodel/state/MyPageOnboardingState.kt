@@ -27,4 +27,9 @@ sealed class MyPageOnboardingState {
      * 로딩 실패
      */
     data class Error(val message: String) : MyPageOnboardingState()
+
+    /**
+     * 회원탈퇴 성공
+     */
+    data object WithdrawSuccess : MyPageOnboardingState()
 }

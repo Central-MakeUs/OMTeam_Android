@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -14,17 +15,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.InfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -45,7 +53,8 @@ fun EditMyInfoScreen(
     onNavigateToEditExerciseTime: (String) -> Unit = {},
     onNavigateToEditMissionTime: (String) -> Unit = {},
     onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
-    onNavigateToEditPattern: (String) -> Unit = {}
+    onNavigateToEditPattern: (String) -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
     val onboardingInfoState by myPageViewModel.onboardingInfoState.collectAsStateWithLifecycle()
 
@@ -61,7 +70,9 @@ fun EditMyInfoScreen(
         onNavigateToEditExerciseTime = onNavigateToEditExerciseTime,
         onNavigateToEditMissionTime = onNavigateToEditMissionTime,
         onNavigateToEditFavoriteExercise = onNavigateToEditFavoriteExercise,
-        onNavigateToEditPattern = onNavigateToEditPattern
+        onNavigateToEditPattern = onNavigateToEditPattern,
+        onWithdraw = { myPageViewModel.withdraw() },
+        onNavigateToLogin = onNavigateToLogin
     )
 }
 
@@ -73,8 +84,41 @@ fun EditMyInfoContent(
     onNavigateToEditExerciseTime: (String) -> Unit = {},
     onNavigateToEditMissionTime: (String) -> Unit = {},
     onNavigateToEditFavoriteExercise: (List<String>) -> Unit = {},
-    onNavigateToEditPattern: (String) -> Unit = {}
+    onNavigateToEditPattern: (String) -> Unit = {},
+    onWithdraw: () -> Unit = {},
+    onNavigateToLogin: () -> Unit = {}
 ) {
+    // 탈퇴 확인 다이얼로그 표시 상태
+    var showWithdrawDialog by remember { mutableStateOf(false) }
+
+    // 탈퇴 완료 다이얼로그 표시 상태
+    var showWithdrawSuccessDialog by remember { mutableStateOf(false) }
+
+    // 탈퇴 완료 상태 감지하면 다이얼로그 표시
+    LaunchedEffect(onboardingInfoState) {
+        if (onboardingInfoState is MyPageOnboardingState.WithdrawSuccess) {
+            showWithdrawSuccessDialog = true
+        }
+    }
+
+    // 탈퇴 확인 다이얼로그
+    if (showWithdrawDialog) {
+        WithdrawDialog(
+            onDismiss = { showWithdrawDialog = false },
+            onConfirmWithdraw = {
+                showWithdrawDialog = false
+                onWithdraw()
+            }
+        )
+    }
+
+    // 탈퇴 완료 다이얼로그
+    if (showWithdrawSuccessDialog) {
+        WithdrawSuccessDialog(
+            onDismiss = onNavigateToLogin
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -186,7 +230,127 @@ fun EditMyInfoContent(
             OMTeamText(
                 text = stringResource(R.string.withdraw),
                 style = PretendardType.body03_1,
-                color = Gray07
+                color = Gray07,
+                modifier = Modifier.clickable { showWithdrawDialog = true }
+            )
+        }
+    }
+}
+
+/**
+ * 탈퇴 확인 다이얼로그
+ *
+ * @param onDismiss 다이얼로그 닫기 콜백
+ * @param onConfirmWithdraw 탈퇴 확인 콜백
+ */
+@Composable
+private fun WithdrawDialog(
+    onDismiss: () -> Unit,
+    onConfirmWithdraw: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dp20)
+                .clip(RoundedCornerShape(dp12))
+                .background(White)
+                .padding(horizontal = dp14)
+                .padding(top = dp42, bottom = dp24),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OMTeamText(
+                text = stringResource(R.string.withdraw_dialog_title),
+                style = PaperlogyType.headline02_2,
+                color = Gray12,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(dp28))
+
+            OMTeamText(
+                text = stringResource(R.string.withdraw_dialog_message),
+                style = PretendardType.body05,
+                color = Gray09,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(dp52))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dp8, Alignment.CenterHorizontally)
+            ) {
+                OMTeamButton(
+                    text = stringResource(R.string.withdraw_confirm_button),
+                    onClick = onConfirmWithdraw,
+                    height = dp46,
+                    cornerRadius = dp8,
+                    backgroundColor = GreenGray05,
+                    textColor = GreenGray09,
+                    modifier = Modifier.weight(1f)
+                )
+
+                OMTeamButton(
+                    text = stringResource(R.string.withdraw_cancel_button),
+                    onClick = onDismiss,
+                    height = dp46,
+                    cornerRadius = dp8,
+                    backgroundColor = Green07,
+                    textColor = Gray12,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 탈퇴 완료 다이얼로그
+ *
+ * @param onDismiss 다이얼로그 닫기 콜백 (확인 버튼 클릭 시 호출)
+ */
+@Composable
+private fun WithdrawSuccessDialog(
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dp20)
+                .clip(RoundedCornerShape(dp12))
+                .background(White)
+                .padding(horizontal = dp14)
+                .padding(top = dp42, bottom = dp24),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OMTeamText(
+                text = stringResource(R.string.withdraw_success_dialog_title),
+                style = PaperlogyType.headline02_2,
+                color = Gray12,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(dp28))
+
+            OMTeamText(
+                text = stringResource(R.string.withdraw_success_dialog_message),
+                style = PretendardType.body05,
+                color = Gray09,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(dp52))
+
+            OMTeamButton(
+                text = stringResource(R.string.withdraw_success_button),
+                onClick = onDismiss,
+                height = dp46,
+                cornerRadius = dp8,
+                backgroundColor = Green07,
+                textColor = Gray12,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -352,5 +516,26 @@ private fun EditMyInfoItemChipPreview() {
 private fun InfoChipPreview() {
     OMTeamTheme {
         InfoChip(text = "헬스")
+    }
+}
+
+@Preview(showBackground = true, name = "WithdrawDialog - 탈퇴 확인")
+@Composable
+private fun WithdrawDialogPreview() {
+    OMTeamTheme {
+        WithdrawDialog(
+            onDismiss = {},
+            onConfirmWithdraw = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "WithdrawSuccessDialog - 탈퇴 완료")
+@Composable
+private fun WithdrawSuccessDialogPreview() {
+    OMTeamTheme {
+        WithdrawSuccessDialog(
+            onDismiss = {}
+        )
     }
 }

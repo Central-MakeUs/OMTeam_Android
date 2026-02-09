@@ -168,6 +168,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToEditPattern = { pattern ->
                                     navigator.navigateToEditPattern(pattern)
+                                },
+                                onNavigateToLogin = {
+                                    navigator.navigateToLogin()
                                 }
                             )
                             
