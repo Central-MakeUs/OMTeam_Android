@@ -269,8 +269,6 @@ private fun WithdrawDialog(
                     modifier = Modifier.weight(1f)
                 )
 
-//                Spacer(modifier = Modifier.width(dp8))
-
                 OMTeamButton(
                     text = stringResource(R.string.withdraw_cancel_button),
                     onClick = onDismiss,
