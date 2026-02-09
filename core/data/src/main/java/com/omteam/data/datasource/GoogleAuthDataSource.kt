@@ -77,4 +77,23 @@ class GoogleAuthDataSource @Inject constructor(
             Result.failure(e)
         }
     }
+
+    /**
+     * 구글 연결 해제 (회원탈퇴)
+     *
+     * Credential Manager에 저장된 자격 증명 초기화
+     */
+    override suspend fun withdraw(): Result<Unit> {
+        return try {
+            Timber.d("## 구글 연결 해제 시작")
+            credentialManager.clearCredentialState(
+                ClearCredentialStateRequest()
+            )
+            Timber.d("## 구글 연결 해제 완료")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Timber.e(e, "## 구글 연결 해제 실패: ${e.message}")
+            Result.failure(e)
+        }
+    }
 }

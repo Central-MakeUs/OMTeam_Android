@@ -19,4 +19,15 @@ interface AuthDataSource {
      * @return 성공 시 Unit, 실패 시 Exception을 포함한 Result
      */
     suspend fun logout(): Result<Unit>
+
+    /**
+     * 회원탈퇴 - SNS 연결 해제
+     *
+     * 카카오 : 연결 끊기 (unlink)
+     *
+     * 구글 : Credential 상태 초기화
+     *
+     * @return 성공 시 Unit, 실패 시 Exception을 포함한 Result
+     */
+    suspend fun withdraw(): Result<Unit>
 }

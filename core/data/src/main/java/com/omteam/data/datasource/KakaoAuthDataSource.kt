@@ -39,4 +39,19 @@ class KakaoAuthDataSource @Inject constructor() : AuthDataSource {
             }
         }
     }
+
+    /**
+     * 카카오 연결 끊기 (회원탈퇴)
+     *
+     * 카카오 계정과 앱의 연결 해제
+     */
+    override suspend fun withdraw(): Result<Unit> = suspendCoroutine { continuation ->
+        UserApiClient.instance.unlink { error ->
+            if (error != null) {
+                continuation.resume(Result.failure(error))
+            } else {
+                continuation.resume(Result.success(Unit))
+            }
+        }
+    }
 }

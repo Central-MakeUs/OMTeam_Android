@@ -112,6 +112,18 @@ class AuthRepositoryImpl @Inject constructor(
 
             if (response.success) {
                 Timber.d("## 회원탈퇴 API 성공")
+
+                // 카카오 연결 끊기
+                kakaoAuthDataSource.withdraw()
+                    .onSuccess { Timber.d("## 카카오 연결 끊기 성공") }
+                    .onFailure { e -> Timber.e(e, "## 카카오 연결 끊기 실패 (무시하고 계속) : ${e.message}") }
+
+                // 구글 연결 해제
+                googleAuthDataSource.withdraw()
+                    .onSuccess { Timber.d("## 구글 연결 해제 성공") }
+                    .onFailure { e -> Timber.e(e, "## 구글 연결 해제 실패 (무시하고 계속) : ${e.message}") }
+
+                // 4. 로컬 토큰 삭제
                 tokenDataStore.clearTokens()
                 Timber.d("## 토큰 삭제 완료")
 
@@ -123,7 +135,7 @@ class AuthRepositoryImpl @Inject constructor(
                 Result.failure(Exception("$errorCode : $errorMessage"))
             }
         } catch (e: Exception) {
-            Timber.e(e, "## 회원탈퇴 에러 발생")
+            Timber.e(e, "## 회원탈퇴 예외 발생")
             Result.failure(e)
         }
     }
