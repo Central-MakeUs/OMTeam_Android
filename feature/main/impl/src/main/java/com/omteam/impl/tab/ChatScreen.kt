@@ -1,6 +1,7 @@
 package com.omteam.impl.tab
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
+import com.omteam.domain.model.chat.ChatHistory
 import com.omteam.domain.model.chat.ChatMessage
 import com.omteam.domain.model.chat.ChatOption
 import com.omteam.domain.model.chat.ChatRole
@@ -51,6 +53,7 @@ import com.omteam.impl.viewmodel.ChatViewModel
 import com.omteam.impl.viewmodel.state.ChatHistoryUiState
 import com.omteam.impl.viewmodel.state.SendMessageUiState
 import com.omteam.omt.core.designsystem.R
+import java.time.LocalDateTime
 
 @Composable
 fun ChatScreen(
@@ -81,7 +84,6 @@ fun ChatScreen(
         else -> cachedMessages
     }
 
-    val hasMessages = currentMessages.isNotEmpty()
     val currentMessageCount = currentMessages.size
 
     val isLoading = sendMessageUiState is SendMessageUiState.Loading ||
@@ -103,6 +105,55 @@ fun ChatScreen(
             shouldScrollToBottom = false
         }
     }
+
+    ChatScreenContent(
+        modifier = modifier,
+        currentMessages = currentMessages,
+        isLoading = isLoading,
+        chatHistoryUiState = chatHistoryUiState,
+        sendMessageUiState = sendMessageUiState,
+        scrollState = scrollState,
+        onOptionSelected = { messageId, option ->
+            // 이미 선택된 경우 무시해서 API 중복 호출 방지
+            if (!selectedMessageIds.contains(messageId)) {
+                selectedMessageIds = selectedMessageIds + messageId
+                viewModel.sendMessage(
+                    type = "OPTION",
+                    value = option.label,
+                    optionValue = option.value,
+                    actionType = option.actionType
+                )
+            }
+        },
+        onStartChat = {
+            // 선택 상태 초기화하고 새 채팅 시작
+            selectedMessageIds = emptySet()
+            previousMessageCount = 0
+            viewModel.startChat()
+        },
+        onFetchChatHistory = {
+            viewModel.fetchChatHistory()
+        },
+        isOptionDisabled = { messageId ->
+            selectedMessageIds.contains(messageId)
+        }
+    )
+}
+
+@Composable
+fun ChatScreenContent(
+    modifier: Modifier = Modifier,
+    currentMessages: List<ChatMessage>,
+    isLoading: Boolean,
+    chatHistoryUiState: ChatHistoryUiState,
+    sendMessageUiState: SendMessageUiState,
+    scrollState: ScrollState,
+    onOptionSelected: (Int, ChatOption) -> Unit,
+    onStartChat: () -> Unit,
+    onFetchChatHistory: () -> Unit,
+    isOptionDisabled: (Int) -> Boolean
+) {
+    val hasMessages = currentMessages.isNotEmpty()
 
     Column(
         modifier = modifier
@@ -147,7 +198,7 @@ fun ChatScreen(
                     message = null,
                     onOptionSelected = {}
                 )
-            } else if (chatHistoryUiState is ChatHistoryUiState.Error && cachedMessages.isEmpty()) {
+            } else if (chatHistoryUiState is ChatHistoryUiState.Error && currentMessages.isEmpty()) {
                 // 캐시된 메시지가 없는 에러 상태 UI
                 Spacer(modifier = Modifier.height(dp134))
                 OMTeamText(
@@ -159,7 +210,7 @@ fun ChatScreen(
                 Spacer(modifier = Modifier.height(dp20))
                 OMTeamButton(
                     text = "다시 시도하기",
-                    onClick = { viewModel.fetchChatHistory() },
+                    onClick = onFetchChatHistory,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = dp20)
@@ -182,20 +233,10 @@ fun ChatScreen(
                             ChatRole.ASSISTANT -> {
                                 AssistantMessageBubble(
                                     message = message,
-                                    isOptionDisabled = selectedMessageIds.contains(message.messageId),
                                     onOptionSelected = { option ->
-                                        // 이미 선택된 경우 무시해서 API 중복 호출 방지
-                                        if (!selectedMessageIds.contains(message.messageId)) {
-                                            selectedMessageIds =
-                                                selectedMessageIds + message.messageId
-                                            viewModel.sendMessage(
-                                                type = "OPTION",
-                                                value = option.label,
-                                                optionValue = option.value,
-                                                actionType = option.actionType
-                                            )
-                                        }
-                                    }
+                                        onOptionSelected(message.messageId, option)
+                                    },
+                                    isOptionDisabled = isOptionDisabled(message.messageId)
                                 )
                             }
 
@@ -225,12 +266,7 @@ fun ChatScreen(
         if (!hasMessages && chatHistoryUiState !is ChatHistoryUiState.Error) {
             OMTeamButton(
                 text = stringResource(com.omteam.main.impl.R.string.chat_screen_button),
-                onClick = {
-                    // 선택 상태 초기화하고 새 채팅 시작
-                    selectedMessageIds = emptySet()
-                    previousMessageCount = 0
-                    viewModel.startChat()
-                },
+                onClick = onStartChat,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dp20)
@@ -245,9 +281,9 @@ fun ChatScreen(
 @Composable
 fun AssistantMessageBubble(
     message: ChatMessage?,
-    isOptionDisabled: Boolean = false,
     onOptionSelected: (ChatOption) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isOptionDisabled: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -287,12 +323,12 @@ fun AssistantMessageBubble(
                     options.forEach { option ->
                         OptionButton(
                             option = option,
-                            isEnabled = !isOptionDisabled,
                             onClick = {
                                 if (!isOptionDisabled) {
                                     onOptionSelected(option)
                                 }
-                            }
+                            },
+                            isEnabled = !isOptionDisabled
                         )
                     }
                 }
@@ -332,9 +368,9 @@ fun buildAnnotatedStringWithBold(text: String) = buildAnnotatedString {
 @Composable
 fun OptionButton(
     option: ChatOption,
-    isEnabled: Boolean = true,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true
 ) {
     Box(
         modifier = modifier
@@ -429,6 +465,98 @@ fun SimpleChatBubbleWithX(
 
 @Preview(showBackground = true)
 @Composable
-private fun ChatScreenPreview() {
-    ChatScreen()
+private fun ChatScreenContentPreview() {
+    val sampleMessages = listOf(
+        ChatMessage(
+            messageId = 1,
+            role = ChatRole.ASSISTANT,
+            content = "안녕하세요! **OMT**입니다. 오늘은 어떤 미션을 수행하고 싶으신가요?",
+            options = listOf(
+                ChatOption(label = "운동 미션", value = "exercise", actionType = "START_MISSION"),
+                ChatOption(label = "식단 미션", value = "diet", actionType = "START_MISSION"),
+                ChatOption(label = "수면 미션", value = "sleep", actionType = "START_MISSION")
+            ),
+            createdAt = LocalDateTime.now(),
+            terminal = false
+        ),
+        ChatMessage(
+            messageId = 2,
+            role = ChatRole.USER,
+            content = "운동 미션",
+            options = emptyList(),
+            createdAt = LocalDateTime.now(),
+            terminal = false
+        ),
+        ChatMessage(
+            messageId = 3,
+            role = ChatRole.ASSISTANT,
+            content = "좋은 선택이에요! **30분 걷기** 미션을 시작해보세요.",
+            options = listOf(
+                ChatOption(label = "미션 시작하기", value = "start", actionType = "CONFIRM")
+            ),
+            createdAt = LocalDateTime.now(),
+            terminal = false
+        )
+    )
+
+    ChatScreenContent(
+        currentMessages = sampleMessages,
+        isLoading = false,
+        chatHistoryUiState = ChatHistoryUiState.Success(
+            ChatHistory(
+                hasActiveSession = true,
+                hasMore = false,
+                messages = sampleMessages
+            )
+        ),
+        sendMessageUiState = SendMessageUiState.Idle,
+        scrollState = rememberScrollState(),
+        onOptionSelected = { _, _ -> },
+        onStartChat = {},
+        onFetchChatHistory = {},
+        isOptionDisabled = { false }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChatScreenContentEmptyPreview() {
+    ChatScreenContent(
+        currentMessages = emptyList(),
+        isLoading = false,
+        chatHistoryUiState = ChatHistoryUiState.Idle,
+        sendMessageUiState = SendMessageUiState.Idle,
+        scrollState = rememberScrollState(),
+        onOptionSelected = { _, _ -> },
+        onStartChat = {},
+        onFetchChatHistory = {},
+        isOptionDisabled = { false }
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AssistantMessageBubblePreview() {
+    val sampleMessage = ChatMessage(
+        messageId = 1,
+        role = ChatRole.ASSISTANT,
+        content = "안녕하세요! **OMT**입니다.\n오늘은 어떤 미션을 수행하고 싶으신가요?",
+        options = listOf(
+            ChatOption(label = "운동 미션", value = "exercise", actionType = "START_MISSION"),
+            ChatOption(label = "식단 미션", value = "diet", actionType = "START_MISSION")
+        ),
+        createdAt = LocalDateTime.now(),
+        terminal = false
+    )
+
+    AssistantMessageBubble(
+        message = sampleMessage,
+        onOptionSelected = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UserMessageBubblePreview() {
+    UserMessageBubble(text = "운동 미션 시작해줘")
 }
