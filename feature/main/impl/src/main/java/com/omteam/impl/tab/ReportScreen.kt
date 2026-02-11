@@ -452,16 +452,15 @@ private fun FailureReasonItem(
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 순위 텍스트
         OMTeamText(
             text = "${rank}위",
             style = PretendardType.button03Abled,
             color = if (isFirst) Green08 else GreenSub07Button
         )
 
-        Spacer(modifier = Modifier.height(dp16))
+        Spacer(modifier = Modifier.width(dp16))
 
-        // 사유 텍스트
+        // 미션이 힘들었던 이유
         OMTeamText(
             text = reason,
             style = if (isFirst) PretendardType.button01Enabled else PretendardType.button02Disabled,
