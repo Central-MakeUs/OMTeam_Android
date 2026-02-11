@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,7 +21,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
+import com.omteam.designsystem.component.textfield.OMTeamBorderlessTextField
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.chat.ChatHistory
@@ -136,6 +141,15 @@ fun ChatScreen(
         },
         isOptionDisabled = { messageId ->
             selectedMessageIds.contains(messageId)
+        },
+        onSendMessage = { message ->
+            // 실패 사유 전송
+            viewModel.sendMessage(
+                type = "TEXT",
+                value = message,
+                optionValue = null,
+                actionType = "MISSION_FAILURE_REASON"
+            )
         }
     )
 }
@@ -151,9 +165,11 @@ fun ChatScreenContent(
     onOptionSelected: (Int, ChatOption) -> Unit,
     onStartChat: () -> Unit,
     onFetchChatHistory: () -> Unit,
-    isOptionDisabled: (Int) -> Boolean
+    isOptionDisabled: (Int) -> Boolean,
+    onSendMessage: (String) -> Unit = {}
 ) {
     val hasMessages = currentMessages.isNotEmpty()
+    var messageText by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -262,14 +278,112 @@ fun ChatScreenContent(
             Spacer(modifier = Modifier.height(dp20))
         }
 
-        // 채팅 시작하기 버튼
+        // 채팅 시작하기 버튼 또는 메시지 입력 영역
         if (!hasMessages && chatHistoryUiState !is ChatHistoryUiState.Error) {
+            // 초기 상태 - 채팅 시작하기 버튼
             OMTeamButton(
                 text = stringResource(com.omteam.main.impl.R.string.chat_screen_button),
                 onClick = onStartChat,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dp20)
+            )
+        } else if (hasMessages || chatHistoryUiState is ChatHistoryUiState.Success) {
+            // 채팅 중 - 메시지 입력 영역
+            ChatInputArea(
+                messageText = messageText,
+                onMessageTextChange = { messageText = it },
+                onSendClick = {
+                    if (messageText.isNotBlank()) {
+                        onSendMessage(messageText)
+                        messageText = ""
+                    }
+                },
+                isEnabled = !isLoading
+            )
+        }
+    }
+}
+
+/**
+ * 메시지 입력 영역
+ *
+ * 하단 탭 바로 위에 표시되는 메시지 입력 필드와 전송 버튼
+ */
+@Composable
+private fun ChatInputArea(
+    messageText: String,
+    onMessageTextChange: (String) -> Unit,
+    onSendClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isEnabled: Boolean = true
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Gray01)
+            .border(
+                width = dp1,
+                color = GreenSub02,
+                shape = RoundedCornerShape(dp0)
+            )
+            .padding(horizontal = dp20, vertical = dp8),
+        horizontalArrangement = Arrangement.spacedBy(dp8),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // 메시지 입력란
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(dp48)
+                .clip(RoundedCornerShape(dp8))
+                .background(White)
+                .border(
+                    width = dp1,
+                    color = GreenSub03Button,
+                    shape = RoundedCornerShape(dp8)
+                )
+                .padding(horizontal = dp12, vertical = dp15),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            OMTeamBorderlessTextField(
+                value = messageText,
+                onValueChange = onMessageTextChange,
+                enabled = isEnabled,
+                placeholder = "메시지를 입력해주세요.",
+                textStyle = PretendardType.body03_1,
+                placeholderColor = Gray07,
+                textColor = Gray12,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Send
+                ),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        if (messageText.isNotBlank()) {
+                            onSendClick()
+                        }
+                    }
+                ),
+                singleLine = true
+            )
+        }
+
+        // 전송 버튼
+        Box(
+            modifier = Modifier
+                .size(dp48)
+                .clip(RoundedCornerShape(dp10))
+                .background(Green07)
+                .clickable(
+                    enabled = isEnabled && messageText.isNotBlank(),
+                    onClick = onSendClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.icon_arrow_up),
+                contentDescription = "전송",
+                modifier = Modifier.size(dp24)
             )
         }
     }
@@ -514,7 +628,8 @@ private fun ChatScreenContentPreview() {
         onOptionSelected = { _, _ -> },
         onStartChat = {},
         onFetchChatHistory = {},
-        isOptionDisabled = { false }
+        isOptionDisabled = { false },
+        onSendMessage = {}
     )
 }
 
@@ -530,7 +645,8 @@ private fun ChatScreenContentEmptyPreview() {
         onOptionSelected = { _, _ -> },
         onStartChat = {},
         onFetchChatHistory = {},
-        isOptionDisabled = { false }
+        isOptionDisabled = { false },
+        onSendMessage = {}
     )
 }
 
