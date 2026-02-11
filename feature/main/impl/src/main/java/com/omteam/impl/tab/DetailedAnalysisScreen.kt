@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -524,14 +525,21 @@ private fun WeeklyGraphRow(
         dayOfWeekStats.find { it.dayOfWeek == day }
     }
 
+    // 가장 낮은 성공 횟수
+    val minCount = orderedStats.filterNotNull()
+        .minOfOrNull { it.successCount } ?: 0
+
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(dp110),
         horizontalArrangement = Arrangement.spacedBy(dp4)
     ) {
         orderedStats.forEach { stat ->
             DayGraphItem(
                 dayName = stat?.dayName ?: "",
                 successCount = stat?.successCount ?: 0,
+                minCount = minCount,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -545,26 +553,56 @@ private fun WeeklyGraphRow(
 private fun DayGraphItem(
     dayName: String,
     successCount: Int,
+    minCount: Int,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val graphRes = when {
-            successCount <= 0 -> R.drawable.graph_green_0
-            successCount >= 5 -> R.drawable.graph_green_5
-            else -> R.drawable.graph_gray_0
+        // 상단 공간을 채워 이미지를 밑으로 밀어냄
+        Spacer(modifier = Modifier.weight(1f))
+
+        // successCount 값에 따른 이미지 선택 (0~5)
+        val level = successCount.coerceIn(0, 5)
+        // 가장 적은 수치의 날에만 녹색 그래프, 나머지는 회색 그래프
+        val graphRes = if (successCount == minCount) {
+            when (level) {
+                0 -> R.drawable.graph_green_0
+                1 -> R.drawable.graph_green_1
+                2 -> R.drawable.graph_green_2
+                3 -> R.drawable.graph_green_3
+                4 -> R.drawable.graph_green_4
+                5 -> R.drawable.graph_green_5
+                else -> R.drawable.graph_green_0
+            }
+        } else {
+            when (level) {
+                0 -> R.drawable.graph_gray_0
+                1 -> R.drawable.graph_gray_1
+                2 -> R.drawable.graph_gray_2
+                3 -> R.drawable.graph_gray_3
+                4 -> R.drawable.graph_gray_4
+                5 -> R.drawable.graph_gray_5
+                else -> R.drawable.graph_gray_0
+            }
         }
 
-        Image(
-            painter = painterResource(id = graphRes),
-            contentDescription = null,
+        // 고정 높이 컨테이너 안에서 이미지를 하단 정렬로 표시
+        Box(
             modifier = Modifier
                 .width(dp36)
-                .height(dp24)
-        )
+                .height(dp24),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Image(
+                painter = painterResource(id = graphRes),
+                contentDescription = null,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
 
+        // 그래프 이미지, dayName 사이 세로 간격
         Spacer(modifier = Modifier.height(dp8))
 
         OMTeamText(
