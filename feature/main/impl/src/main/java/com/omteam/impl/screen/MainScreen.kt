@@ -80,7 +80,8 @@ fun MainScreenContent(
         ) {
             when (selectedTabIndex) {
                 0 -> HomeScreen(
-                    onNavigateToChat = onNavigateToChat
+                    onNavigateToChat = onNavigateToChat,
+                    onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
                 )
                 1 -> ChatScreen()
                 2 -> ReportScreen(
