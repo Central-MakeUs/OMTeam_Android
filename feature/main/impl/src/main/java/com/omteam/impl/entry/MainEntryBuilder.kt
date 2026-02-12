@@ -16,13 +16,15 @@ import timber.log.Timber
  * @param onNavigateToEditMyGoal 나의 목표 수정하기 화면 이동 콜백 (현재 목표 텍스트 전달)
  * @param onNavigateToEditMyInfo 내 정보 수정하기 화면 이동 콜백
  * @param onNavigateToDetailedAnalysis 상세 분석 보기 화면 이동 콜백
+ * @param onNavigateToChat 채팅 탭(1번) 이동 콜백
  */
 fun EntryProviderScope<NavKey>.mainEntry(
     onSignOut: () -> Unit,
     onNavigateToOther: () -> Unit,
     onNavigateToEditMyGoal: (String) -> Unit,
     onNavigateToEditMyInfo: () -> Unit,
-    onNavigateToDetailedAnalysis: () -> Unit = {}
+    onNavigateToDetailedAnalysis: () -> Unit = {},
+    onNavigateToChat: (MainViewModel) -> Unit = {},
 ) {
     entry<MainNavKey> {
         Timber.e("## 메인 화면 이동")
@@ -37,7 +39,8 @@ fun EntryProviderScope<NavKey>.mainEntry(
             onNavigateToOther = onNavigateToOther,
             onNavigateToEditMyGoal = onNavigateToEditMyGoal,
             onNavigateToEditMyInfo = onNavigateToEditMyInfo,
-            onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
+            onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis,
+            onNavigateToChat = { onNavigateToChat(mainViewModel) }
         )
     }
 }

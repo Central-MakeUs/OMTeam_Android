@@ -33,6 +33,7 @@ fun MainScreen(
     onNavigateToEditMyGoal: (String) -> Unit = {},
     onNavigateToEditMyInfo: () -> Unit = {},
     onNavigateToDetailedAnalysis: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
@@ -47,7 +48,9 @@ fun MainScreen(
                 .fillMaxWidth()
         ) {
             when (selectedTabIndex) {
-                0 -> HomeScreen()
+                0 -> HomeScreen(
+                    onNavigateToChat = onNavigateToChat
+                )
                 1 -> ChatScreen()
                 2 -> ReportScreen(
                     onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
