@@ -133,6 +133,10 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateToDetailedAnalysis = {
                                     navigator.navigateToDetailedAnalysis()
+                                },
+                                onNavigateToChat = { mainViewModel ->
+                                    // "미션 인증하기" 클릭 시 채팅 화면 이동
+                                    mainViewModel.selectTab(1)
                                 }
                             )
 

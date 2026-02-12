@@ -54,14 +54,20 @@ fun OtherScreen(
         OtherMenuItem(
             iconRes = R.drawable.icon_announcement,
             text = stringResource(R.string.notice_title),
-            onClick = { Timber.d("## 공지사항 클릭") }
+            onClick = {
+                Timber.d("## 공지사항 클릭")
+                onNavigateToWebView(BuildConfig.NOTICE_WEBVIEW)
+            }
         )
         OtherMenuDivider()
 
         OtherMenuItem(
             iconRes = R.drawable.icon_inquiry,
             text = stringResource(R.string.faq_title),
-            onClick = { Timber.d("## FAQ 클릭") }
+            onClick = {
+                Timber.d("## FAQ 클릭")
+                onNavigateToWebView(BuildConfig.FAQ_WEBVIEW)
+            }
         )
         OtherMenuDivider()
 

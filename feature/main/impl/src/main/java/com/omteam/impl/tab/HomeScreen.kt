@@ -60,7 +60,8 @@ import java.util.Locale
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
-    chatViewModel: ChatViewModel = hiltViewModel()
+    chatViewModel: ChatViewModel = hiltViewModel(),
+    onNavigateToChat: () -> Unit = {}
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
@@ -91,6 +92,8 @@ fun HomeScreen(
                 value = "미션 인증",
                 actionType = actionType
             )
+            // 채팅 탭(1번)으로 이동
+            onNavigateToChat()
         },
         modifier = modifier
     )
