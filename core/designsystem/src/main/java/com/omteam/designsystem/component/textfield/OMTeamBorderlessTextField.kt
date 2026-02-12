@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
@@ -22,6 +23,9 @@ import com.omteam.designsystem.theme.*
 
 /**
  * 테두리 없는 TextField
+ *
+ * @param placeholderColor placeholder 텍스트 색상 (기본값: Gray11)
+ * @param textColor 입력 텍스트 색상 (기본값: Gray11)
  */
 @Composable
 fun OMTeamBorderlessTextField(
@@ -30,6 +34,8 @@ fun OMTeamBorderlessTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     textStyle: TextStyle = PaperlogyType.headline03,
+    placeholderColor: Color = Gray11,
+    textColor: Color = Gray11,
     enabled: Boolean = true,
     singleLine: Boolean = true,
     maxLines: Int = 1,
@@ -47,7 +53,7 @@ fun OMTeamBorderlessTextField(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         textStyle = textStyle.copy(
-            color = Gray11,
+            color = textColor,
             textAlign = TextAlign.Start
         ),
         keyboardOptions = keyboardOptions,
@@ -55,7 +61,7 @@ fun OMTeamBorderlessTextField(
         singleLine = singleLine,
         maxLines = maxLines,
         visualTransformation = visualTransformation,
-        cursorBrush = SolidColor(Gray11),
+        cursorBrush = SolidColor(textColor),
         decorationBox = { innerTextField ->
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -66,7 +72,7 @@ fun OMTeamBorderlessTextField(
                     Text(
                         text = placeholder,
                         style = textStyle,
-                        color = Gray11,
+                        color = placeholderColor,
                         textAlign = TextAlign.Start
                     )
                 }
