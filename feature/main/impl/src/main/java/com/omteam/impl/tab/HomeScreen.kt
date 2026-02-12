@@ -1,5 +1,6 @@
 package com.omteam.impl.tab
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,26 +31,36 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.domain.model.character.CharacterInfo
+import com.omteam.domain.model.report.AiFeedback
+import com.omteam.domain.model.report.TypeSuccessCount
+import com.omteam.domain.model.report.WeeklyReport
 import com.omteam.impl.component.mission.*
 import com.omteam.impl.viewmodel.ChatViewModel
+import com.omteam.impl.viewmodel.HomeViewModel
+import com.omteam.impl.viewmodel.ReportViewModel
 import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
 import com.omteam.impl.viewmodel.state.DailyAppleData
 import com.omteam.impl.viewmodel.state.DailyMissionRecommendationUiState
 import com.omteam.impl.viewmodel.state.DailyMissionUiState
-import com.omteam.impl.viewmodel.HomeViewModel
+import com.omteam.impl.viewmodel.state.WeeklyReportUiState
 import com.omteam.omt.core.designsystem.R
 import timber.log.Timber
 import java.time.LocalDate
@@ -61,11 +72,13 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
     chatViewModel: ChatViewModel = hiltViewModel(),
+    reportViewModel: ReportViewModel = hiltViewModel(),
     onNavigateToChat: () -> Unit = {}
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
     val dailyMissionRecommendationUiState by homeViewModel.dailyMissionRecommendationUiState.collectAsStateWithLifecycle()
+    val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsStateWithLifecycle()
 
     var showMissionRecommendationBottomSheet by remember { mutableStateOf(false) }
 
@@ -74,11 +87,14 @@ fun HomeScreen(
             fetchDailyMissionStatus()
             fetchCharacterInfo()
         }
+        // 주간 리포트 조회 (현재 주 기준)
+        reportViewModel.fetchWeeklyReport(useSelectedDate = true)
     }
 
     HomeScreenContent(
         dailyMissionUiState = dailyMissionUiState,
         characterUiState = characterUiState,
+        weeklyReportUiState = weeklyReportUiState,
         weekDays = homeViewModel.getCurrentWeekDays(),
         onRequestMissionClick = {
             // 미션 제안받기 API 호출
@@ -200,6 +216,7 @@ fun HomeScreen(
 fun HomeScreenContent(
     dailyMissionUiState: DailyMissionUiState,
     characterUiState: CharacterUiState,
+    weeklyReportUiState: WeeklyReportUiState,
     weekDays: List<DailyAppleData>,
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
@@ -275,11 +292,11 @@ fun HomeScreenContent(
                         // 격려 메시지 표시
                         when (characterUiState) {
                             is CharacterUiState.Success -> {
-                                TextWithTriangle(text = characterUiState.data.encouragementMessage)
+                                CharacterDialogue(text = characterUiState.data.encouragementMessage)
                             }
 
                             else -> {
-                                TextWithTriangle(text = "오늘도 힘내세요!")
+                                CharacterDialogue(text = "오늘도 힘내세요!")
                             }
                         }
 
@@ -291,8 +308,8 @@ fun HomeScreenContent(
                             contentDescription = "캐릭터 이미지",
                             modifier = Modifier
                                 .size(
-                                    width = 150.dp,
-                                    height = 133.dp
+                                    width = dp150,
+                                    height = dp133
                                 )
                                 .align(Alignment.CenterHorizontally),
                         )
@@ -480,41 +497,11 @@ fun HomeScreenContent(
 
             Spacer(modifier = Modifier.height(dp24))
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = dp32),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(dp81)
-                        .background(
-                            color = ErrorBottomSheetBackground,
-                            shape = CircleShape
-                        )
-                )
-
-                Spacer(modifier = Modifier.width(dp16))
-
-                Column(
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .padding(vertical = 12.dp)
-                ) {
-                    OMTeamText(
-                        text = "아직 분석할 데이터가 없어요!",
-                        style = PaperlogyType.body01
-                    )
-
-                    Spacer(modifier = Modifier.height(dp6))
-
-                    OMTeamText(
-                        text = "OMT와 함께 미션을 수행하며 데이터를\n쌓아보아요!",
-                        style = PretendardType.body04_3,
-                        color = Gray09,
-                    )
-                }
-            }
+            // 주간 리포트 분석 요약 영역
+            WeeklyAnalysisSummaryView(
+                weeklyReportUiState = weeklyReportUiState,
+                modifier = Modifier.padding(start = dp32)
+            )
 
             Spacer(modifier = Modifier.height(dp20))
         }
@@ -522,10 +509,10 @@ fun HomeScreenContent(
 }
 
 /**
- * 둥근 모서리 박스 안에 텍스트를 표시하고 하단 중앙에 삼각형을 표시하는 컴포저블
+ * 둥근 모서리 박스 안에 캐릭터 대사 표시
  */
 @Composable
-fun TextWithTriangle(
+fun CharacterDialogue(
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -623,6 +610,243 @@ fun DailyAppleItem(
     }
 }
 
+/**
+ * 원형 프로그레스 바 컴포저블
+ *
+ * @param progress 진행률 (0.0 ~ 1.0)
+ * @param progressPercent 중앙에 표시할 진행률 텍스트 (23.4%)
+ * @param size 원형 프로그레스 바의 크기 (기본값 81dp)
+ * @param strokeWidth 원형 선의 두께 (기본값 8dp)
+ * @param backgroundColor 배경 원의 색상 (기본값 Gray05)
+ * @param progressColor 진행률 표시 색상 (기본값 Green05)
+ */
+@Composable
+fun CircularProgressBar(
+    progress: Float,
+    progressPercent: String,
+    modifier: Modifier = Modifier,
+    size: Dp = dp81,
+    strokeWidth: Dp = dp8,
+    backgroundColor: Color = Gray05,
+    progressColor: Color = Green05
+) {
+    Box(
+        modifier = modifier.size(size),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val canvasWidth = size.toPx()
+            val canvasHeight = size.toPx()
+            val strokeWidthPx = strokeWidth.toPx()
+            val diameter = canvasWidth.coerceAtMost(canvasHeight) - strokeWidthPx
+
+            // 배경 원 (회색 트랙)
+            drawArc(
+                color = backgroundColor,
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = Offset(
+                    (canvasWidth - diameter) / 2,
+                    (canvasHeight - diameter) / 2
+                ),
+                size = Size(diameter, diameter),
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+            )
+
+            // 진행률 원 (녹색) - 12시 방향(-90도)부터 시계 방향으로 그리기
+            val sweepAngle = (progress * 360).coerceIn(0f, 360f)
+            drawArc(
+                color = progressColor,
+                startAngle = -90f,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                topLeft = Offset(
+                    (canvasWidth - diameter) / 2,
+                    (canvasHeight - diameter) / 2
+                ),
+                size = Size(diameter, diameter),
+                style = Stroke(width = strokeWidthPx, cap = StrokeCap.Round)
+            )
+        }
+
+        // 중앙 진행률 텍스트
+        OMTeamText(
+            text = progressPercent,
+            style = PaperlogyType.circularProgressPercent,
+            color = Green09,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+/**
+ * 주간 리포트 분석 요약 뷰 컴포저블
+ *
+ * 원형 프로그레스 바와 주간 성공 개수 및 피드백 텍스트를 표시
+ *
+ * @param weeklyReportUiState 주간 리포트 UI 상태
+ */
+@Composable
+fun WeeklyAnalysisSummaryView(
+    weeklyReportUiState: WeeklyReportUiState,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) {
+        when (weeklyReportUiState) {
+            is WeeklyReportUiState.Success -> {
+                val weeklyReport = weeklyReportUiState.data
+                val successRate = (weeklyReport.thisWeekSuccessRate.toFloat() / 100f).coerceIn(0f, 1f)
+                // 한 자릿수 소수로 포맷팅 (23.4%)
+                val successRatePercent = String.format(Locale.getDefault(), "%.1f%%", weeklyReport.thisWeekSuccessRate)
+                val successCount = weeklyReport.thisWeekSuccessCount
+                val weeklyFeedback = weeklyReport.aiFeedback.weeklyFeedback ?: "이번 주 미션 분석 데이터를 준비 중이에요!"
+
+                // 원형 프로그레스 바
+                CircularProgressBar(
+                    progress = successRate,
+                    progressPercent = successRatePercent,
+                    size = dp81,
+                    strokeWidth = dp8,
+                    backgroundColor = Gray05,
+                    progressColor = Green05
+                )
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                // 텍스트 영역 - 원형 프로그레스바 위에서부터 35dp 떨어진 곳에 배치
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = dp35)
+                ) {
+                    Row {
+                        OMTeamText(
+                            text = "이번주에 ",
+                            style = PaperlogyType.analysisSummaryCountBase,
+                            color = Gray11
+                        )
+                        OMTeamText(
+                            text = "미션 ${successCount}개",
+                            style = PaperlogyType.analysisSummaryCountHighlight,
+                            color = Green09
+                        )
+                        OMTeamText(
+                            text = "를 성공했어요!",
+                            style = PaperlogyType.analysisSummaryCountBase,
+                            color = Gray11
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(dp8))
+
+                    // 주간 피드백 텍스트
+                    OMTeamText(
+                        text = weeklyFeedback,
+                        style = PretendardType.analysisSummaryFeedback,
+                        color = Gray10
+                    )
+                }
+            }
+
+            is WeeklyReportUiState.Loading -> {
+                // 로딩 상태 - 회색 원형 프로그레스 바만 표시
+                CircularProgressBar(
+                    progress = 0f,
+                    progressPercent = "--%",
+                    size = dp81,
+                    strokeWidth = dp8,
+                    backgroundColor = Gray05,
+                    progressColor = Green05
+                )
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = dp35)
+                ) {
+                    OMTeamText(
+                        text = "분석 데이터 불러오는 중...",
+                        style = PaperlogyType.body01,
+                        color = Gray08
+                    )
+                }
+            }
+
+            is WeeklyReportUiState.Error -> {
+                // 에러 상태
+                Box(
+                    modifier = Modifier
+                        .size(dp81)
+                        .background(
+                            color = Gray03,
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    OMTeamText(
+                        text = "!",
+                        style = PaperlogyType.headline02,
+                        color = Error
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(top = dp35)
+                ) {
+                    OMTeamText(
+                        text = "데이터를 불러오지 못했어요",
+                        style = PaperlogyType.body01,
+                        color = Gray08
+                    )
+                }
+            }
+
+            else -> {
+                // Idle 상태 - 기본 회색 원 표시
+                Box(
+                    modifier = Modifier
+                        .size(dp81)
+                        .background(
+                            color = ErrorBottomSheetBackground,
+                            shape = CircleShape
+                        )
+                )
+
+                Spacer(modifier = Modifier.width(dp16))
+
+                Column(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(vertical = dp12)
+                ) {
+                    OMTeamText(
+                        text = "아직 분석할 데이터가 없어요!",
+                        style = PaperlogyType.body01
+                    )
+
+                    Spacer(modifier = Modifier.height(dp6))
+
+                    OMTeamText(
+                        text = "OMT와 함께 미션을 수행하며 데이터를\n쌓아보아요!",
+                        style = PretendardType.body04_3,
+                        color = Gray09,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenContentPreview() {
@@ -635,6 +859,25 @@ private fun HomeScreenContentPreview() {
         DailyAppleData(LocalDate.now(), 19, AppleStatus.DEFAULT),
         DailyAppleData(LocalDate.now(), 20, AppleStatus.FAILED)
     )
+
+    val sampleWeeklyReport = WeeklyReport(
+        weekStartDate = LocalDate.now().minusDays(6),
+        weekEndDate = LocalDate.now(),
+        thisWeekSuccessRate = 71.4,
+        lastWeekSuccessRate = 60.0,
+        thisWeekSuccessCount = 5,
+        dailyResults = emptyList(),
+        typeSuccessCounts = listOf(
+            TypeSuccessCount("EXERCISE", "운동", 3),
+            TypeSuccessCount("NUTRITION", "영양", 2)
+        ),
+        topFailureReasons = emptyList(),
+        aiFeedback = AiFeedback(
+            failureReasonRanking = null,
+            weeklyFeedback = "운동 미션을 꾸준히 수행하셨네요! 다음 주도 화이팅!"
+        )
+    )
+
     HomeScreenContent(
         dailyMissionUiState = DailyMissionUiState.Idle,
         characterUiState = CharacterUiState.Success(
@@ -647,6 +890,7 @@ private fun HomeScreenContentPreview() {
                 encouragementMessage = "오늘도 화이팅!"
             )
         ),
+        weeklyReportUiState = WeeklyReportUiState.Success(sampleWeeklyReport),
         weekDays = weeklyData
     )
 }
@@ -664,4 +908,67 @@ private fun WeeklyAppleViewPreview() {
         DailyAppleData(LocalDate.now(), 20, AppleStatus.FAILED)
     )
     WeeklyAppleView(weekDays = sampleData)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CircularProgressBarPreview() {
+    Column(
+        modifier = Modifier.padding(dp16),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(dp16)
+    ) {
+        // 0% 진행률
+        CircularProgressBar(progress = 0f, progressPercent = "0.0%")
+        // 50% 진행률
+        CircularProgressBar(progress = 0.5f, progressPercent = "50.0%")
+        // 75% 진행률
+        CircularProgressBar(progress = 0.75f, progressPercent = "75.0%")
+        // 100% 진행률
+        CircularProgressBar(progress = 1f, progressPercent = "100.0%")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun WeeklyAnalysisSummaryViewPreview() {
+    val sampleWeeklyReport = WeeklyReport(
+        weekStartDate = LocalDate.now().minusDays(6),
+        weekEndDate = LocalDate.now(),
+        thisWeekSuccessRate = 71.4,
+        lastWeekSuccessRate = 60.0,
+        thisWeekSuccessCount = 5,
+        dailyResults = emptyList(),
+        typeSuccessCounts = listOf(
+            TypeSuccessCount("EXERCISE", "운동", 3),
+            TypeSuccessCount("NUTRITION", "영양", 2)
+        ),
+        topFailureReasons = emptyList(),
+        aiFeedback = AiFeedback(
+            failureReasonRanking = null,
+            weeklyFeedback = "운동 미션을 꾸준히 수행하셨네요! 다음 주도 화이팅!"
+        )
+    )
+
+    Column(
+        modifier = Modifier.padding(dp16),
+        verticalArrangement = Arrangement.spacedBy(dp16)
+    ) {
+        // 성공 상태
+        WeeklyAnalysisSummaryView(
+            weeklyReportUiState = WeeklyReportUiState.Success(sampleWeeklyReport)
+        )
+        // 로딩 상태
+        WeeklyAnalysisSummaryView(
+            weeklyReportUiState = WeeklyReportUiState.Loading
+        )
+        // 에러 상태
+        WeeklyAnalysisSummaryView(
+            weeklyReportUiState = WeeklyReportUiState.Error("네트워크 오류")
+        )
+        // Idle 상태
+        WeeklyAnalysisSummaryView(
+            weeklyReportUiState = WeeklyReportUiState.Idle
+        )
+    }
 }

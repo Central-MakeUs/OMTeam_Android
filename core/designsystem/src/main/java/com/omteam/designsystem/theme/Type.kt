@@ -132,12 +132,36 @@ object PaperlogyType {
         letterSpacing = 0.sp
     )
 
+    val circularProgressPercent = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold, // 700
+        lineHeight = 14.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
     // Body
     val body01 = TextStyle(
         fontFamily = PaperlogyFont,
         fontSize = 16.sp,
         fontWeight = FontWeight.Medium, // 500
         lineHeight = 16.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val analysisSummaryCountBase = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 15.sp,  // 100%
+        letterSpacing = 0.sp
+    )
+
+    val analysisSummaryCountHighlight = TextStyle(
+        fontFamily = PaperlogyFont,
+        fontSize = 15.sp,
+        fontWeight = FontWeight.SemiBold, // 600
+        lineHeight = 15.sp,  // 100%
         letterSpacing = 0.sp
     )
 }
@@ -241,6 +265,14 @@ object PretendardType {
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal, // 400
         lineHeight = 19.6.sp,  // 140% (14px × 1.4 = 19.6px)
+        letterSpacing = (-0.056).sp
+    )
+
+    val analysisSummaryFeedback = TextStyle(
+        fontFamily = PretendardFont,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal, // 400
+        lineHeight = 19.6.sp,  // 140%
         letterSpacing = (-0.056).sp
     )
 
