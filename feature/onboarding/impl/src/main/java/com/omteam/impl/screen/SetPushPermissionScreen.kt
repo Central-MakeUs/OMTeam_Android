@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.impl.viewmodel.OnboardingViewModel
@@ -40,14 +41,7 @@ fun SetPushPermissionScreen(
     onNavigateToMain: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
-    var selectedFavoriteExercise by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
-
     val submitState by viewModel.submitState.collectAsStateWithLifecycle()
-
-    val grantText = stringResource(R.string.grant)
-    val notGrantText = stringResource(R.string.not_grant)
 
     // 온보딩 값 제출 상태 관찰
     LaunchedEffect(submitState) {
@@ -59,9 +53,43 @@ fun SetPushPermissionScreen(
             }
             is SubmitState.Error -> {
                 // 에러 메시지 표시
+                viewModel.resetSubmitState()
+            }
+            else -> {}
+        }
+    }
+
+    SetPushPermissionScreenContent(
+        submitState = submitState,
+        onPushGranted = onPushGranted,
+        onBack = onBack,
+        onSubmitOnboarding = { viewModel.submitOnboarding() },
+        onUpdatePushPermission = { isGranted -> viewModel.updatePushPermission(isGranted) }
+    )
+}
+
+@Composable
+fun SetPushPermissionScreenContent(
+    submitState: SubmitState,
+    onPushGranted: (String) -> Unit = {},
+    onBack: () -> Unit = {},
+    onSubmitOnboarding: () -> Unit = {},
+    onUpdatePushPermission: (Boolean) -> Unit = {}
+) {
+    var selectedFavoriteExercise by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
+    val grantText = stringResource(R.string.grant)
+    val notGrantText = stringResource(R.string.not_grant)
+
+    // 온보딩 값 제출 상태 관찰
+    LaunchedEffect(submitState) {
+        when (submitState) {
+            is SubmitState.Error -> {
+                // 에러 메시지 표시
                 errorMessage = (submitState as SubmitState.Error).message
                 showError = true
-                viewModel.resetSubmitState()
             }
             else -> {}
         }
@@ -103,7 +131,7 @@ fun SetPushPermissionScreen(
                             selectedFavoriteExercise = grantText
                             true
                         }
-                        viewModel.updatePushPermission(isGranted)
+                        onUpdatePushPermission(isGranted)
                         onPushGranted(selectedFavoriteExercise)
                     },
                 )
@@ -122,7 +150,7 @@ fun SetPushPermissionScreen(
                             selectedFavoriteExercise = notGrantText
                             false  // "허용 안 함" 선택 시 false
                         }
-                        viewModel.updatePushPermission(isGranted)
+                        onUpdatePushPermission(isGranted)
                         onPushGranted(selectedFavoriteExercise)
                     }
                 )
@@ -154,7 +182,7 @@ fun SetPushPermissionScreen(
                     onClick = {
                         if (selectedFavoriteExercise.isNotEmpty()) {
                             // 온보딩 정보 제출
-                            viewModel.submitOnboarding()
+                            onSubmitOnboarding()
                         }
                     },
                     height = dp60,
@@ -185,4 +213,16 @@ fun SetPushPermissionScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SetPushPermissionScreenContentPreview() {
+    SetPushPermissionScreenContent(
+        submitState = SubmitState.Idle,
+        onPushGranted = {},
+        onBack = {},
+        onSubmitOnboarding = {},
+        onUpdatePushPermission = {}
+    )
 }
