@@ -226,6 +226,8 @@ fun HomeScreenContent(
     onVerifyMissionClick: (actionType: String) -> Unit = {},
     onNavigateToDetailedAnalysis: () -> Unit = {}
 ) {
+    val scrollState = rememberScrollState()
+    
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -235,7 +237,7 @@ fun HomeScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
