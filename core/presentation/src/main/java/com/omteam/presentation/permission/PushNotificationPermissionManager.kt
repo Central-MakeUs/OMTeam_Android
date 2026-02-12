@@ -38,8 +38,9 @@ enum class PushPermissionStatus {
 /**
  * 푸시 알림 권한 매니저
  *
- * Android 13+에서 POST_NOTIFICATIONS 런타임 권한을 관리합니다.
- * 거절 횟수를 추적하여 2회 이상 거절 시 시스템 설정으로 이동합니다.
+ * Android 13+에서 POST_NOTIFICATIONS 런타임 권한 관리
+ *
+ * 거절 횟수 추적해서 2회 이상 거절 시 시스템 설정 화면 이동
  *
  * @param context 애플리케이션 컨텍스트
  * @param permissionDataStore 권한 데이터 저장소
@@ -53,7 +54,8 @@ class PushNotificationPermissionManager(
      * 현재 권한 상태 확인
      */
     suspend fun getPermissionStatus(): PushPermissionStatus {
-        // Android 13 미만은 런타임 권한 필요 없음 (minSdk 28이므로 항상 O 이상)
+        // Android 13 미만은 런타임 권한 필요 없음
+        // minSdk 28이므로 항상 안드 8(오레오) 이상
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
                 PushPermissionStatus.GRANTED
@@ -69,29 +71,23 @@ class PushNotificationPermissionManager(
                 PushPermissionStatus.GRANTED
             }
 
-            isPermanentlyDenied() -> {
-                PushPermissionStatus.PERMANENTLY_DENIED
-            }
+            isPermanentlyDenied() -> PushPermissionStatus.PERMANENTLY_DENIED
 
-            else -> {
-                PushPermissionStatus.DENIED
-            }
+            else -> PushPermissionStatus.DENIED
         }
     }
 
     /**
      * 권한 요청이 가능한지 확인 (2회 미만 거절)
      */
-    suspend fun canRequestPermission(): Boolean {
-        return getPermissionStatus() == PushPermissionStatus.DENIED
-    }
+    suspend fun canRequestPermission(): Boolean = (getPermissionStatus() == PushPermissionStatus.DENIED)
 
     /**
-     * 시스템 설정 화면으로 이동
+     * 시스템 설정 화면 이동
      */
     fun openNotificationSettings() {
         val intent = Intent().apply {
-            // minSdk 28이므로 항상 Android 8.0 (O) 이상
+            // minSdk 28이라서 항상 안드 8(오레오) 이상
             action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
             putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
         }
@@ -101,9 +97,7 @@ class PushNotificationPermissionManager(
     /**
      * 거절 횟수 증가
      */
-    suspend fun incrementDenialCount() {
-        permissionDataStore?.incrementPushPermissionDenialCount()
-    }
+    suspend fun incrementDenialCount() = permissionDataStore?.incrementPushPermissionDenialCount()
 
     /**
      * 거절 횟수 초기화 (권한 허용 시 호출)
@@ -122,7 +116,7 @@ class PushNotificationPermissionManager(
 }
 
 /**
- * Composable에서 푸시 알림 권한 요청을 위한 유틸리티
+ * Composable에서 푸시 알림 권한 요청하기 위한 유틸 함수
  *
  * @param permissionDataStore 권한 데이터 저장소
  * @param onResult 권한 요청 결과 콜백 (granted: Boolean, isPermanentlyDenied: Boolean)
@@ -159,7 +153,7 @@ fun rememberPushPermissionLauncher(
             val permission = Manifest.permission.POST_NOTIFICATIONS
             launcher.launch(permission)
         } else {
-            // Android 13 미만은 자동 허용으로 처리 (실제로는 설정에서 확인 필요)
+            // 안드 13 미만은 자동 허용
             scope.launch {
                 val isEnabled =
                     NotificationManagerCompat.from(context).areNotificationsEnabled()
