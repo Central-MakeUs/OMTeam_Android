@@ -37,8 +37,28 @@ android {
                 """.trimIndent()
             )
 
+        val noticeWebviewUrl = localProperties.getProperty("NOTICE_WEBVIEW")
+            ?: throw GradleException(
+                """
+                공지사항 URL이 local.properties에 정의되지 않았습니다
+                local.properties 파일에 다음을 추가하세요
+                NOTICE_WEBVIEW=url
+                """.trimIndent()
+            )
+
+        val faqWebviewUrl = localProperties.getProperty("FAQ_WEBVIEW")
+            ?: throw GradleException(
+                """
+                FAQ URL이 local.properties에 정의되지 않았습니다
+                local.properties 파일에 다음을 추가하세요
+                FAQ_WEBVIEW=url
+                """.trimIndent()
+            )
+
         buildConfigField("String", "PRIVACY_TERMS_WEBVIEW", "\"$privacyTermsWebviewUrl\"")
         buildConfigField("String", "TERM_CONDITIONS_WEBVIEW", "\"$termsConditionsWebviewUrl\"")
+        buildConfigField("String", "NOTICE_WEBVIEW", "\"$noticeWebviewUrl\"")
+        buildConfigField("String", "FAQ_WEBVIEW", "\"$faqWebviewUrl\"")
     }
 
     buildFeatures {
