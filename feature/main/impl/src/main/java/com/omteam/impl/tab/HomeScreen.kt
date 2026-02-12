@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
@@ -73,7 +74,8 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel(),
     chatViewModel: ChatViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel(),
-    onNavigateToChat: () -> Unit = {}
+    onNavigateToChat: () -> Unit = {},
+    onNavigateToDetailedAnalysis: () -> Unit = {}
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
@@ -111,6 +113,7 @@ fun HomeScreen(
             // 채팅 탭(1번)으로 이동
             onNavigateToChat()
         },
+        onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis,
         modifier = modifier
     )
     
@@ -220,7 +223,8 @@ fun HomeScreenContent(
     weekDays: List<DailyAppleData>,
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
-    onVerifyMissionClick: (actionType: String) -> Unit = {}
+    onVerifyMissionClick: (actionType: String) -> Unit = {},
+    onNavigateToDetailedAnalysis: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -503,7 +507,17 @@ fun HomeScreenContent(
                 modifier = Modifier.padding(start = dp32)
             )
 
-            Spacer(modifier = Modifier.height(dp20))
+            Spacer(modifier = Modifier.height(dp24))
+
+            OMTeamButton(
+                text = "더 자세한 분석 보기",
+                onClick = onNavigateToDetailedAnalysis,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(dp20)
+            )
+
+            Spacer(modifier = Modifier.height(dp64))
         }
     }
 }
