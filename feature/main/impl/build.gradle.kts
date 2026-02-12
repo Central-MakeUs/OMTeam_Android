@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:presentation"))
     implementation(project(":core:domain"))
+    implementation(project(":core:datastore"))
 
     // nav3
     implementation(libs.androidx.navigation3.runtime)

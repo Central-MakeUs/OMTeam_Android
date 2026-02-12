@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.foundation.*
 import com.omteam.impl.screen.component.OnboardingStepIndicator
 import com.omteam.impl.viewmodel.NicknameErrorType
@@ -22,6 +23,7 @@ fun OnboardingScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateToMain: () -> Unit = {},
+    permissionDataStore: PermissionDataStore,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val onboardingData by viewModel.onboardingData.collectAsState()
@@ -96,6 +98,7 @@ fun OnboardingScreen(
                 )
                 7 -> SetPushPermissionScreen(
                     viewModel = viewModel,
+                    permissionDataStore = permissionDataStore,
                     onNavigateToMain = onNavigateToMain,
                     onBack = onBack,
                 )

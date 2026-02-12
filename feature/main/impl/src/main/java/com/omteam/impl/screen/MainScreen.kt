@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.theme.GreenTab
 import com.omteam.impl.component.BottomTabBar
 import com.omteam.impl.tab.ChatScreen
@@ -22,12 +22,16 @@ import com.omteam.impl.viewmodel.MainViewModel
 /**
  * 하단 탭 네비게이션 포함한 메인 화면
  *
- * [MainViewModel] 통해 탭 상태 관리
+ * 프리뷰에서 PermissionDataStore 처리가 번거로워서 이 화면은 프리뷰 없음
+ *
+ * @param viewModel 메인 화면 ViewModel
+ * @param permissionDataStore 권한 데이터 저장소
  */
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = hiltViewModel(),
+    permissionDataStore: PermissionDataStore,
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: (String) -> Unit = {},
@@ -37,6 +41,33 @@ fun MainScreen(
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
+    MainScreenContent(
+        modifier = modifier,
+        selectedTabIndex = selectedTabIndex,
+        permissionDataStore = permissionDataStore,
+        onSignOut = onSignOut,
+        onNavigateToOther = onNavigateToOther,
+        onNavigateToEditMyGoal = onNavigateToEditMyGoal,
+        onNavigateToEditMyInfo = onNavigateToEditMyInfo,
+        onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis,
+        onNavigateToChat = onNavigateToChat,
+        onTabSelected = { viewModel.selectTab(it) }
+    )
+}
+
+@Composable
+fun MainScreenContent(
+    modifier: Modifier = Modifier,
+    selectedTabIndex: Int = 0,
+    permissionDataStore: PermissionDataStore,
+    onSignOut: () -> Unit = {},
+    onNavigateToOther: () -> Unit = {},
+    onNavigateToEditMyGoal: (String) -> Unit = {},
+    onNavigateToEditMyInfo: () -> Unit = {},
+    onNavigateToDetailedAnalysis: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    onTabSelected: (Int) -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,6 +87,7 @@ fun MainScreen(
                     onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
                 )
                 3 -> MyPageScreen(
+                    permissionDataStore = permissionDataStore,
                     onSignOut = onSignOut,
                     onNavigateToOther = onNavigateToOther,
                     onNavigateToEditMyGoal = onNavigateToEditMyGoal,
@@ -66,13 +98,7 @@ fun MainScreen(
 
         BottomTabBar(
             selectedTabIndex = selectedTabIndex,
-            onTabSelected = { viewModel.selectTab(it) }
+            onTabSelected = onTabSelected
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun MainScreenPreview() {
-    MainScreen()
 }

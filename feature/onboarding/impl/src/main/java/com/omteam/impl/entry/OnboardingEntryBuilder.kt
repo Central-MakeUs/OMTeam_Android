@@ -3,6 +3,7 @@ package com.omteam.impl.entry
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.OnboardingNavKey
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.impl.screen.OnboardingScreen
 import timber.log.Timber
 
@@ -11,8 +12,11 @@ import timber.log.Timber
  *
  * @param onNavigateToNextStep 다음 단계 이동
  * @param onNavigateToMain 메인 화면 이동 (온보딩 완료)
+ * @param onNavigateBack 뒤로가기 이동
+ * @param permissionDataStore 권한 데이터 저장소 (푸시 알림 권한 관리용)
  */
 fun EntryProviderScope<NavKey>.onboardingEntry(
+    permissionDataStore: PermissionDataStore,
     onNavigateToNextStep: (currentStep: Int) -> Unit,
     onNavigateToMain: () -> Unit,
     onNavigateBack: () -> Unit,
@@ -22,6 +26,7 @@ fun EntryProviderScope<NavKey>.onboardingEntry(
 
         OnboardingScreen(
             currentStep = navKey.step,
+            permissionDataStore = permissionDataStore,
             onNext = {
                 if (navKey.step < 7) {
                     // 다음 단계로

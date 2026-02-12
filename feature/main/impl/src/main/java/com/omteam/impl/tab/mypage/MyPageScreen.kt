@@ -1,6 +1,11 @@
 package com.omteam.impl.tab.mypage
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,43 +27,45 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import com.omteam.impl.viewmodel.state.MyPageOnboardingState
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.domain.model.onboarding.LifestyleType
 import com.omteam.domain.model.onboarding.OnboardingInfo
 import com.omteam.domain.model.onboarding.WorkTimeType
 import com.omteam.impl.component.ChangeNicknameBottomSheetContent
 import com.omteam.impl.viewmodel.MyPageViewModel
+import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import com.omteam.omt.core.designsystem.R
+import com.omteam.presentation.permission.PushNotificationPermissionManager
+import com.omteam.presentation.permission.PushPermissionStatus
+import com.omteam.presentation.permission.rememberPushPermissionLauncher
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +73,7 @@ import timber.log.Timber
 fun MyPageScreen(
     modifier: Modifier = Modifier,
     viewModel: MyPageViewModel = hiltViewModel(),
+    permissionDataStore: PermissionDataStore,
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: (String) -> Unit = {},
@@ -75,6 +83,32 @@ fun MyPageScreen(
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     val onboardingState by viewModel.onboardingInfoState.collectAsState()
+    val context = LocalContext.current
+    val sheetScope = rememberCoroutineScope()
+
+    // 푸시 알림 권한 상태 추적
+    // 스위치 UI 즉시 업데이트에 사용
+    var permissionRefreshKey by remember { mutableIntStateOf(0) }
+
+    // 푸시 알림 권한 매니저
+    val permissionManager = remember {
+        PushNotificationPermissionManager(context, permissionDataStore)
+    }
+
+    // 권한 요청 런처 - 권한 변경 시 스위치 갱신
+    val (_, requestPermission) = rememberPushPermissionLauncher(
+        permissionDataStore = permissionDataStore
+    ) { granted, isPermanentlyDenied ->
+        if (granted) {
+            Toast.makeText(context, "푸시 알림이 설정되었습니다", Toast.LENGTH_SHORT).show()
+            // 스위치 즉시 갱신을 위해 키 업데이트
+            permissionRefreshKey += 1
+        } else if (isPermanentlyDenied) {
+            permissionManager.openNotificationSettings()
+        } else {
+            Toast.makeText(context, "푸시 알림을 받으려면 설정에서 허용해주세요", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     // 화면 진입 시 온보딩 정보 조회
     LaunchedEffect(Unit) {
@@ -91,11 +125,14 @@ fun MyPageScreen(
     MyPageScreenContent(
         modifier = modifier,
         onboardingState = onboardingState,
+        permissionManager = permissionManager,
+        permissionRefreshKey = permissionRefreshKey,
         onSignOut = onSignOut,
         onNavigateToOther = onNavigateToOther,
         onNavigateToEditMyGoal = onNavigateToEditMyGoal,
         onNavigateToEditMyInfo = onNavigateToEditMyInfo,
-        onShowChangeNicknameBottomSheet = { showChangeNicknameBottomSheet = true }
+        onShowChangeNicknameBottomSheet = { showChangeNicknameBottomSheet = true },
+        onRequestPermission = requestPermission
     )
 
     // 닉네임 변경 바텀 시트
@@ -103,7 +140,6 @@ fun MyPageScreen(
         val sheetState = rememberModalBottomSheetState(
             skipPartiallyExpanded = true
         )
-        val scope = rememberCoroutineScope()
 
         // 바텀 시트보다 먼저 BackHandler 등록해서 키보드 표시될 때 뒤로가기 클릭 시 바텀 시트가 사라지지 않게
         BackHandler(enabled = true) {
@@ -112,7 +148,7 @@ fun MyPageScreen(
                 focusManager.clearFocus()
             } else {
                 // 포커스가 없으면 바텀시트 닫음
-                scope.launch {
+                sheetScope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
                     if (!sheetState.isVisible) {
@@ -124,7 +160,7 @@ fun MyPageScreen(
 
         ModalBottomSheet(
             onDismissRequest = {
-                scope.launch {
+                sheetScope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
                     if (!sheetState.isVisible) {
@@ -146,7 +182,7 @@ fun MyPageScreen(
             Box(modifier = Modifier.imePadding()) {
                 ChangeNicknameBottomSheetContent(
                     onDismiss = {
-                        scope.launch {
+                        sheetScope.launch {
                             sheetState.hide()
                         }.invokeOnCompletion {
                             if (!sheetState.isVisible) {
@@ -171,11 +207,14 @@ fun MyPageScreen(
 fun MyPageScreenContent(
     modifier: Modifier = Modifier,
     onboardingState: MyPageOnboardingState = MyPageOnboardingState.Idle,
+    permissionManager: PushNotificationPermissionManager? = null,
+    permissionRefreshKey: Int = 0,
     onSignOut: () -> Unit = {},
     onNavigateToOther: () -> Unit = {},
     onNavigateToEditMyGoal: (String) -> Unit = {},
     onNavigateToEditMyInfo: () -> Unit = {},
-    onShowChangeNicknameBottomSheet: () -> Unit = {}
+    onShowChangeNicknameBottomSheet: () -> Unit = {},
+    onRequestPermission: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -292,7 +331,6 @@ fun MyPageScreenContent(
         Spacer(modifier = Modifier.height(dp10))
 
         // 운동 습관 형성 카드 - 온보딩 정보에서 appGoalText 표시
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -327,22 +365,25 @@ fun MyPageScreenContent(
         Spacer(modifier = Modifier.height(dp50))
 
         MyPageMenuItemWithSwitch(
-            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title)
+            text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title),
+            permissionManager = permissionManager,
+            permissionRefreshKey = permissionRefreshKey,
+            onRequestPermission = onRequestPermission
         )
         MyPageMenuDivider()
-        
+
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.edit_my_info),
             onClick = onNavigateToEditMyInfo
         )
         MyPageMenuDivider()
-        
+
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.inquiry),
             onClick = { Timber.d("## 문의하기 클릭") }
         )
         MyPageMenuDivider()
-        
+
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.other),
             onClick = onNavigateToOther,
@@ -360,9 +401,58 @@ fun MyPageScreenContent(
 // 커스텀 스위치를 포함하는 알림 설정하기 영역 표현
 @Composable
 private fun MyPageMenuItemWithSwitch(
-    text: String
+    text: String,
+    permissionManager: PushNotificationPermissionManager? = null,
+    permissionRefreshKey: Int = 0,
+    onRequestPermission: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var isChecked by remember { mutableStateOf(false) }
+
+    // 권한 상태 확인
+    // permissionManager나 refreshKey 변경 시 재확인
+    LaunchedEffect(permissionManager, permissionRefreshKey) {
+        permissionManager?.let { manager ->
+            val status = manager.getPermissionStatus()
+            isChecked = (status == PushPermissionStatus.GRANTED)
+        }
+    }
+
+    val handleClick = {
+        scope.launch {
+            if (isChecked) {
+                // 알림 설정하기 off 설정 시 설정 화면 이동
+                // 되돌아오면 앱 처음부터 재실행됨
+                permissionManager?.openNotificationSettings()
+            } else {
+                // 알림 설정하기 on 설정 시 권한 요청
+                val status = permissionManager?.getPermissionStatus()
+                when (status) {
+                    PushPermissionStatus.GRANTED -> {
+                        isChecked = true
+                    }
+
+                    PushPermissionStatus.DENIED -> {
+                        // 권한 요청
+                        onRequestPermission()
+                    }
+
+                    PushPermissionStatus.PERMANENTLY_DENIED -> {
+                        // 설정 화면 이동
+                        permissionManager.openNotificationSettings()
+                        Toast.makeText(
+                            context,
+                            "알림을 받으려면 설정에서 권한을 허용해주세요",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -372,8 +462,7 @@ private fun MyPageMenuItemWithSwitch(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
-                isChecked = !isChecked
-                Timber.d("## 알림 설정하기 클릭 : $isChecked")
+                handleClick()
             }
             .padding(end = dp32),
         verticalAlignment = Alignment.CenterVertically
@@ -390,7 +479,7 @@ private fun MyPageMenuItemWithSwitch(
             checked = isChecked
         )
     }
-    
+
     Spacer(modifier = Modifier.height(dp18))
 }
 
@@ -481,31 +570,27 @@ private fun MyPageMenuDivider() {
 @Preview(showBackground = true, name = "MyPageScreen - 기본 상태")
 @Composable
 private fun MyPageScreenPreview() {
-    OMTeamTheme {
-        MyPageScreenContent()
-    }
+    MyPageScreenContent()
 }
 
 @Preview(showBackground = true, name = "MyPageScreen - 데이터 표시")
 @Composable
 private fun MyPageScreenWithDataPreview() {
-    OMTeamTheme {
-        MyPageScreenContent(
-            onboardingState = MyPageOnboardingState.Success(
-                data = OnboardingInfo(
-                    nickname = "홍길동",
-                    appGoalText = "체중 감량",
-                    workTimeType = WorkTimeType.FIXED,
-                    availableStartTime = "19:00",
-                    availableEndTime = "23:59",
-                    minExerciseMinutes = 30,
-                    preferredExerciseText = "헬스, 요가",
-                    lifestyleType = LifestyleType.REGULAR_DAYTIME,
-                    remindEnabled = true,
-                    checkinEnabled = true,
-                    reviewEnabled = true
-                )
+    MyPageScreenContent(
+        onboardingState = MyPageOnboardingState.Success(
+            data = OnboardingInfo(
+                nickname = "홍길동",
+                appGoalText = "체중 감량",
+                workTimeType = WorkTimeType.FIXED,
+                availableStartTime = "19:00",
+                availableEndTime = "23:59",
+                minExerciseMinutes = 30,
+                preferredExerciseText = "헬스, 요가",
+                lifestyleType = LifestyleType.REGULAR_DAYTIME,
+                remindEnabled = true,
+                checkinEnabled = true,
+                reviewEnabled = true
             )
         )
-    }
+    )
 }
