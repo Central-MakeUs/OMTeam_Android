@@ -4,6 +4,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
 import com.omteam.api.MainNavKey
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.impl.screen.MainScreen
 import com.omteam.impl.viewmodel.MainViewModel
 import timber.log.Timber
@@ -17,8 +18,10 @@ import timber.log.Timber
  * @param onNavigateToEditMyInfo 내 정보 수정하기 화면 이동 콜백
  * @param onNavigateToDetailedAnalysis 상세 분석 보기 화면 이동 콜백
  * @param onNavigateToChat 채팅 탭(1번) 이동 콜백
+ * @param permissionDataStore 권한 데이터 저장소 (푸시 알림 권한 관리용)
  */
 fun EntryProviderScope<NavKey>.mainEntry(
+    permissionDataStore: PermissionDataStore,
     onSignOut: () -> Unit,
     onNavigateToOther: () -> Unit,
     onNavigateToEditMyGoal: (String) -> Unit,
@@ -31,6 +34,7 @@ fun EntryProviderScope<NavKey>.mainEntry(
         val mainViewModel: MainViewModel = hiltViewModel()
         MainScreen(
             viewModel = mainViewModel,
+            permissionDataStore = permissionDataStore,
             onSignOut = {
                 // 로그아웃 후 재로그인 시 홈 화면부터 표시되게 인덱스 리셋
                 mainViewModel.resetTabIndex()

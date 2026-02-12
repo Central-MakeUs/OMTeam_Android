@@ -24,7 +24,9 @@ import androidx.navigation3.ui.NavDisplay
 import com.omteam.api.LoginNavKey
 import com.omteam.api.MainNavKey
 import com.omteam.api.OnboardingNavKey
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.theme.OMTeamTheme
+import com.omteam.impl.LoginViewModel
 import com.omteam.impl.entry.accountLinkCompleteEntry
 import com.omteam.impl.entry.editExerciseTimeEntry
 import com.omteam.impl.entry.editFavoriteExerciseEntry
@@ -40,12 +42,16 @@ import com.omteam.impl.entry.otherEntry
 import com.omteam.impl.entry.webViewEntry
 import com.omteam.impl.screen.SplashScreen
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     
+    @Inject
+    lateinit var permissionDataStore: PermissionDataStore
+    
     private val viewModel: AutoLoginViewModel by viewModels()
-    private val loginViewModel: com.omteam.impl.LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,10 +120,12 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onNavigateBack = {
                                     navigator.popBackStack()
-                                }
+                                },
+                                permissionDataStore = permissionDataStore
                             )
 
                             mainEntry(
+                                permissionDataStore = permissionDataStore,
                                 onSignOut = {
                                     loginViewModel.logout()
                                     navigator.navigateToLogin()

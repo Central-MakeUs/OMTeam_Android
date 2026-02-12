@@ -1,5 +1,6 @@
 package com.omteam.impl.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,27 +22,55 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.omteam.impl.viewmodel.OnboardingViewModel
-import com.omteam.impl.viewmodel.SubmitState
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.card.OMTeamCard
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.R
+import com.omteam.impl.viewmodel.OnboardingViewModel
+import com.omteam.impl.viewmodel.SubmitState
+import com.omteam.presentation.permission.PushNotificationPermissionManager
+import com.omteam.presentation.permission.rememberPushPermissionLauncher
+import timber.log.Timber
 
 @Composable
 fun SetPushPermissionScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
+    permissionDataStore: PermissionDataStore,
     onPushGranted: (String) -> Unit = {},
     onNavigateToMain: () -> Unit = {},
     onBack: () -> Unit = {},
 ) {
     val submitState by viewModel.submitState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    // 권한 요청 런처 - manager와 request 함수를 분리하여 저장
+    val permissionManager = remember {
+        PushNotificationPermissionManager(
+            context,
+            permissionDataStore
+        )
+    }
+
+    val (_, requestPermission) = rememberPushPermissionLauncher(
+        permissionDataStore = permissionDataStore
+    ) { granted, isPermanentlyDenied ->
+        if (granted) {
+            Timber.d("## 푸시 알림 권한 허용됨")
+        } else if (isPermanentlyDenied) {
+            Toast.makeText(context, "설정에서 알림 권한을 허용해주세요", Toast.LENGTH_SHORT).show()
+            permissionManager.openNotificationSettings()
+        } else {
+            Timber.d("## 푸시 알림 권한 거부됨")
+        }
+    }
 
     // 온보딩 값 제출 상태 관찰
     LaunchedEffect(submitState) {
@@ -51,10 +80,12 @@ fun SetPushPermissionScreen(
                 onNavigateToMain()
                 viewModel.resetSubmitState()
             }
+
             is SubmitState.Error -> {
                 // 에러 메시지 표시
                 viewModel.resetSubmitState()
             }
+
             else -> {}
         }
     }
@@ -64,7 +95,8 @@ fun SetPushPermissionScreen(
         onPushGranted = onPushGranted,
         onBack = onBack,
         onSubmitOnboarding = { viewModel.submitOnboarding() },
-        onUpdatePushPermission = { isGranted -> viewModel.updatePushPermission(isGranted) }
+        onUpdatePushPermission = { isGranted -> viewModel.updatePushPermission(isGranted) },
+        onRequestPushPermission = requestPermission
     )
 }
 
@@ -74,11 +106,11 @@ fun SetPushPermissionScreenContent(
     onPushGranted: (String) -> Unit = {},
     onBack: () -> Unit = {},
     onSubmitOnboarding: () -> Unit = {},
-    onUpdatePushPermission: (Boolean) -> Unit = {}
+    onUpdatePushPermission: (Boolean) -> Unit = {},
+    onRequestPushPermission: () -> Unit = {}
 ) {
     var selectedFavoriteExercise by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf("") }
 
     val grantText = stringResource(R.string.grant)
     val notGrantText = stringResource(R.string.not_grant)
@@ -87,10 +119,9 @@ fun SetPushPermissionScreenContent(
     LaunchedEffect(submitState) {
         when (submitState) {
             is SubmitState.Error -> {
-                // 에러 메시지 표시
-                errorMessage = (submitState as SubmitState.Error).message
                 showError = true
             }
+
             else -> {}
         }
     }
@@ -133,6 +164,11 @@ fun SetPushPermissionScreenContent(
                         }
                         onUpdatePushPermission(isGranted)
                         onPushGranted(selectedFavoriteExercise)
+
+                        // "받을래요" 선택 시 권한 요청
+                        if (isGranted) {
+                            onRequestPushPermission()
+                        }
                     },
                 )
 
@@ -207,7 +243,6 @@ fun SetPushPermissionScreenContent(
         // 에러 메시지 표시
         if (showError) {
             // TODO: 에러 다이얼로그 또는 스낵바 표시
-            // 현재는 로그로만 표시
             LaunchedEffect(Unit) {
                 showError = false
             }
@@ -223,6 +258,7 @@ private fun SetPushPermissionScreenContentPreview() {
         onPushGranted = {},
         onBack = {},
         onSubmitOnboarding = {},
-        onUpdatePushPermission = {}
+        onUpdatePushPermission = {},
+        onRequestPushPermission = {}
     )
 }

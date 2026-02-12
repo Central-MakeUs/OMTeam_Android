@@ -81,6 +81,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
     implementation(project(":core:data"))
+    implementation(project(":core:datastore"))
 
     // 필수 의존성
     implementation(libs.androidx.core.ktx)

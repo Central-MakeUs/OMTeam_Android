@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,8 +60,8 @@ fun DetailedAnalysisScreen(
     onBackClick: () -> Unit = {},
     viewModel: ReportViewModel = hiltViewModel()
 ) {
-    val weeklyReportUiState = viewModel.weeklyReportUiState.collectAsStateWithLifecycle().value
-    val monthlyPatternUiState = viewModel.monthlyPatternUiState.collectAsStateWithLifecycle().value
+    val weeklyReportUiState by viewModel.weeklyReportUiState.collectAsStateWithLifecycle()
+    val monthlyPatternUiState by viewModel.monthlyPatternUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchWeeklyReport(useSelectedDate = false)
