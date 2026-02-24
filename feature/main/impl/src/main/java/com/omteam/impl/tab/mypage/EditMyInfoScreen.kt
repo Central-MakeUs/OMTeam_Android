@@ -7,8 +7,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
+import com.omteam.designsystem.component.chip.ChipFlowRow
 import com.omteam.designsystem.component.chip.InfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -393,7 +392,6 @@ private fun getLifestyleTypeString(lifestyleType: LifestyleType): String {
  * @param chips 선호 운동. 3개만 설정 가능
  * @param onClick 클릭 이벤트
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun EditMyInfoItem(
     label: String,
@@ -441,16 +439,10 @@ private fun EditMyInfoItem(
                 modifier = Modifier.padding(start = dp4)
             )
         } else if (chips.isNotEmpty()) {
-            // Chip 표시
-            FlowRow(
-                modifier = Modifier.padding(start = dp4),
-                horizontalArrangement = Arrangement.spacedBy(dp8),
-                verticalArrangement = Arrangement.spacedBy(dp8)
-            ) {
-                chips.forEach { chipText ->
-                    InfoChip(text = chipText)
-                }
-            }
+            ChipFlowRow(
+                chips = chips,
+                modifier = Modifier.padding(start = dp4)
+            )
         }
 
         Spacer(modifier = Modifier.height(dp8))
