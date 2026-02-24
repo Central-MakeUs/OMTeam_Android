@@ -97,7 +97,6 @@ fun HomeScreen(
         dailyMissionUiState = dailyMissionUiState,
         characterUiState = characterUiState,
         weeklyReportUiState = weeklyReportUiState,
-        weekDays = homeViewModel.getCurrentWeekDays(),
         onRequestMissionClick = {
             // 미션 제안받기 API 호출
             homeViewModel.requestDailyMissionRecommendations()
@@ -220,13 +219,46 @@ fun HomeScreenContent(
     dailyMissionUiState: DailyMissionUiState,
     characterUiState: CharacterUiState,
     weeklyReportUiState: WeeklyReportUiState,
-    weekDays: List<DailyAppleData>,
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
     onVerifyMissionClick: (actionType: String) -> Unit = {},
     onNavigateToDetailedAnalysis: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
+
+    // weeklyReportUiState에서 weekDays 계산
+    val weekDays = when (weeklyReportUiState) {
+        is WeeklyReportUiState.Success -> {
+            val report = weeklyReportUiState.data
+            val dailyResultsMap = report.dailyResults.associateBy { it.date }
+
+            // weekStartDate~weekEndDate까지 모든 날짜 생성
+            var currentDate = report.weekStartDate
+            val endDate = report.weekEndDate
+            val result = mutableListOf<DailyAppleData>()
+
+            while (!currentDate.isAfter(endDate)) {
+                val dailyResult = dailyResultsMap[currentDate]
+                result.add(
+                    DailyAppleData(
+                        date = currentDate,
+                        dayOfMonth = currentDate.dayOfMonth,
+                        status = when (dailyResult?.status) {
+                            com.omteam.domain.model.report.DailyMissionStatus.SUCCESS -> AppleStatus.SUCCESS
+                            com.omteam.domain.model.report.DailyMissionStatus.FAILED -> AppleStatus.FAILED
+                            else -> AppleStatus.DEFAULT
+                        }
+                    )
+                )
+                currentDate = currentDate.plusDays(1)
+            }
+            result
+        }
+        else -> {
+            // 로딩 중이거나 에러 상태일 때는 빈 리스트 반환
+            emptyList()
+        }
+    }
     
     Column(
         modifier = modifier
@@ -866,16 +898,6 @@ fun WeeklyAnalysisSummaryView(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenContentPreview() {
-    val weeklyData = listOf(
-        DailyAppleData(LocalDate.now(), 14, AppleStatus.DEFAULT),
-        DailyAppleData(LocalDate.now(), 15, AppleStatus.SUCCESS),
-        DailyAppleData(LocalDate.now(), 16, AppleStatus.FAILED),
-        DailyAppleData(LocalDate.now(), 17, AppleStatus.DEFAULT),
-        DailyAppleData(LocalDate.now(), 18, AppleStatus.SUCCESS),
-        DailyAppleData(LocalDate.now(), 19, AppleStatus.DEFAULT),
-        DailyAppleData(LocalDate.now(), 20, AppleStatus.FAILED)
-    )
-
     val sampleWeeklyReport = WeeklyReport(
         weekStartDate = LocalDate.now().minusDays(6),
         weekEndDate = LocalDate.now(),
@@ -906,8 +928,7 @@ private fun HomeScreenContentPreview() {
                 encouragementMessage = "오늘도 화이팅!"
             )
         ),
-        weeklyReportUiState = WeeklyReportUiState.Success(sampleWeeklyReport),
-        weekDays = weeklyData
+        weeklyReportUiState = WeeklyReportUiState.Success(sampleWeeklyReport)
     )
 }
 
