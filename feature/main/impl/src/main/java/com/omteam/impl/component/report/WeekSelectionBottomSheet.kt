@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,11 +37,13 @@ import com.omteam.main.impl.R as MainR
  *
  * @param onDismiss 바텀 시트 닫기 콜백
  * @param onAnalyzeClick "분석 보기" 버튼 클릭 콜백 (year, month, weekOfMonth 전달)
+ * @param onFocusChanged 텍스트 필드 포커스 상태 변경 콜백 (키보드 표시 여부 추적용)
  */
 @Composable
 fun WeekSelectionBottomSheetContent(
     onDismiss: () -> Unit,
-    onAnalyzeClick: (year: String, month: String, weekOfMonth: String) -> Unit = { _, _, _ -> }
+    onAnalyzeClick: (year: String, month: String, weekOfMonth: String) -> Unit = { _, _, _ -> },
+    onFocusChanged: (Boolean) -> Unit = {}
 ) {
     var year by remember { mutableStateOf("") }
     var month by remember { mutableStateOf("") }
@@ -94,6 +97,7 @@ fun WeekSelectionBottomSheetContent(
             YearInputField(
                 value = year,
                 onValueChange = { year = it },
+                onFocusChanged = onFocusChanged,
                 modifier = Modifier.width(dp108)
             )
 
@@ -102,6 +106,7 @@ fun WeekSelectionBottomSheetContent(
                 onValueChange = { month = it },
                 label = stringResource(MainR.string.week_selection_month_label),
                 placeholder = stringResource(MainR.string.week_selection_month_placeholder),
+                onFocusChanged = onFocusChanged,
                 modifier = Modifier.width(dp84)
             )
 
@@ -110,6 +115,7 @@ fun WeekSelectionBottomSheetContent(
                 onValueChange = { weekOfMonth = it },
                 label = stringResource(MainR.string.week_selection_week_label),
                 placeholder = stringResource(MainR.string.week_selection_week_placeholder),
+                onFocusChanged = onFocusChanged,
                 modifier = Modifier.width(dp84)
             )
         }
@@ -130,6 +136,7 @@ fun WeekSelectionBottomSheetContent(
 private fun YearInputField(
     value: String,
     onValueChange: (String) -> Unit,
+    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -151,7 +158,11 @@ private fun YearInputField(
             },
             placeholder = stringResource(MainR.string.week_selection_year_placeholder),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    onFocusChanged(focusState.isFocused)
+                }
         )
     }
 }
@@ -162,6 +173,7 @@ private fun MonthWeekInputField(
     onValueChange: (String) -> Unit,
     label: String,
     placeholder: String,
+    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -183,7 +195,11 @@ private fun MonthWeekInputField(
             },
             placeholder = placeholder,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    onFocusChanged(focusState.isFocused)
+                }
         )
     }
 }
