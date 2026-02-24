@@ -3,8 +3,6 @@ package com.omteam.impl.tab.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
+import com.omteam.designsystem.component.chip.ChipFlowRow
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -65,7 +64,6 @@ fun EditExerciseTimeScreen(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditExerciseTimeContent(
     modifier: Modifier = Modifier,
@@ -121,24 +119,21 @@ fun EditExerciseTimeContent(
 
             Spacer(modifier = Modifier.height(dp20))
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dp8),
-                verticalArrangement = Arrangement.spacedBy(dp8)
-            ) {
-                availableTimes.forEach { time ->
-                    SelectableInfoChip(
-                        text = time,
-                        isSelected = selectedTime == time,
-                        onClick = {
-                            selectedTime = if (selectedTime == time) {
-                                ""
-                            } else {
-                                time
-                            }
+            ChipFlowRow(
+                items = availableTimes,
+                modifier = Modifier.fillMaxWidth()
+            ) { time ->
+                SelectableInfoChip(
+                    text = time,
+                    isSelected = selectedTime == time,
+                    onClick = {
+                        selectedTime = if (selectedTime == time) {
+                            ""
+                        } else {
+                            time
                         }
-                    )
-                }
+                    }
+                )
             }
             
             Spacer(modifier = Modifier.height(dp20))

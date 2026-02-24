@@ -3,8 +3,6 @@ package com.omteam.impl.tab.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
+import com.omteam.designsystem.component.chip.ChipFlowRow
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -66,7 +65,6 @@ fun EditPatternScreen(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditPatternContent(
     modifier: Modifier = Modifier,
@@ -125,24 +123,21 @@ fun EditPatternContent(
 
             Spacer(modifier = Modifier.height(dp20))
 
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dp8),
-                verticalArrangement = Arrangement.spacedBy(dp8)
-            ) {
-                availablePatterns.forEach { pattern ->
-                    SelectableInfoChip(
-                        text = pattern,
-                        isSelected = selectedPattern == pattern,
-                        onClick = {
-                            selectedPattern = if (selectedPattern == pattern) {
-                                ""
-                            } else {
-                                pattern
-                            }
+            ChipFlowRow(
+                items = availablePatterns,
+                modifier = Modifier.fillMaxWidth()
+            ) { pattern ->
+                SelectableInfoChip(
+                    text = pattern,
+                    isSelected = selectedPattern == pattern,
+                    onClick = {
+                        selectedPattern = if (selectedPattern == pattern) {
+                            ""
+                        } else {
+                            pattern
                         }
-                    )
-                }
+                    }
+                )
             }
             
             Spacer(modifier = Modifier.height(dp20))

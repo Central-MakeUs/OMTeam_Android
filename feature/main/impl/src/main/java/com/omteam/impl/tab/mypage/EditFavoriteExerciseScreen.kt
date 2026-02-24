@@ -3,8 +3,6 @@ package com.omteam.impl.tab.mypage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.chip.AddCustomChip
+import com.omteam.designsystem.component.chip.ChipFlowRow
 import com.omteam.designsystem.component.chip.SelectableInfoChip
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -71,7 +70,6 @@ fun EditFavoriteExerciseScreen(
     )
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditFavoriteExerciseContent(
     modifier: Modifier = Modifier,
@@ -134,43 +132,43 @@ fun EditFavoriteExerciseContent(
 
             Spacer(modifier = Modifier.height(dp20))
 
-            FlowRow(
+            ChipFlowRow(
+                items = allExercises,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(dp8),
-                verticalArrangement = Arrangement.spacedBy(dp8)
-            ) {
-                allExercises.forEach { exercise ->
-                    SelectableInfoChip(
-                        text = exercise,
-                        isSelected = selectedExercises.contains(exercise),
-                        onClick = {
-                            selectedExercises = if (selectedExercises.contains(exercise)) {
-                                selectedExercises - exercise
-                            } else {
-                                if (selectedExercises.size < 3) {
-                                    selectedExercises + exercise
-                                } else {
-                                    selectedExercises
+                horizontalSpacing = dp8,
+                verticalSpacing = dp8,
+                footer = {
+                    AddCustomChip(
+                        onClick = { isAddingCustom = true },
+                        isEditing = isAddingCustom,
+                        value = customExerciseName,
+                        onValueChange = { customExerciseName = it },
+                        onDone = {
+                            if (customExerciseName.isNotBlank()) {
+                                val trimmedName = customExerciseName.trim()
+                                if (!customExercises.contains(trimmedName) && !availableExercises.contains(trimmedName)) {
+                                    onAddCustomExercise(trimmedName)
                                 }
                             }
+                            customExerciseName = ""
+                            isAddingCustom = false
                         }
                     )
                 }
-
-                AddCustomChip(
-                    onClick = { isAddingCustom = true },
-                    isEditing = isAddingCustom,
-                    value = customExerciseName,
-                    onValueChange = { customExerciseName = it },
-                    onDone = {
-                        if (customExerciseName.isNotBlank()) {
-                            val trimmedName = customExerciseName.trim()
-                            if (!customExercises.contains(trimmedName) && !availableExercises.contains(trimmedName)) {
-                                onAddCustomExercise(trimmedName)
+            ) { exercise ->
+                SelectableInfoChip(
+                    text = exercise,
+                    isSelected = selectedExercises.contains(exercise),
+                    onClick = {
+                        selectedExercises = if (selectedExercises.contains(exercise)) {
+                            selectedExercises - exercise
+                        } else {
+                            if (selectedExercises.size < 3) {
+                                selectedExercises + exercise
+                            } else {
+                                selectedExercises
                             }
                         }
-                        customExerciseName = ""
-                        isAddingCustom = false
                     }
                 )
             }
@@ -200,7 +198,6 @@ private fun EditFavoriteExerciseScreenPreview() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Preview(showBackground = true, name = "선호 운동 선택된 상태")
 @Composable
 private fun EditFavoriteExerciseScreenWithChipsPreview() {
