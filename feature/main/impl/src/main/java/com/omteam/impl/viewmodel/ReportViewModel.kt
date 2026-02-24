@@ -90,6 +90,32 @@ class ReportViewModel @Inject constructor(
     }
 
     /**
+     * 선택된 날짜를 특정 주로 업데이트 (바텀 시트에서 사용)
+     */
+    fun updateSelectedDate(year: String, month: String, weekOfMonth: String) {
+        val yearInt = year.toIntOrNull() ?: _selectedDate.value.year
+        val monthInt = month.toIntOrNull() ?: _selectedDate.value.monthValue
+        val weekInt = weekOfMonth.toIntOrNull() ?: 1
+
+        // 해당 년, 월의 n주차 시작일 계산
+        val firstDayOfMonth = LocalDate.of(yearInt, monthInt, 1)
+        val weekFields = WeekFields.of(Locale.KOREA)
+
+        // 월의 첫 번째 주 월요일 기준으로 계산
+        val targetWeekStart = firstDayOfMonth
+            .with(weekFields.weekOfMonth(), weekInt.toLong())
+            .with(weekFields.dayOfWeek(), 1L) // 월요일
+
+        _selectedDate.value = targetWeekStart
+        _weekDisplayText.value = formatWeekDisplayText(_selectedDate.value)
+        Timber.d("## 선택된 주 업데이트 : ${_weekDisplayText.value}")
+
+        // 변경된 주의 데이터 조회
+        fetchWeeklyReport()
+        fetchDailyFeedbackForSelectedDate()
+    }
+
+    /**
      * 날짜를 "yyyy년 M월 n주" 형식으로 변환
      */
     private fun formatWeekDisplayText(date: LocalDate): String {

@@ -17,11 +17,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,13 +50,14 @@ import com.omteam.domain.model.report.DailyResult
 import com.omteam.domain.model.report.DayOfWeek
 import com.omteam.domain.model.report.TopFailureReason
 import com.omteam.domain.model.report.WeeklyReport
+import com.omteam.impl.component.report.WeekSelectionBottomSheetContent
 import com.omteam.impl.viewmodel.ReportViewModel
 import com.omteam.impl.viewmodel.state.DailyFeedbackUiState
 import com.omteam.impl.viewmodel.state.WeeklyReportUiState
 import com.omteam.omt.core.designsystem.R
-import timber.log.Timber
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReportScreen(
     modifier: Modifier = Modifier,
@@ -61,10 +68,30 @@ fun ReportScreen(
     val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsState()
     val dailyFeedbackUiState by reportViewModel.dailyFeedbackUiState.collectAsState()
 
+    // 주 선택 바텀 시트 표시 상태
+    var showWeekSelectionSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
     // 화면 진입 시 데이터 로드
     LaunchedEffect(Unit) {
         reportViewModel.fetchWeeklyReport()
         reportViewModel.fetchDailyFeedbackForSelectedDate()
+    }
+
+    // 주 선택 바텀 시트
+    if (showWeekSelectionSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showWeekSelectionSheet = false },
+            sheetState = sheetState
+        ) {
+            WeekSelectionBottomSheetContent(
+                onDismiss = { showWeekSelectionSheet = false },
+                onAnalyzeClick = { year, month, weekOfMonth ->
+                    reportViewModel.updateSelectedDate(year, month, weekOfMonth)
+                    showWeekSelectionSheet = false
+                }
+            )
+        }
     }
 
     ReportContent(
@@ -74,7 +101,7 @@ fun ReportScreen(
         dailyFeedbackUiState = dailyFeedbackUiState,
         onPreviousWeekClick = { reportViewModel.moveToPreviousWeek() },
         onNextWeekClick = { reportViewModel.moveToNextWeek() },
-        onWeekSelectClick = { Timber.d("## 주 선택") },
+        onWeekSelectClick = { showWeekSelectionSheet = true },
         onRefreshClick = {
             reportViewModel.resetToCurrentWeek()
             reportViewModel.fetchWeeklyReport()

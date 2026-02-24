@@ -17,6 +17,18 @@
     <string name="failure_reasons">미션이 힘들었던 이유를 살펴봤어요!</string>
     <string name="suggestion">OMT의 제안</string>
 
+    <!-- 주 선택 바텀 시트 -->
+    <string name="week_selection_title">분석을 보고 싶은 주간을 입력해주세요.</string>
+    <string name="week_selection_subtitle">분석은 월요일을 기준으로 1주 단위로 진행돼요!</string>
+    <string name="week_selection_start_date">시작 날짜</string>
+    <string name="week_selection_year_label">년</string>
+    <string name="week_selection_month_label">월</string>
+    <string name="week_selection_week_label">주</string>
+    <string name="week_selection_year_placeholder">YYYY</string>
+    <string name="week_selection_month_placeholder">MM</string>
+    <string name="week_selection_week_placeholder">WW</string>
+    <string name="week_selection_button">분석 보기</string>
+
     <!-- 마이페이지 -->
     <string name="edit_button">수정하기</string>
     <string name="my_page_card">OMT와 함께 운동습관 형성하기</string>
