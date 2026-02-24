@@ -237,13 +237,12 @@ fun MyPageScreenContent(
                 .size(dp140)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.character_mypage_profile),
+                contentDescription = "마이페이지 프로필",
                 modifier = Modifier
-                    .size(dp140)
-                    .background(
-                        color = ErrorBottomSheetBackground,
-                        shape = CircleShape
-                    )
+                    .size(dp100)
+                    .align(Alignment.Center)
             )
 
             // 편집 아이콘
@@ -252,7 +251,7 @@ fun MyPageScreenContent(
                 contentDescription = "닉네임 수정",
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = dp8)
+                    .padding(bottom = dp20, end = dp10)
                     .size(dp36)
                     .clickable(
                         // 물결 효과 제거
@@ -264,7 +263,7 @@ fun MyPageScreenContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(dp16))
+        Spacer(modifier = Modifier.height(dp12))
 
         // 온보딩 정보에서 조회한 닉네임 표시
         val nickname = when (onboardingState) {

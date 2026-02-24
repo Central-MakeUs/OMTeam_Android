@@ -7,9 +7,7 @@ import com.omteam.domain.usecase.GetCharacterInfoUseCase
 import com.omteam.domain.usecase.GetDailyRecommendedMissionsUseCase
 import com.omteam.domain.usecase.RequestDailyMissionRecommendationsUseCase
 import com.omteam.domain.usecase.StartMissionUseCase
-import com.omteam.impl.viewmodel.enum.AppleStatus
 import com.omteam.impl.viewmodel.state.CharacterUiState
-import com.omteam.impl.viewmodel.state.DailyAppleData
 import com.omteam.impl.viewmodel.state.DailyMissionRecommendationUiState
 import com.omteam.impl.viewmodel.state.DailyMissionUiState
 import com.omteam.impl.viewmodel.state.RecommendedMissionsUiState
@@ -20,9 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 /**
@@ -176,34 +171,4 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    /**
-     * 주어진 날짜가 속한 주의 일요일부터 토요일까지 7일간의 데이터를 반환
-     */
-    fun getCurrentWeekDays(baseDate: LocalDate = LocalDate.now()): List<DailyAppleData> {
-        // 주의 시작(일요일)을 찾음
-        val startOfWeek = baseDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
-        
-        // 7일간의 데이터 생성 (임시로 DEFAULT 상태 사용, 추후 API 연동 시 변경)
-        return (0..6).map { dayOffset ->
-            val date = startOfWeek.plusDays(dayOffset.toLong())
-            DailyAppleData(
-                date = date,
-                dayOfMonth = date.dayOfMonth,
-                status = getAppleStatusForDate(date) // 임시 데이터
-            )
-        }
-    }
-
-    /**
-     * 임시로 사과 상태를 반환하는 함수
-     * TODO: API 연동 후 실제 데이터로 교체
-     */
-    private fun getAppleStatusForDate(date: LocalDate): AppleStatus {
-        // 임시 로직: 날짜에 따라 다른 상태 반환
-        return when (date.dayOfMonth % 3) {
-            0 -> AppleStatus.SUCCESS
-            1 -> AppleStatus.FAILED
-            else -> AppleStatus.DEFAULT
-        }
-    }
 }
