@@ -61,6 +61,10 @@ class ReportViewModel @Inject constructor(
         _selectedDate.value = _selectedDate.value.minusWeeks(1)
         _weekDisplayText.value = formatWeekDisplayText(_selectedDate.value)
         Timber.d("## 이전 주 표시 : ${_weekDisplayText.value}")
+
+        // 변경된 주의 데이터 조회
+        fetchWeeklyReport()
+        fetchDailyFeedbackForSelectedDate()
     }
 
     /**
@@ -70,6 +74,10 @@ class ReportViewModel @Inject constructor(
         _selectedDate.value = _selectedDate.value.plusWeeks(1)
         _weekDisplayText.value = formatWeekDisplayText(_selectedDate.value)
         Timber.d("## 다음 주 표시 : ${_weekDisplayText.value}")
+
+        // 변경된 주의 데이터 조회
+        fetchWeeklyReport()
+        fetchDailyFeedbackForSelectedDate()
     }
 
     /**
