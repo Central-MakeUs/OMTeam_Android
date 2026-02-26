@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -93,10 +92,17 @@ fun EditMyInfoContent(
     // 탈퇴 완료 다이얼로그 표시 상태
     var showWithdrawSuccessDialog by remember { mutableStateOf(false) }
 
-    // 탈퇴 완료 상태 감지하면 다이얼로그 표시
+    // 마지막으로 성공적으로 로드된 온보딩 데이터 캐시
+    // 탈퇴 진행 중 Loading 상태로 전환되더라도 기존 표시되던 데이터 유지에 사용
+    var cachedOnboardingData by remember { mutableStateOf<OnboardingInfo?>(null) }
+
+    // 상태 변경 감지해서 데이터 캐시 갱신, 탈퇴 완료 다이얼로그 표시
     LaunchedEffect(onboardingInfoState) {
-        if (onboardingInfoState is MyPageOnboardingState.WithdrawSuccess) {
-            showWithdrawSuccessDialog = true
+        when (onboardingInfoState) {
+            is MyPageOnboardingState.Success -> cachedOnboardingData = onboardingInfoState.data
+            is MyPageOnboardingState.UpdateSuccess -> cachedOnboardingData = onboardingInfoState.data
+            is MyPageOnboardingState.WithdrawSuccess -> showWithdrawSuccessDialog = true
+            else -> {}
         }
     }
 
@@ -131,88 +137,86 @@ fun EditMyInfoContent(
 
         Spacer(modifier = Modifier.height(dp36))
 
-        when (onboardingInfoState) {
-            is MyPageOnboardingState.Success,
-            is MyPageOnboardingState.UpdateSuccess -> {
-                val data = when (onboardingInfoState) {
-                    is MyPageOnboardingState.Success -> onboardingInfoState.data
-                    is MyPageOnboardingState.UpdateSuccess -> onboardingInfoState.data
-                    else -> return@Column
-                }
-                
-                // 운동 가능 시간
-                val exerciseTimeString = getExerciseTimeString(data.availableStartTime)
-                EditMyInfoItem(
-                    label = stringResource(R.string.available_exercise_hours),
-                    value = exerciseTimeString,
-                    onClick = { onNavigateToEditExerciseTime(exerciseTimeString) }
-                )
+        // 현재 상태에서 데이터를 꺼내거나 캐시된 데이터를 fallback으로 사용
+        // Loading(탈퇴 진행 중 포함) 상태에서도 기존에 표시되던 온보딩 정보 유지
+        val displayData = when (onboardingInfoState) {
+            is MyPageOnboardingState.Success -> onboardingInfoState.data
+            is MyPageOnboardingState.UpdateSuccess -> onboardingInfoState.data
+            else -> cachedOnboardingData
+        }
 
-                Spacer(modifier = Modifier.height(dp36))
+        if (displayData != null) {
+            // 운동 가능 시간
+            val exerciseTimeString = getExerciseTimeString(displayData.availableStartTime)
+            EditMyInfoItem(
+                label = stringResource(R.string.available_exercise_hours),
+                value = exerciseTimeString,
+                onClick = { onNavigateToEditExerciseTime(exerciseTimeString) }
+            )
 
-                // 미션에 투자할 수 있는 시간
-                EditMyInfoItem(
-                    label = stringResource(R.string.available_mission_hours),
-                    value = "${data.minExerciseMinutes}분",
-                    onClick = { onNavigateToEditMissionTime(data.minExerciseMinutes.toString()) }
-                )
+            Spacer(modifier = Modifier.height(dp36))
 
-                Spacer(modifier = Modifier.height(dp36))
+            // 미션에 투자할 수 있는 시간
+            EditMyInfoItem(
+                label = stringResource(R.string.available_mission_hours),
+                value = "${displayData.minExerciseMinutes}분",
+                onClick = { onNavigateToEditMissionTime(displayData.minExerciseMinutes.toString()) }
+            )
 
-                // 선호 운동을 ","로 나눠서 개별 chip으로 표시
-                val preferredExercises = data.preferredExerciseText
-                    .split(",")
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() }
-                
-                EditMyInfoItem(
-                    label = stringResource(R.string.favorite_exercises),
-                    chips = preferredExercises,
-                    onClick = { onNavigateToEditFavoriteExercise(preferredExercises) }
-                )
+            Spacer(modifier = Modifier.height(dp36))
 
-                Spacer(modifier = Modifier.height(dp36))
+            // 선호 운동을 ","로 나눠서 개별 chip으로 표시
+            val preferredExercises = displayData.preferredExerciseText
+                .split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
 
-                // 평소 생활 패턴
-                val lifestyleTypeString = getLifestyleTypeString(data.lifestyleType)
-                EditMyInfoItem(
-                    label = stringResource(R.string.usual_pattern),
-                    value = lifestyleTypeString,
-                    onClick = { onNavigateToEditPattern(lifestyleTypeString) }
-                )
-            }
-            else -> {
-                // 로딩 중, 에러면 기본값 표시
-                EditMyInfoItem(
-                    label = stringResource(R.string.available_exercise_hours),
-                    value = "로딩 중...",
-                    onClick = { onNavigateToEditExerciseTime("") }
-                )
+            EditMyInfoItem(
+                label = stringResource(R.string.favorite_exercises),
+                chips = preferredExercises,
+                onClick = { onNavigateToEditFavoriteExercise(preferredExercises) }
+            )
 
-                Spacer(modifier = Modifier.height(dp36))
+            Spacer(modifier = Modifier.height(dp36))
 
-                EditMyInfoItem(
-                    label = stringResource(R.string.available_mission_hours),
-                    value = "로딩 중...",
-                    onClick = { onNavigateToEditMissionTime("") }
-                )
+            // 평소 생활 패턴
+            val lifestyleTypeString = getLifestyleTypeString(displayData.lifestyleType)
+            EditMyInfoItem(
+                label = stringResource(R.string.usual_pattern),
+                value = lifestyleTypeString,
+                onClick = { onNavigateToEditPattern(lifestyleTypeString) }
+            )
+        } else {
+            // 초기 로딩 중이거나 에러 시 기본값 표시
+            EditMyInfoItem(
+                label = stringResource(R.string.available_exercise_hours),
+                value = "로딩 중...",
+                onClick = { onNavigateToEditExerciseTime("") }
+            )
 
-                Spacer(modifier = Modifier.height(dp36))
+            Spacer(modifier = Modifier.height(dp36))
 
-                EditMyInfoItem(
-                    label = stringResource(R.string.favorite_exercises),
-                    value = "로딩 중...",
-                    onClick = { onNavigateToEditFavoriteExercise(emptyList()) }
-                )
+            EditMyInfoItem(
+                label = stringResource(R.string.available_mission_hours),
+                value = "로딩 중...",
+                onClick = { onNavigateToEditMissionTime("") }
+            )
 
-                Spacer(modifier = Modifier.height(dp36))
+            Spacer(modifier = Modifier.height(dp36))
 
-                EditMyInfoItem(
-                    label = stringResource(R.string.usual_pattern),
-                    value = "로딩 중...",
-                    onClick = { onNavigateToEditPattern("") }
-                )
-            }
+            EditMyInfoItem(
+                label = stringResource(R.string.favorite_exercises),
+                value = "로딩 중...",
+                onClick = { onNavigateToEditFavoriteExercise(emptyList()) }
+            )
+
+            Spacer(modifier = Modifier.height(dp36))
+
+            EditMyInfoItem(
+                label = stringResource(R.string.usual_pattern),
+                value = "로딩 중...",
+                onClick = { onNavigateToEditPattern("") }
+            )
         }
 
         Spacer(modifier = Modifier.height(dp62))
