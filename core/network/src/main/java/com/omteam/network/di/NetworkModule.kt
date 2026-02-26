@@ -5,6 +5,7 @@ import com.omteam.network.api.AuthApiService
 import com.omteam.network.api.CharacterApiService
 import com.omteam.network.api.ChatApiService
 import com.omteam.network.api.MissionApiService
+import com.omteam.network.api.NotificationApiService
 import com.omteam.network.api.OnboardingApiService
 import com.omteam.network.api.ReportApiService
 import com.omteam.network.interceptor.AuthResponseInterceptor
@@ -103,4 +104,9 @@ object NetworkModule {
     @Singleton
     fun provideChatApiService(retrofit: Retrofit): ChatApiService =
         retrofit.create(ChatApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationApiService(retrofit: Retrofit): NotificationApiService =
+        retrofit.create(NotificationApiService::class.java)
 }

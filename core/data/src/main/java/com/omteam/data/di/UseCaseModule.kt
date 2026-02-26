@@ -139,4 +139,16 @@ object UseCaseModule {
     fun provideWithdrawUseCase(
         authRepository: AuthRepository
     ): WithdrawUseCase = WithdrawUseCase(authRepository)
+
+    @Provides
+    @Singleton
+    fun provideRegisterFcmTokenUseCase(
+        notificationRepository: NotificationRepository
+    ): RegisterFcmTokenUseCase = RegisterFcmTokenUseCase(notificationRepository)
+
+    @Provides
+    @Singleton
+    fun provideDeleteFcmTokenUseCase(
+        notificationRepository: NotificationRepository
+    ): DeleteFcmTokenUseCase = DeleteFcmTokenUseCase(notificationRepository)
 }
