@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +36,7 @@ import com.omteam.designsystem.foundation.*
 import com.omteam.designsystem.theme.*
 import com.omteam.impl.R
 import com.omteam.impl.screen.component.OnboardingBottomSheet
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +51,9 @@ fun SetGoalScreen(
     var customGoalInput by remember { mutableStateOf("") }
     var isTextFieldFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    // confirmValueChange 없이 sheetState를 상위 스코프에서 관리해서 애니메이션이 정상 실행되게 함
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     val goalTitleText = stringResource(R.string.set_goal_screen_title)
     val dietText = stringResource(R.string.diet)
@@ -148,31 +154,32 @@ fun SetGoalScreen(
     }
 
     if (showBottomSheet) {
-        // 바텀 시트보다 먼저 BackHandler 등록해서 키보드 표시될 때 뒤로가기 클릭 시 바텀 시트가 사라지지 않게
-        BackHandler(enabled = true) {
-            if (isTextFieldFocused) {
-                // TextField에 포커스 있으면 키보드만 닫음
-                focusManager.clearFocus()
-            } else {
-                // 포커스가 없으면 바텀시트 닫음
-                showBottomSheet = false
-            }
-        }
-
         ModalBottomSheet(
-            onDismissRequest = {
-                // 외부 클릭으로 인한 dismiss는 무시
-            },
-            sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-                confirmValueChange = { false }
-            ),
+            // 스와이프해서 시트가 닫히면 컴포저블도 같이 제거
+            onDismissRequest = { showBottomSheet = false },
+            sheetState = sheetState,
+            // 시트 자체의 뒤로가기 키 처리를 비활성화해서 BackHandler와 충돌 방지
+            properties = ModalBottomSheetProperties(shouldDismissOnBackPress = false),
             containerColor = White,
             shape = RoundedCornerShape(
                 topStart = dp32,
                 topEnd = dp32
             )
         ) {
+            // 바텀 시트 안에서 뒤로가기 키 단독 처리
+            BackHandler(enabled = true) {
+                if (isTextFieldFocused) {
+                    // TextField에 포커스 있으면 키보드만 닫음
+                    focusManager.clearFocus()
+                } else {
+                    // hide 애니메이션 완료 후 composable 제거해서 window 정리 보장
+                    scope.launch {
+                        sheetState.hide()
+                        showBottomSheet = false
+                    }
+                }
+            }
+
             Box(modifier = Modifier.imePadding()) {
                 OnboardingBottomSheet(
                     placeholder = stringResource(R.string.direct_input_placeholder),
@@ -180,7 +187,11 @@ fun SetGoalScreen(
                         customGoalInput = customGoal
                         selectedGoal = customGoal
                         onGoalChange(customGoal)
-                        showBottomSheet = false
+                        // 확인 버튼도 애니메이션 후 제거
+                        scope.launch {
+                            sheetState.hide()
+                            showBottomSheet = false
+                        }
                     },
                     onFocusChanged = { focused ->
                         isTextFieldFocused = focused
