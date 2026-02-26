@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -60,7 +61,27 @@ class PermissionDataStore @Inject constructor(
         }
     }
 
+    /**
+     * FCM 토큰 서버 등록 여부 저장
+     *
+     * 앱 재시작 후 알림 권한 취소 감지 시 불필요한 API 호출 방지에 사용
+     */
+    suspend fun saveFcmTokenRegistered(isRegistered: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_FCM_TOKEN_REGISTERED] = isRegistered
+        }
+    }
+
+    /**
+     * FCM 토큰 서버 등록 여부 조회
+     */
+    fun isFcmTokenRegistered(): Flow<Boolean> =
+        dataStore.data.map { preferences ->
+            preferences[IS_FCM_TOKEN_REGISTERED] ?: false
+        }
+
     companion object {
         private val PUSH_PERMISSION_DENIAL_COUNT = intPreferencesKey("push_permission_denial_count")
+        private val IS_FCM_TOKEN_REGISTERED = booleanPreferencesKey("is_fcm_token_registered")
     }
 }

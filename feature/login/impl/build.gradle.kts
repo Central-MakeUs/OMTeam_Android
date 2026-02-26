@@ -39,6 +39,10 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
 
+    // 파이어베이스 (FCM 토큰 등록)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
+
     // timber
     implementation(libs.timber)
 

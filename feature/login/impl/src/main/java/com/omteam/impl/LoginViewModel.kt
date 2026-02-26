@@ -4,17 +4,21 @@ import android.content.Context
 import androidx.credentials.CredentialManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.datastore.TokenDataStore
 import com.omteam.domain.model.auth.LoginResult
 import com.omteam.domain.model.auth.UserInfo
 import com.omteam.domain.usecase.GetUserInfoUseCase
-import com.omteam.domain.usecase.LogoutUseCase
 import com.omteam.domain.usecase.LoginWithIdTokenUseCase
+import com.omteam.domain.usecase.LogoutUseCase
+import com.omteam.domain.usecase.RegisterFcmTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
@@ -24,8 +28,10 @@ class LoginViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val loginWithIdTokenUseCase: LoginWithIdTokenUseCase,
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
     private val credentialManager: CredentialManager,
     private val tokenDataStore: TokenDataStore,
+    private val permissionDataStore: PermissionDataStore,
     @param:Named("google_web_client_id") private val googleWebClientId: String
 ): ViewModel() {
 
@@ -71,6 +77,9 @@ class LoginViewModel @Inject constructor(
                         // 토큰 저장
                         tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
                         Timber.d("## 카카오 로그인 후 토큰 저장 완료")
+
+                        // FCM 토큰 등록 (백그라운드에서 처리)
+                        registerFcmToken()
 
                         // 사용자 정보 조회
                         getUserInfoUseCase("kakao")
@@ -126,6 +135,9 @@ class LoginViewModel @Inject constructor(
 
                         tokenDataStore.saveTokens(loginResult.accessToken, loginResult.refreshToken)
                         Timber.d("## 구글 로그인 후 토큰 저장 완료")
+
+                        // 백그라운드에서 FCM 토큰 등록
+                        registerFcmToken()
                         
                         // 로그인 시 받은 유저 정보 확인
                         Timber.d("## 구글 유저 정보 : ${userInfo.email}")
@@ -186,6 +198,30 @@ class LoginViewModel @Inject constructor(
     // 로그인 상태 완전 초기화
     fun resetLoginState() {
         _loginState.value = LoginState.Idle
+    }
+
+    /**
+     * FCM 토큰 등록
+     *
+     * 로그인 성공 후 백그라운드에서 호출
+     */
+    private fun registerFcmToken() = viewModelScope.launch {
+        try {
+            val fcmToken = FirebaseMessaging.getInstance().token.await()
+            Timber.d("## FCM 토큰 : $fcmToken")
+
+            registerFcmTokenUseCase(fcmToken).collect { result ->
+                result.onSuccess { message ->
+                    Timber.d("## 로그인 후 FCM 토큰 등록 성공 : $message")
+                    // 앱 재시작 후 알림 권한 취소 감지하기 위해 등록 완료 플래그 저장
+                    permissionDataStore.saveFcmTokenRegistered(true)
+                }.onFailure { error ->
+                    Timber.e("## 로그인 후 FCM 토큰 등록 실패 : ${error.message}")
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e("## 로그인 후 FCM 토큰 등록 중 예외 발생 : ${e.message}")
+        }
     }
 
     sealed interface LoginState {

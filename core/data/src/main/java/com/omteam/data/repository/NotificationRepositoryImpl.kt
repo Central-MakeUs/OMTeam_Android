@@ -22,7 +22,14 @@ class NotificationRepositoryImpl @Inject constructor(
                 val request = FcmTokenRequest(fcmToken = fcmToken)
                 notificationApiService.registerFcmToken(request)
             },
-            transform = { response -> response.data },
+            transform = { response ->
+                // success가 true면 성공 (data는 null일 수 있음)
+                if (response.success) {
+                    response.data ?: "FCM 토큰이 등록되었습니다."
+                } else {
+                    null
+                }
+            },
             getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
         )
 
@@ -30,7 +37,14 @@ class NotificationRepositoryImpl @Inject constructor(
         safeApiCall(
             logTag = "FCM 토큰 삭제",
             apiCall = { notificationApiService.deleteFcmToken() },
-            transform = { response -> response.data },
+            transform = { response ->
+                // success가 true면 성공 (data는 null일 수 있음)
+                if (response.success) {
+                    response.data ?: "FCM 토큰이 삭제되었습니다."
+                } else {
+                    null
+                }
+            },
             getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
         )
 }

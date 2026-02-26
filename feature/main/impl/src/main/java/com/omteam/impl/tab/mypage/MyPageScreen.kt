@@ -110,9 +110,14 @@ fun MyPageScreen(
         }
     }
 
-    // 화면 진입 시 온보딩 정보 조회
+    // 화면 진입 시 온보딩 정보 조회 + 앱 재시작 후 알림 권한 취소 감지 처리
+    // 알림 설정에서 권한을 끄면 앱이 재시작되기 때문에
+    // 화면 생성 시점에 권한 상태 확인해서 FCM 토큰 삭제
     LaunchedEffect(Unit) {
         viewModel.getOnboardingInfo()
+        val isPermissionGranted =
+            permissionManager.getPermissionStatus() == PushPermissionStatus.GRANTED
+        viewModel.deleteFcmTokenIfRegistered(isPermissionGranted)
     }
 
     // 닉네임 변경 성공 시 바텀 시트 닫고 정보 갱신
@@ -132,7 +137,8 @@ fun MyPageScreen(
         onNavigateToEditMyGoal = onNavigateToEditMyGoal,
         onNavigateToEditMyInfo = onNavigateToEditMyInfo,
         onShowChangeNicknameBottomSheet = { showChangeNicknameBottomSheet = true },
-        onRequestPermission = requestPermission
+        onRequestPermission = requestPermission,
+        onSwitchTurnedOn = { viewModel.registerFcmToken() }
     )
 
     // 닉네임 변경 바텀 시트
@@ -214,7 +220,8 @@ fun MyPageScreenContent(
     onNavigateToEditMyGoal: (String) -> Unit = {},
     onNavigateToEditMyInfo: () -> Unit = {},
     onShowChangeNicknameBottomSheet: () -> Unit = {},
-    onRequestPermission: () -> Unit = {}
+    onRequestPermission: () -> Unit = {},
+    onSwitchTurnedOn: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -367,7 +374,8 @@ fun MyPageScreenContent(
             text = stringResource(com.omteam.main.impl.R.string.setting_alarm_title),
             permissionManager = permissionManager,
             permissionRefreshKey = permissionRefreshKey,
-            onRequestPermission = onRequestPermission
+            onRequestPermission = onRequestPermission,
+            onSwitchTurnedOn = onSwitchTurnedOn
         )
         MyPageMenuDivider()
 
@@ -403,18 +411,32 @@ private fun MyPageMenuItemWithSwitch(
     text: String,
     permissionManager: PushNotificationPermissionManager? = null,
     permissionRefreshKey: Int = 0,
-    onRequestPermission: () -> Unit = {}
+    onRequestPermission: () -> Unit = {},
+    onSwitchTurnedOn: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var isChecked by remember { mutableStateOf(false) }
 
-    // 권한 상태 확인
-    // permissionManager나 refreshKey 변경 시 재확인
+    // 이전 권한 허용 여부 추적 (null = 초기화 전, 초기화 시점에는 FCM 호출 없음)
+    var previousGranted by remember { mutableStateOf<Boolean?>(null) }
+
+    // 권한 상태 확인:
+    // - permissionRefreshKey: 권한 허가 다이얼로그 결과 반영 (OFF → ON 감지)
+    // ON → OFF(설정에서 권한 취소)는 앱이 재시작되므로 MyPageScreen.LaunchedEffect(Unit)에서 처리
     LaunchedEffect(permissionManager, permissionRefreshKey) {
         permissionManager?.let { manager ->
-            val status = manager.getPermissionStatus()
-            isChecked = (status == PushPermissionStatus.GRANTED)
+            val currentGranted = manager.getPermissionStatus() == PushPermissionStatus.GRANTED
+
+            val prev = previousGranted
+            if (prev != null && !prev && currentGranted) {
+                // 초기화 이후 OFF → ON 전환 시에만 FCM 토큰 등록
+                Timber.d("## 푸시 알림 권한 허가 → FCM 토큰 등록")
+                onSwitchTurnedOn()
+            }
+
+            previousGranted = currentGranted
+            isChecked = currentGranted
         }
     }
 
