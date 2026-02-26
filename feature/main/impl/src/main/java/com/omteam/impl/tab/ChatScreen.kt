@@ -63,6 +63,7 @@ import java.time.LocalDateTime
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
+    onNavigateHome: () -> Unit = {},
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val sendMessageUiState by viewModel.sendMessageUiState.collectAsState()
@@ -119,15 +120,20 @@ fun ChatScreen(
         sendMessageUiState = sendMessageUiState,
         scrollState = scrollState,
         onOptionSelected = { messageId, option ->
-            // 이미 선택된 경우 무시해서 API 중복 호출 방지
-            if (!selectedMessageIds.contains(messageId)) {
-                selectedMessageIds = selectedMessageIds + messageId
-                viewModel.sendMessage(
-                    type = "OPTION",
-                    value = option.label,
-                    optionValue = option.value,
-                    actionType = option.actionType
-                )
+            when {
+                // NAVIGATE_HOME 액션 클릭 시 메시지 전송 대신 홈 탭 이동
+                option.actionType == "NAVIGATE_HOME" -> onNavigateHome()
+
+                // 이미 선택된 경우 무시해서 API 중복 호출 방지
+                !selectedMessageIds.contains(messageId) -> {
+                    selectedMessageIds = selectedMessageIds + messageId
+                    viewModel.sendMessage(
+                        type = "OPTION",
+                        value = option.label,
+                        optionValue = option.value,
+                        actionType = option.actionType
+                    )
+                }
             }
         },
         onStartChat = {
@@ -143,12 +149,18 @@ fun ChatScreen(
             selectedMessageIds.contains(messageId)
         },
         onSendMessage = { message ->
-            // 실패 사유 전송
+            // 마지막 어시스턴트 메시지의 actionType을 그대로 사용
+            // actionType이 null이면 일반 채팅으로 처리됨
+            val lastAssistantActionType = currentMessages
+                .filter { it.role == ChatRole.ASSISTANT }
+                .maxByOrNull { it.messageId }
+                ?.actionType
+
             viewModel.sendMessage(
                 type = "TEXT",
                 value = message,
                 optionValue = null,
-                actionType = "MISSION_FAILURE_REASON"
+                actionType = lastAssistantActionType
             )
         }
     )
