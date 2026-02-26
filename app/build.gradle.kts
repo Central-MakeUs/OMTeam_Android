@@ -105,6 +105,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.messaging)
 
     // nav3
     implementation(libs.androidx.navigation3.runtime)

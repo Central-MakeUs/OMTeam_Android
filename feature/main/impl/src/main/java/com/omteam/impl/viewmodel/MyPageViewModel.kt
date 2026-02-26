@@ -2,8 +2,12 @@ package com.omteam.impl.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
+import com.omteam.datastore.PermissionDataStore
 import com.omteam.domain.repository.CustomExerciseRepository
+import com.omteam.domain.usecase.DeleteFcmTokenUseCase
 import com.omteam.domain.usecase.GetOnboardingInfoUseCase
+import com.omteam.domain.usecase.RegisterFcmTokenUseCase
 import com.omteam.domain.usecase.UpdateAvailableTimeUseCase
 import com.omteam.domain.usecase.UpdateLifestyleUseCase
 import com.omteam.domain.usecase.UpdateMinExerciseMinutesUseCase
@@ -11,14 +15,17 @@ import com.omteam.domain.usecase.UpdateAppGoalUseCase
 import com.omteam.domain.usecase.UpdateNicknameUseCase
 import com.omteam.domain.usecase.UpdatePreferredExerciseUseCase
 import com.omteam.domain.usecase.WithdrawUseCase
+import com.omteam.impl.viewmodel.state.FcmTokenState
 import com.omteam.impl.viewmodel.state.MyPageOnboardingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -33,11 +40,17 @@ class MyPageViewModel @Inject constructor(
     private val customExerciseRepository: CustomExerciseRepository,
     private val withdrawUseCase: WithdrawUseCase,
     private val updateAppGoalUseCase: UpdateAppGoalUseCase,
+    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
+    private val deleteFcmTokenUseCase: DeleteFcmTokenUseCase,
+    private val permissionDataStore: PermissionDataStore,
 ) : ViewModel() {
 
     private val _onboardingInfoState =
         MutableStateFlow<MyPageOnboardingState>(MyPageOnboardingState.Idle)
     val onboardingInfoState: StateFlow<MyPageOnboardingState> = _onboardingInfoState.asStateFlow()
+
+    private val _fcmTokenState = MutableStateFlow<FcmTokenState>(FcmTokenState.Idle)
+    val fcmTokenState: StateFlow<FcmTokenState> = _fcmTokenState.asStateFlow()
 
     val customExercises: StateFlow<List<String>> = customExerciseRepository.getAllCustomExercises()
         .stateIn(
@@ -179,6 +192,9 @@ class MyPageViewModel @Inject constructor(
     fun withdraw() = viewModelScope.launch {
         _onboardingInfoState.value = MyPageOnboardingState.Loading
 
+        // 회원탈퇴 전 FCM 토큰 삭제
+        deleteFcmToken()
+
         withdrawUseCase.invoke()
             .onSuccess { message ->
                 Timber.d("## 회원탈퇴 성공 : $message")
@@ -188,6 +204,75 @@ class MyPageViewModel @Inject constructor(
                 _onboardingInfoState.value =
                     MyPageOnboardingState.Error(e.message ?: "회원탈퇴 중 오류가 발생했습니다.")
             }
+    }
+
+    /**
+     * FCM 토큰 등록
+     *
+     * Firebase에서 현재 기기의 FCM 토큰을 가져와 서버에 등록.
+     * 성공 시 DataStore에 등록 완료 플래그를 저장하여 앱 재시작 후 상태 추적에 사용.
+     */
+    fun registerFcmToken() = viewModelScope.launch {
+        _fcmTokenState.value = FcmTokenState.Loading
+        try {
+            val fcmToken = FirebaseMessaging.getInstance().token.await()
+            Timber.d("## FCM 토큰 : $fcmToken")
+
+            registerFcmTokenUseCase(fcmToken).collect { result ->
+                result.onSuccess { message ->
+                    Timber.d("## FCM 토큰 등록 성공 : $message")
+                    permissionDataStore.saveFcmTokenRegistered(true)
+                    _fcmTokenState.value = FcmTokenState.RegisterSuccess(message)
+                }.onFailure { e ->
+                    Timber.e("## FCM 토큰 등록 실패 : ${e.message}")
+                    _fcmTokenState.value = FcmTokenState.Error(e.message ?: "FCM 토큰 등록 실패")
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e("## FCM 토큰 등록 중 예외 발생 : ${e.message}")
+            _fcmTokenState.value = FcmTokenState.Error(e.message ?: "FCM 토큰 등록 중 오류 발생")
+        }
+    }
+
+    /**
+     * FCM 토큰 삭제
+     *
+     * 알림 권한 취소, 회원탈퇴 전 서버에서 FCM 토큰을 제거
+     *
+     * 성공 시 DataStore의 등록 완료 플래그를 해제
+     */
+    fun deleteFcmToken() = viewModelScope.launch {
+        _fcmTokenState.value = FcmTokenState.Loading
+
+        deleteFcmTokenUseCase().collect { result ->
+            result.onSuccess { message ->
+                Timber.d("## FCM 토큰 삭제 성공 : $message")
+                permissionDataStore.saveFcmTokenRegistered(false)
+                _fcmTokenState.value = FcmTokenState.DeleteSuccess(message)
+            }.onFailure { e ->
+                Timber.e("## FCM 토큰 삭제 실패 : ${e.message}")
+                _fcmTokenState.value = FcmTokenState.Error(e.message ?: "FCM 토큰 삭제 실패")
+            }
+        }
+    }
+
+    /**
+     * 앱 재시작 후 알림 권한 취소 감지 시 FCM 토큰 삭제
+     *
+     * 알림 설정 화면에서 권한을 끄면 앱이 재시작돼서 OnResume으로 감지할 수 없음
+     *
+     * 대신 MyPageScreen 진입 시 푸시 알림 권한이 없는 상태면서 DataStore에 FCM이 등록된 상태면 삭제 처리
+     *
+     * @param isPermissionGranted 현재 푸시 알림 권한 허가 여부
+     */
+    fun deleteFcmTokenIfRegistered(isPermissionGranted: Boolean) = viewModelScope.launch {
+        if (!isPermissionGranted) {
+            val isRegistered = permissionDataStore.isFcmTokenRegistered().first()
+            if (isRegistered) {
+                Timber.d("## 앱 재시작 후 알림 권한 없음 감지 → FCM 토큰 삭제")
+                deleteFcmToken()
+            }
+        }
     }
 
 }

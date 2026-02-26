@@ -87,6 +87,11 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    // 파이어베이스 (FCM 토큰 삭제)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // timber
     implementation(libs.timber)

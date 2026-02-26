@@ -78,6 +78,7 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
 # timber
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
