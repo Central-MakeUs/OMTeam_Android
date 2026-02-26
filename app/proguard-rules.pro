@@ -12,15 +12,21 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Firebase Crashlytics: 스택 트레이스 가독성을 위해 소스 파일 및 라인 정보 유지
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
 -keep class com.kakao.sdk.**.model.* { <fields>; }
+
+# Kotlin Coroutines: R8 최적화로 인한 코루틴 내부 클래스 제거 방지
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}
+
+# AndroidX Credentials: Google 로그인 라이브러리 경고 억제
+-dontwarn com.google.android.libraries.identity.googleid.**
 
 # https://github.com/square/okhttp/pull/6792
 -dontwarn org.bouncycastle.jsse.**
