@@ -83,7 +83,9 @@ fun MainScreenContent(
                     onNavigateToChat = onNavigateToChat,
                     onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
                 )
-                1 -> ChatScreen()
+                1 -> ChatScreen(
+                    onNavigateHome = { onTabSelected(0) }
+                )
                 2 -> ReportScreen(
                     onNavigateToDetailedAnalysis = onNavigateToDetailedAnalysis
                 )
