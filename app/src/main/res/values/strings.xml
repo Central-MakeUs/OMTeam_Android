@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OMTeam</string>
+
+    <!-- FCM 알림 채널 -->
+    <string name="notification_channel_name">OMTeam 푸시 알림</string>
+    <string name="notification_channel_description">운동 미션, 리마인더 등 OMTeam 앱의 푸시 알림을 수신합니다.</string>
 </resources>
