@@ -9,6 +9,7 @@ import com.omteam.network.api.NotificationApiService
 import com.omteam.network.api.OnboardingApiService
 import com.omteam.network.api.ReportApiService
 import com.omteam.network.interceptor.AuthResponseInterceptor
+import com.omteam.network.interceptor.CrashlyticsNetworkLoggingInterceptor
 import com.omteam.network.interceptor.TokenInterceptor
 import com.omteam.omt.core.network.BuildConfig
 import dagger.Module
@@ -18,7 +19,6 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -45,15 +45,12 @@ object NetworkModule {
     fun provideOkHttpClient(
         tokenInterceptor: TokenInterceptor,
         authResponseInterceptor: AuthResponseInterceptor,
+        crashlyticsNetworkLoggingInterceptor: CrashlyticsNetworkLoggingInterceptor,
     ): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
-        }
-        
         return OkHttpClient.Builder()
             .addInterceptor(tokenInterceptor) // Authorization 헤더 자동 추가
             .addInterceptor(authResponseInterceptor) // 401, 403 응답 시 토큰 갱신 및 재시도
-            .addInterceptor(loggingInterceptor) // HTTP 로깅
+            .addInterceptor(crashlyticsNetworkLoggingInterceptor) // Crashlytics 네트워크 로그
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
