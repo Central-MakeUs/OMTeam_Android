@@ -48,6 +48,7 @@ fun WeekSelectionBottomSheetContent(
     var year by remember { mutableStateOf("") }
     var month by remember { mutableStateOf("") }
     var weekOfMonth by remember { mutableStateOf("") }
+    val validationMessageRes = getWeekSelectionValidationMessageRes(year, month, weekOfMonth)
 
     Column(
         modifier = Modifier
@@ -120,11 +121,34 @@ fun WeekSelectionBottomSheetContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(dp28))
+        Spacer(modifier = Modifier.height(dp20))
+        if (validationMessageRes != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon_error),
+                    contentDescription = stringResource(MainR.string.week_selection_error_icon),
+                    modifier = Modifier.size(dp24)
+                )
+                Spacer(modifier = Modifier.width(dp8))
+                OMTeamText(
+                    text = stringResource(validationMessageRes),
+                    style = PretendardType.button02Enabled,
+                    color = Error
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(if (validationMessageRes != null) dp12 else dp8))
 
         OMTeamButton(
             text = stringResource(MainR.string.week_selection_button),
-            onClick = { onAnalyzeClick(year, month, weekOfMonth) },
+            onClick = {
+                if (validationMessageRes == null) {
+                    onAnalyzeClick(year, month, weekOfMonth)
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -202,6 +226,28 @@ private fun MonthWeekInputField(
                 }
         )
     }
+}
+private fun getWeekSelectionValidationMessageRes(
+    year: String,
+    month: String,
+    weekOfMonth: String
+): Int? {
+    val yearValue = year.toIntOrNull()
+    if (yearValue != null && yearValue < 2026) {
+        return MainR.string.week_selection_error_year_too_small
+    }
+    if (yearValue != null && yearValue > 2100) {
+        return MainR.string.week_selection_error_year_too_large
+    }
+    val monthValue = month.toIntOrNull()
+    if (monthValue != null && monthValue !in 1..12) {
+        return MainR.string.week_selection_error_month_out_of_range
+    }
+    val weekValue = weekOfMonth.toIntOrNull()
+    if (weekValue != null && weekValue !in 1..5) {
+        return MainR.string.week_selection_error_week_out_of_range
+    }
+    return null
 }
 
 @Preview(showBackground = true)
