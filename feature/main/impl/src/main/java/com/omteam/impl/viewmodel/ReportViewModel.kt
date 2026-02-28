@@ -134,7 +134,10 @@ class ReportViewModel @Inject constructor(
      * false - 서버에서 현재 주 기준으로 조회 (기본값: true)
      */
     fun fetchWeeklyReport(useSelectedDate: Boolean = true) = viewModelScope.launch {
-        _weeklyReportUiState.value = WeeklyReportUiState.Loading
+        val hasCachedWeeklyReport = _weeklyReportUiState.value is WeeklyReportUiState.Success
+        if (!hasCachedWeeklyReport) {
+            _weeklyReportUiState.value = WeeklyReportUiState.Loading
+        }
 
         // selectedDate를 기준으로 year, month, weekOfMonth 계산 (useSelectedDate가 true인 경우에만)
         val (year, month, weekOfMonth) = if (useSelectedDate) {
@@ -152,14 +155,17 @@ class ReportViewModel @Inject constructor(
 
         getWeeklyReportUseCase(year, month, weekOfMonth)
             .collect { result ->
-                _weeklyReportUiState.value = result.fold(
+                result.fold(
                     onSuccess = { weeklyReport ->
                         Timber.d("## 주간 리포트 조회 성공 : $weeklyReport")
-                        WeeklyReportUiState.Success(weeklyReport)
+                        _weeklyReportUiState.value = WeeklyReportUiState.Success(weeklyReport)
                     },
                     onFailure = { error ->
                         Timber.e("## 주간 리포트 조회 실패 : ${error.message}")
-                        WeeklyReportUiState.Error(error.message ?: "알 수 없는 오류")
+                        if (!hasCachedWeeklyReport) {
+                            _weeklyReportUiState.value =
+                                WeeklyReportUiState.Error(error.message ?: "알 수 없는 오류")
+                        }
                     }
                 )
             }
@@ -171,20 +177,26 @@ class ReportViewModel @Inject constructor(
      * @param date 조회할 날짜 (yyyy-MM-dd 형식), null인 경우 오늘 날짜 사용
      */
     fun fetchDailyFeedback(date: String? = null) = viewModelScope.launch {
-        _dailyFeedbackUiState.value = DailyFeedbackUiState.Loading
+        val hasCachedDailyFeedback = _dailyFeedbackUiState.value is DailyFeedbackUiState.Success
+        if (!hasCachedDailyFeedback) {
+            _dailyFeedbackUiState.value = DailyFeedbackUiState.Loading
+        }
 
         Timber.d("## 데일리 피드백 조회 시작 - date : ${date ?: "오늘"}")
 
         getDailyFeedbackUseCase(date)
             .collect { result ->
-                _dailyFeedbackUiState.value = result.fold(
+                result.fold(
                     onSuccess = { dailyFeedback ->
                         Timber.d("## 데일리 피드백 조회 성공 : $dailyFeedback")
-                        DailyFeedbackUiState.Success(dailyFeedback)
+                        _dailyFeedbackUiState.value = DailyFeedbackUiState.Success(dailyFeedback)
                     },
                     onFailure = { error ->
                         Timber.e("## 데일리 피드백 조회 실패 : ${error.message}")
-                        DailyFeedbackUiState.Error(error.message ?: "알 수 없는 오류")
+                        if (!hasCachedDailyFeedback) {
+                            _dailyFeedbackUiState.value =
+                                DailyFeedbackUiState.Error(error.message ?: "알 수 없는 오류")
+                        }
                     }
                 )
             }

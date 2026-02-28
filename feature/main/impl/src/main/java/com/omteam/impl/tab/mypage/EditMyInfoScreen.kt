@@ -58,7 +58,9 @@ fun EditMyInfoScreen(
 
     // 화면 진입 시 온보딩 정보 조회
     LaunchedEffect(Unit) {
-        myPageViewModel.getOnboardingInfo()
+        if (onboardingInfoState is MyPageOnboardingState.Idle) {
+            myPageViewModel.getOnboardingInfo()
+        }
     }
 
     EditMyInfoContent(
