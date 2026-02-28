@@ -226,6 +226,20 @@ fun MyPageScreenContent(
     onRequestPermission: () -> Unit = {},
     onSwitchTurnedOn: () -> Unit = {}
 ) {
+    // Loading 상태에서도 마지막 성공 데이터를 유지해서 화면 깜박임을 줄이기
+    var cachedOnboardingData by remember { mutableStateOf<OnboardingInfo?>(null) }
+    LaunchedEffect(onboardingState) {
+        when (onboardingState) {
+            is MyPageOnboardingState.Success -> cachedOnboardingData = onboardingState.data
+            is MyPageOnboardingState.UpdateSuccess -> cachedOnboardingData = onboardingState.data
+            else -> {}
+        }
+    }
+    val displayData = when (onboardingState) {
+        is MyPageOnboardingState.Success -> onboardingState.data
+        is MyPageOnboardingState.UpdateSuccess -> onboardingState.data
+        else -> cachedOnboardingData
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -276,11 +290,7 @@ fun MyPageScreenContent(
         Spacer(modifier = Modifier.height(dp12))
 
         // 온보딩 정보에서 조회한 닉네임 표시
-        val nickname = when (onboardingState) {
-            is MyPageOnboardingState.Success -> onboardingState.data.nickname
-            is MyPageOnboardingState.UpdateSuccess -> onboardingState.data.nickname
-            else -> "닉네임"
-        }
+        val nickname = displayData?.nickname ?: "닉네임"
 
         OMTeamText(
             text = nickname,
@@ -291,11 +301,8 @@ fun MyPageScreenContent(
         Spacer(modifier = Modifier.height(dp53))
 
         // 온보딩 정보 중 appGoalText 표시
-        val appGoalText = when (onboardingState) {
-            is MyPageOnboardingState.Success -> onboardingState.data.appGoalText
-            is MyPageOnboardingState.UpdateSuccess -> onboardingState.data.appGoalText
-            else -> stringResource(com.omteam.main.impl.R.string.my_page_card)
-        }
+        val appGoalText = displayData?.appGoalText
+            ?: stringResource(com.omteam.main.impl.R.string.my_page_card)
 
         // 나의 목표, 수정하기
         Row(

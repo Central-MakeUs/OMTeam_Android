@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     // 일일 미션 UI State
-    private val _dailyMissionUiState = MutableStateFlow<DailyMissionUiState>(DailyMissionUiState.Idle)
+    private val _dailyMissionUiState = MutableStateFlow<DailyMissionUiState>(DailyMissionUiState.Uninitialized)
     val dailyMissionUiState: StateFlow<DailyMissionUiState> = _dailyMissionUiState.asStateFlow()
     
     // 캐릭터 정보 UI State

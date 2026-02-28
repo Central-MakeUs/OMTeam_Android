@@ -86,7 +86,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         // 이미 조회된 데이터가 있으면 재진입 시 재호출하지 않아 화면 깜박임을 줄인다.
-        if (dailyMissionUiState is DailyMissionUiState.Idle) {
+        if (dailyMissionUiState is DailyMissionUiState.Uninitialized) {
             homeViewModel.fetchDailyMissionStatus()
         }
         if (characterUiState is CharacterUiState.Idle) {
@@ -488,6 +488,7 @@ fun HomeScreenContent(
             Spacer(modifier = Modifier.height(dp24))
 
             when (dailyMissionUiState) {
+                is DailyMissionUiState.Uninitialized -> MissionLoadingView()
                 is DailyMissionUiState.Idle -> {
                     // 초기 상태 - 미션 없는 상태로 표시
                     RecommendedMissionView(

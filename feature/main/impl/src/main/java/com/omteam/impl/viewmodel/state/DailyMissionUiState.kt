@@ -7,6 +7,10 @@ import com.omteam.domain.model.mission.DailyMissionStatus
  */
 sealed class DailyMissionUiState {
     /**
+     * 화면 최초 진입 상태 (아직 조회 요청 전)
+     */
+    data object Uninitialized : DailyMissionUiState()
+    /**
      * 초기 상태 (아직 로드하지 않음)
      */
     data object Idle : DailyMissionUiState()
