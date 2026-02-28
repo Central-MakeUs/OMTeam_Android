@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -80,8 +81,25 @@ class PermissionDataStore @Inject constructor(
             preferences[IS_FCM_TOKEN_REGISTERED] ?: false
         }
 
+    /**
+     * 마지막으로 서버 등록에 성공한 FCM 토큰 저장
+     */
+    suspend fun saveLastRegisteredFcmToken(token: String) =
+        dataStore.edit { preferences ->
+            preferences[LAST_REGISTERED_FCM_TOKEN] = token
+        }
+
+    /**
+     * 마지막으로 서버 등록에 성공한 FCM 토큰 조회
+     */
+    fun getLastRegisteredFcmToken(): Flow<String> =
+        dataStore.data.map { preferences ->
+            preferences[LAST_REGISTERED_FCM_TOKEN] ?: ""
+        }
+
     companion object {
         private val PUSH_PERMISSION_DENIAL_COUNT = intPreferencesKey("push_permission_denial_count")
         private val IS_FCM_TOKEN_REGISTERED = booleanPreferencesKey("is_fcm_token_registered")
+        private val LAST_REGISTERED_FCM_TOKEN = stringPreferencesKey("last_registered_fcm_token")
     }
 }

@@ -248,6 +248,7 @@ class MyPageViewModel @Inject constructor(
             result.onSuccess { message ->
                 Timber.d("## FCM 토큰 삭제 성공 : $message")
                 permissionDataStore.saveFcmTokenRegistered(false)
+                permissionDataStore.saveLastRegisteredFcmToken("")
                 _fcmTokenState.value = FcmTokenState.DeleteSuccess(message)
             }.onFailure { e ->
                 Timber.e("## FCM 토큰 삭제 실패 : ${e.message}")

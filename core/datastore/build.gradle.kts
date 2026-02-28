@@ -8,7 +8,7 @@ android {
 
 dependencies {
     // dataStore
-    implementation(libs.androidx.datastore.preferences)
+    api(libs.androidx.datastore.preferences)
     
     // hilt
     implementation(libs.hilt.android)

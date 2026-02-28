@@ -6,7 +6,7 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.omteam.domain.usecase.RegisterFcmTokenUseCase
+import com.omteam.data.fcm.FcmTokenSyncManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class OmtFirebaseMessagingService : FirebaseMessagingService() {
 
     @Inject
-    lateinit var registerFcmTokenUseCase: RegisterFcmTokenUseCase
+    lateinit var fcmTokenSyncManager: FcmTokenSyncManager
 
     // 서비스 생명주기에 맞는 독립 CoroutineScope
     // SupervisorJob으로 만들어서 자식 실패가 전파되지 않게
@@ -38,14 +38,7 @@ class OmtFirebaseMessagingService : FirebaseMessagingService() {
         Timber.d("## [FCM] 토큰 갱신됨 : $token")
 
         serviceScope.launch {
-            registerFcmTokenUseCase(token).collect { result ->
-                result.onSuccess { message ->
-                    Timber.d("## [FCM] 갱신된 토큰 서버 등록 성공 : $message")
-                }.onFailure { error ->
-                    // 로그인 전이거나 네트워크 오류일 수 있음 — 다음 로그인/자동로그인 시 재등록됨
-                    Timber.w("## [FCM] 갱신된 토큰 서버 등록 실패 (무시됨) : ${error.message}")
-                }
-            }
+            fcmTokenSyncManager.syncToken(token = token, source = "FCM onNewToken", force = true)
         }
     }
 
