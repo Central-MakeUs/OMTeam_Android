@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization.converter)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
 
     // kotlinx-serialization
     implementation(libs.kotlinx.serialization.json)
@@ -55,4 +54,8 @@ dependencies {
     
     // timber
     implementation(libs.timber)
+    
+    // 파베 크래시틱스
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
 }
