@@ -71,6 +71,8 @@ fun ChatScreen(
 
     // 이미 선택한 messageId들을 추적해서 API 중복 호출 방지
     var selectedMessageIds by remember { mutableStateOf<Set<Int>>(emptySet()) }
+    // 옵션 선택 직후 로딩 중에만 표시할 사용자 메시지
+    var pendingOptionMessage by remember { mutableStateOf<String?>(null) }
 
     val scrollState = rememberScrollState()
 
@@ -94,6 +96,7 @@ fun ChatScreen(
 
     val isLoading = sendMessageUiState is SendMessageUiState.Loading ||
             chatHistoryUiState is ChatHistoryUiState.Loading
+    val isSendingMessage = sendMessageUiState is SendMessageUiState.Loading
 
     // 화면 진입 시 기존 대화 내역 조회 및 스크롤 플래그 설정
     LaunchedEffect(Unit) {
@@ -111,6 +114,12 @@ fun ChatScreen(
             shouldScrollToBottom = false
         }
     }
+    
+    LaunchedEffect(isSendingMessage) {
+        if (!isSendingMessage) {
+            pendingOptionMessage = null
+        }
+    }
 
     ChatScreenContent(
         modifier = modifier,
@@ -118,6 +127,7 @@ fun ChatScreen(
         isLoading = isLoading,
         chatHistoryUiState = chatHistoryUiState,
         sendMessageUiState = sendMessageUiState,
+        pendingOptionMessage = pendingOptionMessage,
         scrollState = scrollState,
         onOptionSelected = { messageId, option ->
             when {
@@ -127,6 +137,7 @@ fun ChatScreen(
                 // 이미 선택된 경우 무시해서 API 중복 호출 방지
                 !selectedMessageIds.contains(messageId) -> {
                     selectedMessageIds = selectedMessageIds + messageId
+                    pendingOptionMessage = option.label
                     viewModel.sendMessage(
                         type = "OPTION",
                         value = option.label,
@@ -139,6 +150,7 @@ fun ChatScreen(
         onStartChat = {
             // 선택 상태 초기화하고 새 채팅 시작
             selectedMessageIds = emptySet()
+            pendingOptionMessage = null
             previousMessageCount = 0
             viewModel.startChat()
         },
@@ -173,6 +185,7 @@ fun ChatScreenContent(
     isLoading: Boolean,
     chatHistoryUiState: ChatHistoryUiState,
     sendMessageUiState: SendMessageUiState,
+    pendingOptionMessage: String? = null,
     scrollState: ScrollState,
     onOptionSelected: (Int, ChatOption) -> Unit,
     onStartChat: () -> Unit,
@@ -278,6 +291,10 @@ fun ChatScreenContent(
 
                     // 로딩 중일 때 "..." 표시
                     if (sendMessageUiState is SendMessageUiState.Loading) {
+                        pendingOptionMessage?.let { selectedOptionText ->
+                            Spacer(modifier = Modifier.height(dp20))
+                            UserMessageBubble(text = selectedOptionText)
+                        }
                         Spacer(modifier = Modifier.height(dp20))
                         AssistantMessageBubble(
                             message = null,
