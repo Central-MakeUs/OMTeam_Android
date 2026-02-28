@@ -58,14 +58,17 @@ class HomeViewModel @Inject constructor(
      * 일일 미션 상태 조회
      */
     fun fetchDailyMissionStatus() = viewModelScope.launch {
-        _dailyMissionUiState.value = DailyMissionUiState.Loading
+        val hasCachedDailyMission = _dailyMissionUiState.value is DailyMissionUiState.Success
+        if (!hasCachedDailyMission) {
+            _dailyMissionUiState.value = DailyMissionUiState.Loading
+        }
 
         missionRepository.getDailyMissionStatus()
             .collect { result ->
-                _dailyMissionUiState.value = result.fold(
+                result.fold(
                     onSuccess = { status ->
                         Timber.d("## 일일 미션 상태 조회 성공 : $status")
-                        when {
+                        _dailyMissionUiState.value = when {
                             status.currentMission != null || status.missionResult != null -> {
                                 // 진행 중 or 완료된 미션 있음
                                 DailyMissionUiState.Success(status)
@@ -79,7 +82,10 @@ class HomeViewModel @Inject constructor(
                     },
                     onFailure = { error ->
                         Timber.e("## 일일 미션 상태 조회 실패 : ${error.message}")
-                        DailyMissionUiState.Error(error.message ?: "알 수 없는 오류")
+                        if (!hasCachedDailyMission) {
+                            _dailyMissionUiState.value =
+                                DailyMissionUiState.Error(error.message ?: "알 수 없는 오류")
+                        }
                     }
                 )
             }
@@ -89,18 +95,24 @@ class HomeViewModel @Inject constructor(
      * 캐릭터 정보 조회
      */
     fun fetchCharacterInfo() = viewModelScope.launch {
-        _characterUiState.value = CharacterUiState.Loading
+        val hasCachedCharacter = _characterUiState.value is CharacterUiState.Success
+        if (!hasCachedCharacter) {
+            _characterUiState.value = CharacterUiState.Loading
+        }
 
         getCharacterInfoUseCase()
             .collect { result ->
-                _characterUiState.value = result.fold(
+                result.fold(
                     onSuccess = { characterInfo ->
                         Timber.d("## 캐릭터 정보 조회 성공 : $characterInfo")
-                        CharacterUiState.Success(characterInfo)
+                        _characterUiState.value = CharacterUiState.Success(characterInfo)
                     },
                     onFailure = { error ->
                         Timber.e("## 캐릭터 정보 조회 실패 : ${error.message}")
-                        CharacterUiState.Error(error.message ?: "알 수 없는 오류")
+                        if (!hasCachedCharacter) {
+                            _characterUiState.value =
+                                CharacterUiState.Error(error.message ?: "알 수 없는 오류")
+                        }
                     }
                 )
             }

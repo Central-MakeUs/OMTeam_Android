@@ -114,7 +114,10 @@ fun MyPageScreen(
     // 알림 설정에서 권한을 끄면 앱이 재시작되기 때문에
     // 화면 생성 시점에 권한 상태 확인해서 FCM 토큰 삭제
     LaunchedEffect(Unit) {
-        viewModel.getOnboardingInfo()
+        // 이미 조회된 데이터가 있으면 재진입 시 재호출하지 않아 화면 깜박임을 줄인다.
+        if (onboardingState is MyPageOnboardingState.Idle) {
+            viewModel.getOnboardingInfo()
+        }
         val isPermissionGranted =
             permissionManager.getPermissionStatus() == PushPermissionStatus.GRANTED
         viewModel.deleteFcmTokenIfRegistered(isPermissionGranted)

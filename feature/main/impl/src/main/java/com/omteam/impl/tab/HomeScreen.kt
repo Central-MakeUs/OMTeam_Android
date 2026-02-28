@@ -85,12 +85,16 @@ fun HomeScreen(
     var showMissionRecommendationBottomSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        homeViewModel.run {
-            fetchDailyMissionStatus()
-            fetchCharacterInfo()
+        // 이미 조회된 데이터가 있으면 재진입 시 재호출하지 않아 화면 깜박임을 줄인다.
+        if (dailyMissionUiState is DailyMissionUiState.Idle) {
+            homeViewModel.fetchDailyMissionStatus()
         }
-        // 주간 리포트 조회 (현재 주 기준)
-        reportViewModel.fetchWeeklyReport(useSelectedDate = true)
+        if (characterUiState is CharacterUiState.Idle) {
+            homeViewModel.fetchCharacterInfo()
+        }
+        if (weeklyReportUiState is WeeklyReportUiState.Idle) {
+            reportViewModel.fetchWeeklyReport(useSelectedDate = true)
+        }
     }
 
     HomeScreenContent(
