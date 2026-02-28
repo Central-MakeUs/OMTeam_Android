@@ -2,26 +2,22 @@ package com.omteam.omt
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.messaging.FirebaseMessaging
-import com.omteam.datastore.PermissionDataStore
+import com.omteam.data.fcm.FcmTokenSyncManager
 import com.omteam.domain.usecase.AutoLoginResult
 import com.omteam.domain.usecase.CheckAutoLoginUseCase
-import com.omteam.domain.usecase.RegisterFcmTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class AutoLoginViewModel @Inject constructor(
     private val checkAutoLoginUseCase: CheckAutoLoginUseCase,
-    private val registerFcmTokenUseCase: RegisterFcmTokenUseCase,
-    private val permissionDataStore: PermissionDataStore
+    private val fcmTokenSyncManager: FcmTokenSyncManager
 ) : ViewModel() {
     
     private val _autoLoginState = MutableStateFlow<AutoLoginState>(AutoLoginState.Checking)
@@ -69,21 +65,7 @@ class AutoLoginViewModel @Inject constructor(
      * Firebase가 토큰을 갱신했을 경우를 대비해 항상 최신 토큰을 서버에 등록
      */
     private fun registerFcmToken() = viewModelScope.launch {
-        try {
-            val fcmToken = FirebaseMessaging.getInstance().token.await()
-            Timber.d("## [자동 로그인] FCM 토큰 : $fcmToken")
-
-            registerFcmTokenUseCase(fcmToken).collect { result ->
-                result.onSuccess { message ->
-                    Timber.d("## [자동 로그인] FCM 토큰 등록 성공 : $message")
-                    permissionDataStore.saveFcmTokenRegistered(true)
-                }.onFailure { error ->
-                    Timber.e("## [자동 로그인] FCM 토큰 등록 실패 : ${error.message}")
-                }
-            }
-        } catch (e: Exception) {
-            Timber.e("## [자동 로그인] FCM 토큰 등록 중 예외 발생 : ${e.message}")
-        }
+        fcmTokenSyncManager.syncCurrentToken(source = "자동 로그인")
     }
     
     sealed interface AutoLoginState {

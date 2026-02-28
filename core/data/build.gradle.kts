@@ -24,6 +24,10 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
+    // firebase messaging (FCM 토큰 동기화)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     
     // timber
     implementation(libs.timber)
