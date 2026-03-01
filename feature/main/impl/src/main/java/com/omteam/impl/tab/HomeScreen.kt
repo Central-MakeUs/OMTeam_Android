@@ -44,6 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.foundation.*
@@ -81,6 +84,7 @@ fun HomeScreen(
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
     val dailyMissionRecommendationUiState by homeViewModel.dailyMissionRecommendationUiState.collectAsStateWithLifecycle()
     val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsStateWithLifecycle()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     var showMissionRecommendationBottomSheet by remember { mutableStateOf(false) }
 
@@ -94,6 +98,19 @@ fun HomeScreen(
         }
         if (weeklyReportUiState is WeeklyReportUiState.Idle) {
             reportViewModel.fetchWeeklyReport(useSelectedDate = true)
+        }
+    }
+    
+    DisposableEffect(lifecycleOwner) {
+        // 탭 재진입(ON_RESUME) 시 미션 상태 다시 조회해서 미션 제안받기 UI 갱신
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                homeViewModel.fetchDailyMissionStatus()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
