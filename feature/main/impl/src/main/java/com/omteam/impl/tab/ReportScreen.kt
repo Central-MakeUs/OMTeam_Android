@@ -84,7 +84,7 @@ fun ReportScreen(
 
     // 화면 진입 시 데이터 로드
     LaunchedEffect(Unit) {
-        // 이미 조회된 데이터가 있으면 재진입 시 재호출하지 않아 화면 깜박임을 줄인다.
+        // 이미 조회된 데이터가 있으면 재진입 시 재호출하지 않게 해서 화면 깜박임 줄임
         if (weeklyReportUiState is WeeklyReportUiState.Idle) {
             reportViewModel.fetchWeeklyReport()
         }

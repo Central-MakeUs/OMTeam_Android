@@ -64,7 +64,8 @@ fun DetailedAnalysisScreen(
     val monthlyPatternUiState by viewModel.monthlyPatternUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchWeeklyReport(useSelectedDate = false)
+        // 리포트 화면에서 선택한 주(selectedDate) 기준으로 조회
+        viewModel.fetchWeeklyReport()
         viewModel.fetchMonthlyPattern()
     }
 
