@@ -14,10 +14,13 @@ import timber.log.Timber
 fun EntryProviderScope<NavKey>.detailedAnalysisEntry(
     onBackClick: () -> Unit
 ) {
-    entry<DetailedAnalysisNavKey> {
+    entry<DetailedAnalysisNavKey> { navKey ->
         Timber.d("## 상세 분석 보기 화면 이동")
         DetailedAnalysisScreen(
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            year = navKey.year,
+            month = navKey.month,
+            weekOfMonth = navKey.weekOfMonth
         )
     }
 }

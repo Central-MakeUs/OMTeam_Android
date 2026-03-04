@@ -126,5 +126,15 @@ class AppNavigator(
     /**
      * 상세 분석 보기 화면 이동
      */
-    fun navigateToDetailedAnalysis() = navigate(destination = DetailedAnalysisNavKey)
+    fun navigateToDetailedAnalysis(
+        year: Int? = null,
+        month: Int? = null,
+        weekOfMonth: Int? = null
+    ) = navigate(
+        destination = DetailedAnalysisNavKey(
+            year = year,
+            month = month,
+            weekOfMonth = weekOfMonth
+        )
+    )
 }

@@ -37,11 +37,15 @@ class ReportRepositoryImpl @Inject constructor(
             getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
         )
 
-    override fun getMonthlyPattern(): Flow<Result<MonthlyPattern>> =
+    override fun getMonthlyPattern(
+        year: Int?,
+        month: Int?,
+        weekOfMonth: Int?
+    ): Flow<Result<MonthlyPattern>> =
         safeApiCall(
             logTag = "월간 패턴 분석 조회",
             defaultErrorMessage = "월간 패턴 분석을 불러올 수 없습니다",
-            apiCall = { reportApiService.getMonthlyPattern() },
+            apiCall = { reportApiService.getMonthlyPattern(year, month, weekOfMonth) },
             transform = { response -> response.data?.toDomain() },
             getErrorInfo = { response -> ErrorInfo(response.error?.code, response.error?.message) }
         )

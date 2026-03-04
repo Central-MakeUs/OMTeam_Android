@@ -78,7 +78,7 @@ fun HomeScreen(
     chatViewModel: ChatViewModel = hiltViewModel(),
     reportViewModel: ReportViewModel = hiltViewModel(),
     onNavigateToChat: () -> Unit = {},
-    onNavigateToDetailedAnalysis: () -> Unit = {}
+    onNavigateToDetailedAnalysis: (Int?, Int?, Int?) -> Unit = { _, _, _ -> }
 ) {
     val dailyMissionUiState by homeViewModel.dailyMissionUiState.collectAsStateWithLifecycle()
     val characterUiState by homeViewModel.characterUiState.collectAsStateWithLifecycle()
@@ -243,7 +243,7 @@ fun HomeScreenContent(
     modifier: Modifier = Modifier,
     onRequestMissionClick: () -> Unit = {},
     onVerifyMissionClick: (actionType: String) -> Unit = {},
-    onNavigateToDetailedAnalysis: () -> Unit = {}
+    onNavigateToDetailedAnalysis: (Int?, Int?, Int?) -> Unit = { _, _, _ -> }
 ) {
     val scrollState = rememberScrollState()
 
@@ -361,7 +361,6 @@ fun HomeScreenContent(
 
                         Spacer(modifier = Modifier.height(dp20))
 
-                        // TODO : 캐릭터 상태에 따른 이미지 변경
                         Image(
                             painter = painterResource(id = R.drawable.character_normal),
                             contentDescription = "캐릭터 이미지",
@@ -567,7 +566,10 @@ fun HomeScreenContent(
 
             OMTeamButton(
                 text = "더 자세한 분석 보기",
-                onClick = onNavigateToDetailedAnalysis,
+                onClick = {
+                    // 홈 화면 진입 시에는 월간 패턴 조회 파라미터 없이 현재 기준으로 조회한다.
+                    onNavigateToDetailedAnalysis(null, null, null)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(dp20)

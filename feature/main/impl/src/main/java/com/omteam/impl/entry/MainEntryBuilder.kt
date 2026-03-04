@@ -26,7 +26,7 @@ fun EntryProviderScope<NavKey>.mainEntry(
     onNavigateToOther: () -> Unit,
     onNavigateToEditMyGoal: (String) -> Unit,
     onNavigateToEditMyInfo: () -> Unit,
-    onNavigateToDetailedAnalysis: () -> Unit = {},
+    onNavigateToDetailedAnalysis: (Int?, Int?, Int?) -> Unit = { _, _, _ -> },
     onNavigateToChat: (MainViewModel) -> Unit = {},
 ) {
     entry<MainNavKey> {

@@ -69,7 +69,7 @@ import java.time.LocalDate
 fun ReportScreen(
     modifier: Modifier = Modifier,
     reportViewModel: ReportViewModel = hiltViewModel(),
-    onNavigateToDetailedAnalysis: () -> Unit = {}
+    onNavigateToDetailedAnalysis: (Int?, Int?, Int?) -> Unit = { _, _, _ -> }
 ) {
     val weekDisplayText by reportViewModel.weekDisplayText.collectAsState()
     val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsState()
@@ -169,8 +169,19 @@ fun ReportScreen(
             reportViewModel.fetchWeeklyReport()
             reportViewModel.fetchDailyFeedbackForSelectedDate()
         },
-        onDetailedAnalysisClick = onNavigateToDetailedAnalysis
+        onDetailedAnalysisClick = {
+            val (year, month, weekOfMonth) = parseWeekDisplayText(weekDisplayText)
+            onNavigateToDetailedAnalysis(year, month, weekOfMonth)
+        }
     )
+}
+ 
+private fun parseWeekDisplayText(weekDisplayText: String): Triple<Int?, Int?, Int?> {
+    // "2025년 1월 3주" 형태를 year/month/weekOfMonth로 변환한다.
+    val pattern = Regex("""(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})주""")
+    val matchResult = pattern.find(weekDisplayText.trim()) ?: return Triple(null, null, null)
+    val (year, month, weekOfMonth) = matchResult.destructured
+    return Triple(year.toIntOrNull(), month.toIntOrNull(), weekOfMonth.toIntOrNull())
 }
 
 @Composable

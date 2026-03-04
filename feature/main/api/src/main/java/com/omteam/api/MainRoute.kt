@@ -85,4 +85,8 @@ data class WebViewNavKey(
  * 상세 분석 보기 화면 NavKey
  */
 @Serializable
-object DetailedAnalysisNavKey : NavKey
+data class DetailedAnalysisNavKey(
+    val year: Int? = null,
+    val month: Int? = null,
+    val weekOfMonth: Int? = null
+) : NavKey
