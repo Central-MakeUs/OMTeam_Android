@@ -139,8 +139,8 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToEditMyInfo = {
                                     navigator.navigateToEditMyInfo()
                                 },
-                                onNavigateToDetailedAnalysis = {
-                                    navigator.navigateToDetailedAnalysis()
+                                onNavigateToDetailedAnalysis = { year, month, weekOfMonth ->
+                                    navigator.navigateToDetailedAnalysis(year, month, weekOfMonth)
                                 },
                                 onNavigateToChat = { mainViewModel ->
                                     // "미션 인증하기" 클릭 시 채팅 화면 이동

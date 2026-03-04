@@ -58,6 +58,9 @@ import java.util.Locale
 fun DetailedAnalysisScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
+    year: Int? = null,
+    month: Int? = null,
+    weekOfMonth: Int? = null,
     viewModel: ReportViewModel = hiltViewModel()
 ) {
     val weeklyReportUiState by viewModel.weeklyReportUiState.collectAsStateWithLifecycle()
@@ -66,7 +69,7 @@ fun DetailedAnalysisScreen(
     LaunchedEffect(Unit) {
         // 리포트 화면에서 선택한 주(selectedDate) 기준으로 조회
         viewModel.fetchWeeklyReport()
-        viewModel.fetchMonthlyPattern()
+        viewModel.fetchMonthlyPattern(year, month, weekOfMonth)
     }
 
     DetailedAnalysisContent(

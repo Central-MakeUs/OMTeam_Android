@@ -32,7 +32,14 @@ interface ReportRepository {
     /**
      * 월간 요일별 패턴 분석 조회
      *
+     * @param year 연도 (예: 2024), null인 경우 현재 주 기준
+     * @param month 월 (1-12), null인 경우 현재 주 기준
+     * @param weekOfMonth 해당 월의 주차 (1부터 시작), null인 경우 현재 주 기준
      * @return 월간 패턴 Flow
      */
-    fun getMonthlyPattern(): Flow<Result<MonthlyPattern>>
+    fun getMonthlyPattern(
+        year: Int? = null,
+        month: Int? = null,
+        weekOfMonth: Int? = null
+    ): Flow<Result<MonthlyPattern>>
 }

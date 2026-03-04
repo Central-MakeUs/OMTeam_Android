@@ -19,6 +19,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -47,9 +48,21 @@ object NetworkModule {
         authResponseInterceptor: AuthResponseInterceptor,
         crashlyticsNetworkLoggingInterceptor: CrashlyticsNetworkLoggingInterceptor,
     ): OkHttpClient {
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
+            redactHeader("Authorization")
+            redactHeader("Cookie")
+            redactHeader("Set-Cookie")
+        }
+ 
         return OkHttpClient.Builder()
             .addInterceptor(tokenInterceptor) // Authorization 헤더 자동 추가
             .addInterceptor(authResponseInterceptor) // 401, 403 응답 시 토큰 갱신 및 재시도
+            .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(crashlyticsNetworkLoggingInterceptor) // Crashlytics 네트워크 로그
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)

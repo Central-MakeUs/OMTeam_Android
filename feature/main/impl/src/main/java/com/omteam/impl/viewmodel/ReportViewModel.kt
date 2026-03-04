@@ -213,20 +213,23 @@ class ReportViewModel @Inject constructor(
     /**
      * 월간 요일별 패턴 분석 조회
      */
-    fun fetchMonthlyPattern() = viewModelScope.launch {
+    fun fetchMonthlyPattern(
+        year: Int? = null,
+        month: Int? = null,
+        weekOfMonth: Int? = null
+    ) = viewModelScope.launch {
         _monthlyPatternUiState.value = MonthlyPatternUiState.Loading
+        Timber.d("## 월간 요일별 패턴 분석 조회 시작 - year : $year, month : $month, weekOfMonth : $weekOfMonth")
 
-        Timber.d("## 월간 패턴 분석 조회 시작")
-
-        getMonthlyPatternUseCase()
+        getMonthlyPatternUseCase(year, month, weekOfMonth)
             .collect { result ->
                 _monthlyPatternUiState.value = result.fold(
                     onSuccess = { monthlyPattern ->
-                        Timber.d("## 월간 패턴 분석 조회 성공 : $monthlyPattern")
+                        Timber.d("## 월간 요일별 패턴 분석 조회 성공 : $monthlyPattern")
                         MonthlyPatternUiState.Success(monthlyPattern)
                     },
                     onFailure = { error ->
-                        Timber.e("## 월간 패턴 분석 조회 실패 : ${error.message}")
+                        Timber.e("## 월간 요일별 패턴 분석 조회 실패 : ${error.message}")
                         MonthlyPatternUiState.Error(error.message ?: "알 수 없는 오류")
                     }
                 )
