@@ -184,7 +184,6 @@ fun ReportScreen(
         onNextWeekClick = { reportViewModel.moveToNextWeek() },
         onWeekSelectClick = { showWeekSelectionSheet = true },
         onRefreshClick = {
-            reportViewModel.resetToCurrentWeek()
             reportViewModel.fetchWeeklyReport()
             reportViewModel.fetchDailyFeedbackForSelectedDate()
         },
