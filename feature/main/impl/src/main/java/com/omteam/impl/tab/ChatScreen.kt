@@ -26,6 +26,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,6 +46,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
 import com.omteam.designsystem.component.textfield.OMTeamBorderlessTextField
@@ -68,6 +72,7 @@ fun ChatScreen(
 ) {
     val sendMessageUiState by viewModel.sendMessageUiState.collectAsState()
     val chatHistoryUiState by viewModel.chatHistoryUiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     // 이미 선택한 messageId들을 추적해서 API 중복 호출 방지
     var selectedMessageIds by remember { mutableStateOf<Set<Int>>(emptySet()) }
@@ -102,6 +107,20 @@ fun ChatScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchChatHistory()
         shouldScrollToBottom = true
+    }
+    
+    DisposableEffect(lifecycleOwner) {
+        // 탭 재진입(ON_RESUME) 시 최신 대화 내역 다시 조회
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.fetchChatHistory()
+                shouldScrollToBottom = true
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 
     // 메시지 개수 변경, 로딩, 화면 재진입 시 스크롤
