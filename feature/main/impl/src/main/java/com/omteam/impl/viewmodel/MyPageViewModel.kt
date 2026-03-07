@@ -167,6 +167,23 @@ class MyPageViewModel @Inject constructor(
             }
         }
     }
+    
+    /**
+     * one-shot 업데이트 결과 상태를 소비 처리해서
+     *
+     * 화면 재진입 시 같은 성공 or 에러 이벤트가 재실행되지 않게 함
+     */
+    fun consumeOnboardingUpdateState() {
+        when (val state = _onboardingInfoState.value) {
+            is MyPageOnboardingState.UpdateSuccess -> {
+                _onboardingInfoState.value = MyPageOnboardingState.Success(state.data)
+            }
+            is MyPageOnboardingState.Error -> {
+                _onboardingInfoState.value = MyPageOnboardingState.Idle
+            }
+            else -> Unit
+        }
+    }
 
     // 커스텀 운동 추가
     fun addCustomExercise(name: String) = viewModelScope.launch {

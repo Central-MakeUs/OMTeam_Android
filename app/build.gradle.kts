@@ -44,8 +44,8 @@ android {
 
     defaultConfig {
         applicationId = "com.omteam.omt"
-        versionCode = 10
-        versionName = "1.0.9"
+        versionCode = 11
+        versionName = "1.0.10"
         
         buildConfigField(
             "String",

@@ -25,6 +25,7 @@ import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,6 +46,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.launch
 import com.omteam.designsystem.component.button.OMTeamButton
 import com.omteam.designsystem.component.text.OMTeamText
@@ -74,6 +78,7 @@ fun ReportScreen(
     val weekDisplayText by reportViewModel.weekDisplayText.collectAsState()
     val weeklyReportUiState by reportViewModel.weeklyReportUiState.collectAsState()
     val dailyFeedbackUiState by reportViewModel.dailyFeedbackUiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     // 주 선택 바텀 시트 표시 상태
     var showWeekSelectionSheet by remember { mutableStateOf(false) }
@@ -90,6 +95,20 @@ fun ReportScreen(
         }
         if (dailyFeedbackUiState is DailyFeedbackUiState.Idle) {
             reportViewModel.fetchDailyFeedbackForSelectedDate()
+        }
+    }
+    
+    DisposableEffect(lifecycleOwner) {
+        // 탭 재진입(ON_RESUME) 시 최신 리포트 데이터 다시 조회
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                reportViewModel.fetchWeeklyReport()
+                reportViewModel.fetchDailyFeedbackForSelectedDate()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -165,7 +184,6 @@ fun ReportScreen(
         onNextWeekClick = { reportViewModel.moveToNextWeek() },
         onWeekSelectClick = { showWeekSelectionSheet = true },
         onRefreshClick = {
-            reportViewModel.resetToCurrentWeek()
             reportViewModel.fetchWeeklyReport()
             reportViewModel.fetchDailyFeedbackForSelectedDate()
         },
