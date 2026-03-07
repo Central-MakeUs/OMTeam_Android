@@ -181,17 +181,24 @@ fun ChatScreen(
         },
         onSendMessage = { message ->
             // 마지막 어시스턴트 메시지의 actionType을 그대로 사용
-            // actionType이 null이면 일반 채팅으로 처리됨
+            // 미션 완료/실패 후 안내되는 NAVIGATE_HOME 단계에서는
+            // 일반 텍스트를 보낼 경우 actionType을 null로 보내야 함
             val lastAssistantActionType = currentMessages
                 .filter { it.role == ChatRole.ASSISTANT }
                 .maxByOrNull { it.messageId }
                 ?.actionType
-
+            val actionTypeForText = if (lastAssistantActionType == "NAVIGATE_HOME") {
+                null
+            } else {
+                lastAssistantActionType
+            }
+            
+            // actionType이 null이면 일반 채팅으로 처리됨
             viewModel.sendMessage(
                 type = "TEXT",
                 value = message,
                 optionValue = null,
-                actionType = lastAssistantActionType
+                actionType = actionTypeForText
             )
         }
     )
