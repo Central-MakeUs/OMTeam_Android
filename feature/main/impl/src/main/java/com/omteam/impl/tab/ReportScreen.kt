@@ -97,7 +97,7 @@ fun ReportScreen(
             reportViewModel.fetchDailyFeedbackForSelectedDate()
         }
     }
-    
+
     DisposableEffect(lifecycleOwner) {
         // 탭 재진입(ON_RESUME) 시 최신 리포트 데이터 다시 조회
         val observer = LifecycleEventObserver { _, event ->

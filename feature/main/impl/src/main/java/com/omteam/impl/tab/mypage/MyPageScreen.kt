@@ -1,5 +1,6 @@
 package com.omteam.impl.tab.mypage
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.omteam.datastore.PermissionDataStore
 import com.omteam.designsystem.component.text.OMTeamText
@@ -226,6 +228,7 @@ fun MyPageScreenContent(
     onRequestPermission: () -> Unit = {},
     onSwitchTurnedOn: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     // Loading 상태에서도 마지막 성공 데이터를 유지해서 화면 깜박임을 줄이기
     var cachedOnboardingData by remember { mutableStateOf<OnboardingInfo?>(null) }
     LaunchedEffect(onboardingState) {
@@ -397,7 +400,21 @@ fun MyPageScreenContent(
 
         MyPageMenuItem(
             text = stringResource(com.omteam.main.impl.R.string.inquiry),
-            onClick = { Timber.d("## 문의하기 클릭") }
+            onClick = {
+                Timber.d("## 문의하기 클릭")
+                val emailUri = "mailto:omteam.omt@gmail.com".toUri()
+                val gmailIntent = Intent(Intent.ACTION_SENDTO, emailUri).apply {
+                    setPackage("com.google.android.gm")
+                }
+                val fallbackIntent = Intent(Intent.ACTION_SENDTO, emailUri)
+                context.startActivity(
+                    if (gmailIntent.resolveActivity(context.packageManager) != null) {
+                        gmailIntent
+                    } else {
+                        fallbackIntent
+                    }
+                )
+            }
         )
         MyPageMenuDivider()
 

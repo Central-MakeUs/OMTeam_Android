@@ -1,5 +1,6 @@
 package com.omteam.impl.tab.mypage
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,6 +31,7 @@ import com.omteam.impl.component.SubScreenHeader
 import com.omteam.omt.core.designsystem.R
 import com.omteam.main.impl.BuildConfig
 import timber.log.Timber
+import androidx.core.net.toUri
 
 @Composable
 fun OtherScreen(
@@ -36,6 +39,7 @@ fun OtherScreen(
     onBackClick: () -> Unit = {},
     onNavigateToWebView: (url: String) -> Unit = { _ -> }
 ) {
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -74,7 +78,21 @@ fun OtherScreen(
         OtherMenuItem(
             iconRes = R.drawable.icon_faq,
             text = stringResource(R.string.inquiry_title),
-            onClick = { Timber.d("## 문의하기 클릭") }
+            onClick = {
+                Timber.d("## 문의하기 클릭")
+                val emailUri = "mailto:omteam.omt@gmail.com".toUri()
+                val gmailIntent = Intent(Intent.ACTION_SENDTO, emailUri).apply {
+                    setPackage("com.google.android.gm")
+                }
+                val fallbackIntent = Intent(Intent.ACTION_SENDTO, emailUri)
+                context.startActivity(
+                    if (gmailIntent.resolveActivity(context.packageManager) != null) {
+                        gmailIntent
+                    } else {
+                        fallbackIntent
+                    }
+                )
+            }
         )
         OtherMenuDivider()
 
