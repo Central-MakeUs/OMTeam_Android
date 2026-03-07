@@ -59,6 +59,7 @@ fun EditMyGoalScreen(
                     R.string.app_goal_update_success,
                     Toast.LENGTH_SHORT
                 ).show()
+                myPageViewModel.consumeOnboardingUpdateState()
                 onBackClick()
             }
             is MyPageOnboardingState.Error -> {
@@ -67,6 +68,7 @@ fun EditMyGoalScreen(
                     R.string.app_goal_update_error,
                     Toast.LENGTH_SHORT
                 ).show()
+                myPageViewModel.consumeOnboardingUpdateState()
             }
             else -> { /* Loading, Idle 등 다른 상태는 무시 */ }
         }
